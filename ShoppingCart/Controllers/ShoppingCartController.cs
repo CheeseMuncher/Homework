@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using ShoppingCart.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -23,12 +24,7 @@ namespace ShoppingCart.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] ShoppingCartRequest request)
         {
-            return Ok($"{request.Test} tested");
+            return Ok($"{request.DiscountCode} tested");
         }
-    }
-
-    public class ShoppingCartRequest
-    {
-        public string Test { get; set; }
     }
 }

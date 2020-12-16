@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using NUnit.Framework;
 using ShoppingCart.Implementation;
-using ShoppingCart.Pocos;
+using ShoppingCart.Models;
+using System.Collections.Generic;
 
 namespace ShoppingCart.Tests
 {
@@ -29,7 +29,7 @@ namespace ShoppingCart.Tests
             var carItem2 = new CartItem { ProductId = 2, UnitQuantity = 1 };
 
             var cart = new List<CartItem> { carItem1, carItem2 };
-            
+
             var calc = new Calculator(new ShippingCalculator(), _productRepository);
             double total = calc.Total(cart);
 
@@ -40,7 +40,7 @@ namespace ShoppingCart.Tests
         public void WithOneItem_CheckCalculation()
         {
             var carItem1 = new CartItem { ProductId = 1, UnitQuantity = 1 };
-     
+
             var cart = new List<CartItem> { carItem1 };
 
             var calc = new Calculator(new ShippingCalculator(), _productRepository);

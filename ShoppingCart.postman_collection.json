@@ -31,7 +31,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"Test\":\"I am a test\"\r\n}",
+					"raw": "{\r\n    \"DiscountCode\":\"I am a test\",\r\n    \"CartItems\": [\r\n        {\r\n            \"ProductId\": 123,\r\n            \"UnitQuantity\": 1\r\n        },\r\n        {\r\n            \"ProductId\": 456,\r\n            \"UnitQuantity\": 2\r\n        },\r\n        {\r\n            \"ProductId\": 789,\r\n            \"UnitQuantity\": 3\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
