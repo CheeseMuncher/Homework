@@ -69,3 +69,11 @@ Please comment (in the code, in an e-mail, or verbally) what you think of the de
 
 
 BONUS QUESTION:  what would you do with this solution to handle the use case of a user being refunded the correct amount for a returned item?
+
+
+Swagger endpoints:
+[Swagger UI](http://localhost:5000/swagger/index.html)
+[Open Api 3.0.1 Json](http://localhost:5000/swagger/v1/swagger.json)
+
+Log File Path:
+bin\Debug\netcoreapp3.1\logs
