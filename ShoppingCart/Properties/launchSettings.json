@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ShoppingCart": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Key": "Value",
+        "ASPNETCORE_APPLICATIONNAME": "Shopping Cart",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
