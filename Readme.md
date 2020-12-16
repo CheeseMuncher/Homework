@@ -23,9 +23,9 @@ There are three types of Suppliers:
 Currently, the price of the Cart is calculated as follows:
 - For each Product in the Cart, find its price and multiply by the number of units required
 - Once all summed up, add any shipping costs as follows:
-	- running total is less than 20, shipping cost is 7
-	- running total is less than 40, shipping cost is 5
-	- otherwise shipping cost is free
+    - running total is less than 20, shipping cost is 7
+    - running total is less than 40, shipping cost is 5
+    - otherwise shipping cost is free
 - Return the running total added to the shipping cost
 
 
@@ -33,12 +33,12 @@ YOU NEED TO IMPLEMENT THE FOLLOWING:
 
 Given a Cart that contains
 - 2 * headphones from Apple, at 10 per unit
-- 1 * usb cable from Apple, at 4 per unit
+- 1 * USB cable from Apple, at 4 per unit
 - 1 * monitor from HP, at 100 per unit
 - 1 * laptop from Dell, at 1000 per unit
 
 Given these Products and associated Product Categories:
-- Headhphones: Accessory, Electronic, Audio
+- Headphones: Accessory, Electronic, Audio
 - USB cable: Accessory
 - Monitor: Electronic
 - Laptop: Electronic
@@ -55,12 +55,12 @@ We would like to see:
 - Add or change any of the classes/code-base as you find appropriate
 - Make your solution extensible and follow SOLID principles
 
-When we evaulate the solution we are looking for the following points (as per regular PR):
+When we evaluate the solution we are looking for the following points (as per regular PR):
 
-- Good understanding of SOLID Principles	
-- Good understanding of DI	
-- Unit Testing	
-- Good data structure choices	
+- Good understanding of SOLID Principles    
+- Good understanding of DI    
+- Unit Testing    
+- Good data structure choices    
 - Appropriate refactoring of base implementation
 - Easy to follow and readable solution
 
