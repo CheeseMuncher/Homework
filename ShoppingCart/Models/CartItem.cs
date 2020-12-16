@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.Pocos
+﻿namespace ShoppingCart.Models
 {
     public class CartItem
     {

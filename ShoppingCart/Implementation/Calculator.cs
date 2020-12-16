@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using ShoppingCart.Interfaces;
-using ShoppingCart.Pocos;
+﻿using ShoppingCart.Interfaces;
+using ShoppingCart.Models;
+using System.Collections.Generic;
 
 namespace ShoppingCart.Implementation
 {

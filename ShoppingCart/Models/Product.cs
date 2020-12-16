@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.Pocos
+﻿namespace ShoppingCart.Models
 {
     public class Product
     {
@@ -7,6 +7,5 @@
         public string Name { get; set; }
         public double WholesalePrice { get; set; }
         public double Price { get; set; }
-
     }
 }

@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using ShoppingCart.Interfaces;
+using ShoppingCart.Models;
+using System.Collections.Generic;
 using System.Linq;
-using ShoppingCart.Interfaces;
-using ShoppingCart.Pocos;
 
 namespace ShoppingCart.Implementation
 {
     public class ProductRepository : IRepository<Product>
     {
         private readonly List<Product> _products = new List<Product>();
+
         public void Add(Product item)
         {
             _products.Add(item);
