@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using ShoppingCart.Implementation;
+using ShoppingCart.Data;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 
