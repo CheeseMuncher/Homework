@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using ShoppingCart.Data;
 using ShoppingCart.Implementation;
 using ShoppingCart.Models;
 using System.Collections.Generic;
