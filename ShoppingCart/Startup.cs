@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using ShoppingCart.Implementation;
+using ShoppingCart.Interfaces;
+using ShoppingCart.Models;
 
 namespace ShoppingCart
 {
@@ -23,10 +26,12 @@ namespace ShoppingCart
                 .AddMvc(opt => opt.EnableEndpointRouting = false)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"{Program.ApplicationName}", Version = $"{Program.ApplicationVersion}" });
-                    c.EnableAnnotations();
-                });
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = $"{Program.ApplicationName}", Version = $"{Program.ApplicationVersion}" });
+                c.EnableAnnotations();
+            });
+
+            services.AddSingleton<IRepository<Product>, ProductRepository>();
         }
 
         public void Configure(IApplicationBuilder app)

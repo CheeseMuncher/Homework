@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using ShoppingCart.Interfaces;
 
 namespace ShoppingCart.Models
 {
@@ -6,7 +7,7 @@ namespace ShoppingCart.Models
     {
         private const string _alpahnumericRegex = "^[a-zA-Z0-9_]*$";
 
-        public ShoppingCartRequestValidator()
+        public ShoppingCartRequestValidator(IRepository<Product> productRepository)
         {
             RuleFor(request => request.CouponCode)
                 .Cascade(CascadeMode.Stop)
@@ -20,7 +21,7 @@ namespace ShoppingCart.Models
                 .WithMessage(ValidationMessages.ExactlyOneCodeAlphanumeric);
 
             RuleForEach(request => request.CartItems)
-                .SetValidator(new CartItemValidator());
+                .SetValidator(new CartItemValidator(productRepository));
         }
     }
 }

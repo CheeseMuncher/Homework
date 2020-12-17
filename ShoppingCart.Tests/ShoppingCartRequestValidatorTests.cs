@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
+using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using Shouldly;
 using System.Linq;
@@ -7,7 +9,14 @@ namespace ShoppingCart.Tests
 {
     public class ShoppingCartRequestValidatorTests
     {
-        private ShoppingCartRequestValidator _sut = new ShoppingCartRequestValidator();
+        private readonly Mock<IRepository<Product>> _mockProductRepository = new Mock<IRepository<Product>>();
+        private ShoppingCartRequestValidator _sut;
+
+        [SetUp]
+        public void Setup()
+        {
+            _sut = new ShoppingCartRequestValidator(_mockProductRepository.Object);
+        }
 
         [Test]
         public void Validate_ReturnsValid_IfValidRequestSupplied()
@@ -78,14 +87,64 @@ namespace ShoppingCart.Tests
             result.Errors.Single().ErrorMessage.ShouldBe("API takes positive quantities");
         }
 
+        [Test]
+        public void Validate_ReturnsInvalid_IfProductNotFound()
+        {
+            var request = GetValidRequest();
+            request.CartItems = new[] { new CartItem { ProductId = 456, UnitQuantity = 1 } };
+
+            var result = _sut.Validate(request);
+
+            result.IsValid.ShouldBeFalse();
+            result.Errors.Count.ShouldBe(1);
+            result.Errors.Single().PropertyName.ShouldContain(nameof(CartItem.ProductId));
+            result.Errors.Single().ErrorMessage.ShouldBe("Product not found");
+        }
+
+        [Test]
+        public void Validate_ReturnsMultipleErrorMessages()
+        {
+            var id1 = 123;
+            var id2 = 456;
+            _mockProductRepository
+                .Setup(repo => repo.Get(id1))
+                .Returns(new Product { Id = id1, Name = $"Product {id1}" });
+            _mockProductRepository
+                .Setup(repo => repo.Get(id2))
+                .Returns(new Product { Id = id2, Name = $"Product {id2}" });
+
+            var request = new ShoppingCartRequest
+            {
+                CouponCode = "***",
+                CartItems = new[]
+                {
+                    new CartItem { ProductId = id1, UnitQuantity = 1 },
+                    new CartItem { ProductId = id2, UnitQuantity = -1 },
+                    new CartItem { ProductId = 789, UnitQuantity = 1 }
+                }
+            };
+
+            var result = _sut.Validate(request);
+
+            result.IsValid.ShouldBeFalse();
+            result.Errors.Count.ShouldBe(3);
+            result.Errors.ShouldContain(e => e.ErrorMessage == ValidationMessages.ExactlyOneCodeAlphanumeric);
+            result.Errors.ShouldContain(e => e.ErrorMessage == ValidationMessages.PositiveQuantities);
+            result.Errors.ShouldContain(e => e.ErrorMessage == ValidationMessages.ProductNotFound);
+        }
+
         private ShoppingCartRequest GetValidRequest()
         {
+            var id = 123;
+            _mockProductRepository
+                .Setup(repo => repo.Get(id))
+                .Returns(new Product { Id = id, Name = $"Product {id}" });
             return new ShoppingCartRequest
             {
                 CouponCode = "FREESHIPPING",
                 CartItems = new[]
                 {
-                    new CartItem  { ProductId = 123, UnitQuantity = 1 }
+                    new CartItem  { ProductId = id, UnitQuantity = 1 }
                 }
             };
         }
