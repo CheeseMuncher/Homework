@@ -4,6 +4,8 @@ namespace ShoppingCart.Models
 {
     public class ShoppingCartRequestValidator : AbstractValidator<ShoppingCartRequest>
     {
+        private const string _alpahnumericRegex = "^[a-zA-Z0-9_]*$";
+
         public ShoppingCartRequestValidator()
         {
             RuleFor(request => request.CouponCode)
@@ -13,7 +15,12 @@ namespace ShoppingCart.Models
                 .NotEmpty()
                 .WithMessage(ValidationMessages.ExactlyOneCode)
                 .Must(code => code.Split(' ').Length == 1)
-                .WithMessage(ValidationMessages.ExactlyOneCode);
+                .WithMessage(ValidationMessages.ExactlyOneCode)
+                .Matches(_alpahnumericRegex)
+                .WithMessage(ValidationMessages.ExactlyOneCodeAlphanumeric);
+
+            RuleForEach(request => request.CartItems)
+                .SetValidator(new CartItemValidator());
         }
     }
 }
