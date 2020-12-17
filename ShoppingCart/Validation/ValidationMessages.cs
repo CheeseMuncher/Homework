@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.Models
+﻿namespace ShoppingCart.Validation
 {
     public static class ValidationMessages
     {

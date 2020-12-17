@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
+using ShoppingCart.Validation;
 using Shouldly;
 using System.Linq;
 

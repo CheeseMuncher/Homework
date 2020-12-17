@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using ShoppingCart.Interfaces;
 
-namespace ShoppingCart.Models
+using ShoppingCart.Models;
+
+namespace ShoppingCart.Validation
 {
     public class ShoppingCartRequestValidator : AbstractValidator<ShoppingCartRequest>
     {
