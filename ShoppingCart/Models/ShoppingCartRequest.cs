@@ -4,7 +4,7 @@ namespace ShoppingCart.Models
 {
     public class ShoppingCartRequest
     {
-        public string DiscountCode { get; set; }
+        public string CouponCode { get; set; }
         public IEnumerable<CartItem> CartItems { get; set; }
     }
 }
