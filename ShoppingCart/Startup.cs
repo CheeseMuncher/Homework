@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -17,7 +18,10 @@ namespace ShoppingCart
         public void ConfigureServices(IServiceCollection services)
         {
             _logger.Information("Starting {ApplicationName} {ApplicationVersion}", Program.ApplicationName, Program.ApplicationVersion);
-            services.AddMvc(opt => opt.EnableEndpointRouting = false);
+
+            services
+                .AddMvc(opt => opt.EnableEndpointRouting = false)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = $"{Program.ApplicationName}", Version = $"{Program.ApplicationVersion}" });

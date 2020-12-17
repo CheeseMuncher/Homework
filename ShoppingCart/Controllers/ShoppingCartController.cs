@@ -24,7 +24,7 @@ namespace ShoppingCart.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] ShoppingCartRequest request)
         {
-            return Ok($"{request.DiscountCode} tested");
+            return Ok($"{request.CouponCode} tested");
         }
     }
 }
