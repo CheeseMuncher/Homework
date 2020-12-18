@@ -10,6 +10,7 @@ namespace ShoppingCart.Data
 
         public ProductRepository()
         {
+            // TODO this should come from config or be backed by a database or a dedicated product service
             _products = new Dictionary<int, Product>
             {
                 [1] = new Product { Id = 1, Name = "Headphones", Price = 10, Supplier = "Apple", Categories = new[] { "Accessory", "Electronic", "Audio" } },
