@@ -11,12 +11,14 @@ namespace ShoppingCart.Tests
     public class ShoppingCartRequestValidatorTests
     {
         private readonly Mock<IRepository<int, Product>> _mockProductRepository = new Mock<IRepository<int, Product>>();
+        private readonly Mock<IRepository<string, Discount>> _mockDiscountRepository = new Mock<IRepository<string, Discount>>();
         private ShoppingCartRequestValidator _sut;
 
         [SetUp]
         public void Setup()
         {
-            _sut = new ShoppingCartRequestValidator(_mockProductRepository.Object);
+            _mockDiscountRepository.Setup(repo => repo.Get("FREESHIPPING")).Returns(new Discount { DiscountType = DiscountType.Shipping });
+            _sut = new ShoppingCartRequestValidator(_mockProductRepository.Object, _mockDiscountRepository.Object);
         }
 
         [Test]
@@ -100,6 +102,20 @@ namespace ShoppingCart.Tests
             result.Errors.Count.ShouldBe(1);
             result.Errors.Single().PropertyName.ShouldContain(nameof(CartItem.ProductId));
             result.Errors.Single().ErrorMessage.ShouldBe("Product not found");
+        }
+
+        [Test]
+        public void Validate_ReturnsInvalid_IfCouponCodeNotFound()
+        {
+            var request = GetValidRequest();
+            request.CouponCode = "FakeCode";
+
+            var result = _sut.Validate(request);
+
+            result.IsValid.ShouldBeFalse();
+            result.Errors.Count.ShouldBe(1);
+            result.Errors.Single().PropertyName.ShouldContain(nameof(CartItem.ProductId));
+            result.Errors.Single().ErrorMessage.ShouldBe("Coupon code not found");
         }
 
         [Test]
