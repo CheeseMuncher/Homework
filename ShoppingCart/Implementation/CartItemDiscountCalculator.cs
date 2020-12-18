@@ -11,12 +11,12 @@ namespace ShoppingCart.Implementation
             switch (discount.DiscountType)
             {
                 case DiscountType.Supplier:
-                    return discount.SupplierDiscount.Equals(item.Supplier, StringComparison.InvariantCultureIgnoreCase)
+                    return discount.DiscountedSupplier.Equals(item.Supplier, StringComparison.InvariantCultureIgnoreCase)
                         ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
                         : quantity * item.Price;
 
                 case DiscountType.Category:
-                    return discount.CategoryDiscount.Equals(item.Category, StringComparison.InvariantCultureIgnoreCase)
+                    return discount.DiscountedCategory.Equals(item.Category, StringComparison.InvariantCultureIgnoreCase)
                         ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
                         : quantity * item.Price;
 
