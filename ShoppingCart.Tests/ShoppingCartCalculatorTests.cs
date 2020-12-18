@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ShoppingCart.Tests
 {
-    public class Tests
+    public class ShoppingCartCalculatorTests
     {
         private ProductRepository _productRepository;
 
@@ -31,7 +31,7 @@ namespace ShoppingCart.Tests
 
             var cart = new List<CartItem> { carItem1, carItem2 };
 
-            var calc = new Calculator(new ShippingCalculator(), _productRepository);
+            var calc = new ShoppingCartCalculator(new ShippingCalculator(), _productRepository);
             double total = calc.Total(cart);
 
             Assert.AreEqual(1004, total);
@@ -44,7 +44,7 @@ namespace ShoppingCart.Tests
 
             var cart = new List<CartItem> { carItem1 };
 
-            var calc = new Calculator(new ShippingCalculator(), _productRepository);
+            var calc = new ShoppingCartCalculator(new ShippingCalculator(), _productRepository);
             double total = calc.Total(cart);
 
             Assert.AreEqual(11, total);
