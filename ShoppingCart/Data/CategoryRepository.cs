@@ -1,9 +1,10 @@
 ﻿using ShoppingCart.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace ShoppingCart.Data
 {
-    public class CategoryRepository : IRepository
+    public class CategoryRepository : IRepository<string, string>
     {
         private readonly HashSet<string> _categories;
 
@@ -13,14 +14,17 @@ namespace ShoppingCart.Data
             _categories = new HashSet<string> { "Electronic", "Accessory", "Audio" };
         }
 
-        public void Add(string item)
+        public void Add(string item, string value)
         {
-            _categories.Add(item);
+            if (item == value)
+                _categories.Add(item);
+
+            throw new ArgumentException("Key and value don't match");
         }
 
-        public bool Contains(string item)
+        public string Get(string item)
         {
-            return _categories.Contains(item);
+            return _categories.Contains(item) ? item : null;
         }
     }
 }

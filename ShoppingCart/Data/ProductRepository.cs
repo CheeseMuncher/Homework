@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 namespace ShoppingCart.Data
 {
-    public class ProductRepository : IRepository<Product>
+    public class ProductRepository : IRepository<int, Product>
     {
         private readonly Dictionary<int, Product> _products = new Dictionary<int, Product>();
 
-        public void Add(Product item)
+        public void Add(int key, Product value)
         {
-            _products[item.Id] = item;
+            _products[key] = value;
         }
 
-        public Product Get(int id)
+        public Product Get(int key)
         {
-            return _products.TryGetValue(id, out var result) ? result : null;
+            return _products.TryGetValue(key, out var result) ? result : null;
         }
     }
 }

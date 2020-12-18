@@ -18,9 +18,9 @@ namespace ShoppingCart.Tests
             var iPad = new Product { Id = 3, Name = "iPad", WholesalePrice = 180, Price = 220 };
 
             _productRepository = new ProductRepository();
-            _productRepository.Add(usbCable);
-            _productRepository.Add(laptop);
-            _productRepository.Add(iPad);
+            _productRepository.Add(usbCable.Id, usbCable);
+            _productRepository.Add(laptop.Id, laptop);
+            _productRepository.Add(iPad.Id, iPad);
         }
 
         [Test]

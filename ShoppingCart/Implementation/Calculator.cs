@@ -6,10 +6,10 @@ namespace ShoppingCart.Implementation
 {
     public class Calculator
     {
-        private readonly IRepository<Product> _productStore;
+        private readonly IRepository<int, Product> _productStore;
         private readonly IShippingCalculator _shippingCalculator;
 
-        public Calculator(IShippingCalculator shippingCalculator, IRepository<Product> productStore)
+        public Calculator(IShippingCalculator shippingCalculator, IRepository<int, Product> productStore)
         {
             _productStore = productStore;
             _shippingCalculator = shippingCalculator;

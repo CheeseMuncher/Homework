@@ -10,7 +10,7 @@ namespace ShoppingCart.Tests
 {
     public class ShoppingCartRequestValidatorTests
     {
-        private readonly Mock<IRepository<Product>> _mockProductRepository = new Mock<IRepository<Product>>();
+        private readonly Mock<IRepository<int, Product>> _mockProductRepository = new Mock<IRepository<int, Product>>();
         private ShoppingCartRequestValidator _sut;
 
         [SetUp]

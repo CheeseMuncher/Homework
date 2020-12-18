@@ -9,7 +9,7 @@ namespace ShoppingCart.Validation
     {
         private const string _alpahnumericRegex = "^[a-zA-Z0-9_]*$";
 
-        public ShoppingCartRequestValidator(IRepository<Product> productRepository)
+        public ShoppingCartRequestValidator(IRepository<int, Product> productRepository)
         {
             RuleFor(request => request.CouponCode)
                 .Cascade(CascadeMode.Stop)
