@@ -53,6 +53,36 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "ShoppingCartRequest TestCase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"CouponCode\":\"AUDIO10\",\r\n    \"CartItems\": [\r\n        {\r\n            \"ProductId\": 1,\r\n            \"UnitQuantity\":2\r\n        },\r\n        {\r\n            \"ProductId\": 2,\r\n            \"UnitQuantity\": 1\r\n        },\r\n        {\r\n            \"ProductId\": 3,\r\n            \"UnitQuantity\": 1\r\n        },\r\n        {\r\n            \"ProductId\": 4,\r\n            \"UnitQuantity\": 1\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/ShoppingCart/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"ShoppingCart",
+						""
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}

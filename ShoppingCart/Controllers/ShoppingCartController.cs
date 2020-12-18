@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using System;
 using System.Threading.Tasks;
@@ -12,11 +13,13 @@ namespace ShoppingCart.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly ILogger _logger;
+        private readonly IShoppingCartCalculator _shoppingCartCalculator;
 
-        public ShoppingCartController(ILogger logger)
+        public ShoppingCartController(ILogger logger, IShoppingCartCalculator shoppingCartCalculator)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _logger.Information("ShoppingCartController built");
+            _shoppingCartCalculator = shoppingCartCalculator ?? throw new ArgumentNullException(nameof(shoppingCartCalculator));
+            _logger.Debug("ShoppingCartController built");
         }
 
         [HttpPost]
@@ -24,7 +27,7 @@ namespace ShoppingCart.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] ShoppingCartRequest request)
         {
-            return Ok($"{request.CouponCode} tested");
+            return Ok($"{_shoppingCartCalculator.Total(request)}");
         }
     }
 }
