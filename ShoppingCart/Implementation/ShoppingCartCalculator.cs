@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace ShoppingCart.Implementation
 {
-    public class Calculator
+    public class ShoppingCartCalculator : IShoppingCartCalculator
     {
         private readonly IRepository<int, Product> _productStore;
         private readonly IShippingCalculator _shippingCalculator;
 
-        public Calculator(IShippingCalculator shippingCalculator, IRepository<int, Product> productStore)
+        public ShoppingCartCalculator(IShippingCalculator shippingCalculator, IRepository<int, Product> productStore)
         {
             _productStore = productStore;
             _shippingCalculator = shippingCalculator;
