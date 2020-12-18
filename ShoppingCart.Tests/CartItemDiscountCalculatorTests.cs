@@ -37,7 +37,7 @@ namespace ShoppingCart.Tests
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
-            result.ShouldBe(product.Price * quantity * (1 - discount.DiscountPercentage) / 100);
+            result.ShouldBe(product.Price * quantity * (1 - discount.DiscountPercentage / 100));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace ShoppingCart.Tests
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
-            result.ShouldBe(product.Price * quantity * (1 - discount.DiscountPercentage) / 100);
+            result.ShouldBe(product.Price * quantity * (1 - discount.DiscountPercentage / 100));
         }
 
         [Test]
@@ -76,6 +76,17 @@ namespace ShoppingCart.Tests
             var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = _fixture.Create<string>(), DiscountPercentage = 4.56 };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
+
+            result.ShouldBe(product.Price * quantity);
+        }
+
+        [Test]
+        public void CalculateLineTotal_HandlesNullDiscount()
+        {
+            var product = _fixture.Create<Product>();
+            var quantity = _fixture.Create<int>();
+
+            var result = _sut.CalculateLineTotal(product, quantity, null);
 
             result.ShouldBe(product.Price * quantity);
         }

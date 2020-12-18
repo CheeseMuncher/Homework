@@ -9,16 +9,16 @@ namespace ShoppingCart.Implementation
     {
         public double CalculateLineTotal(Product item, int quantity, Discount discount)
         {
-            switch (discount.DiscountType)
+            switch (discount?.DiscountType)
             {
                 case DiscountType.Supplier:
                     return item.Supplier.Equals(discount.DiscountedSupplier, StringComparison.InvariantCultureIgnoreCase)
-                        ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
+                        ? quantity * item.Price * (1 - discount.DiscountPercentage / 100)
                         : quantity * item.Price;
 
                 case DiscountType.Category:
                     return item.Categories.Any(cat => cat.Equals(discount.DiscountedCategory, StringComparison.InvariantCultureIgnoreCase))
-                        ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
+                        ? quantity * item.Price * (1 - discount.DiscountPercentage / 100)
                         : quantity * item.Price;
 
                 case DiscountType.Shipping:
