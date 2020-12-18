@@ -58,7 +58,7 @@ namespace ShoppingCart.Tests
         public void CalculateLineTotal_AppliesCategoryDiscount(string categoryDiscount)
         {
             var product = _fixture.Create<Product>();
-            product.Category = categoryDiscount.ToUpper();
+            product.Categories = new[] { categoryDiscount.ToUpper() };
 
             var quantity = _fixture.Create<int>();
             var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = categoryDiscount, DiscountPercentage = 3.45 };

@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using System;
+using System.Linq;
 
 namespace ShoppingCart.Implementation
 {
@@ -11,12 +12,12 @@ namespace ShoppingCart.Implementation
             switch (discount.DiscountType)
             {
                 case DiscountType.Supplier:
-                    return discount.DiscountedSupplier.Equals(item.Supplier, StringComparison.InvariantCultureIgnoreCase)
+                    return item.Supplier.Equals(discount.DiscountedSupplier, StringComparison.InvariantCultureIgnoreCase)
                         ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
                         : quantity * item.Price;
 
                 case DiscountType.Category:
-                    return discount.DiscountedCategory.Equals(item.Category, StringComparison.InvariantCultureIgnoreCase)
+                    return item.Categories.Any(cat => cat.Equals(discount.DiscountedCategory, StringComparison.InvariantCultureIgnoreCase))
                         ? quantity * item.Price * (1 - discount.DiscountPercentage) / 100
                         : quantity * item.Price;
 
