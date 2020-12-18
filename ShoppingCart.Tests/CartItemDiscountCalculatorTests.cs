@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
+﻿using AutoFixture;
+using NUnit.Framework;
 using ShoppingCart.Implementation;
 using ShoppingCart.Interfaces;
-using AutoFixture;
 using ShoppingCart.Models;
 using Shouldly;
 
@@ -33,7 +33,7 @@ namespace ShoppingCart.Tests
             product.Supplier = supplierDiscount.ToUpper();
 
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Supplier, SupplierDiscount = supplierDiscount, DiscountPercentage = 1.23 };
+            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = supplierDiscount, DiscountPercentage = 1.23 };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -45,7 +45,7 @@ namespace ShoppingCart.Tests
         {
             var product = _fixture.Create<Product>();
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Supplier, SupplierDiscount = _fixture.Create<string>(), DiscountPercentage = 2.34 };
+            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = _fixture.Create<string>(), DiscountPercentage = 2.34 };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -61,7 +61,7 @@ namespace ShoppingCart.Tests
             product.Category = categoryDiscount.ToUpper();
 
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Category, CategoryDiscount = categoryDiscount, DiscountPercentage = 3.45 };
+            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = categoryDiscount, DiscountPercentage = 3.45 };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -73,7 +73,7 @@ namespace ShoppingCart.Tests
         {
             var product = _fixture.Create<Product>();
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Category, CategoryDiscount = _fixture.Create<string>(), DiscountPercentage = 4.56 };
+            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = _fixture.Create<string>(), DiscountPercentage = 4.56 };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
