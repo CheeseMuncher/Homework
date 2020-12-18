@@ -1,28 +1,31 @@
 ﻿using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
-using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace ShoppingCart.Implementation
 {
     public class ShoppingCartCalculator : IShoppingCartCalculator
     {
-        private readonly IRepository<int, Product> _productStore;
         private readonly IShippingCalculator _shippingCalculator;
+        private readonly IRepository<int, Product> _productRepository;
 
-        public ShoppingCartCalculator(IShippingCalculator shippingCalculator, IRepository<int, Product> productStore)
+        public ShoppingCartCalculator(
+            IShippingCalculator shippingCalculator,
+            IRepository<int, Product> productRepository)
         {
-            _productStore = productStore;
-            _shippingCalculator = shippingCalculator;
+            _shippingCalculator = shippingCalculator ?? throw new ArgumentException(nameof(shippingCalculator));
+            _productRepository = productRepository ?? throw new ArgumentException(nameof(productRepository));
         }
 
-        public double Total(IList<CartItem> cart)
+        public double Total(ShoppingCartRequest request)
         {
-            if (cart == null || cart.Count == 0) return 0;
+            if (request == null || !request.CartItems.Any()) return 0;
 
             double runningTotal = 0;
-            foreach (var item in cart)
+            foreach (var item in request.CartItems)
             {
-                var product = _productStore.Get(item.ProductId);
+                var product = _productRepository.Get(item.ProductId);
                 if (product != null)
                 {
                     runningTotal += item.UnitQuantity * product.Price;

@@ -37,8 +37,9 @@ namespace ShoppingCart.Tests
         public void CorrectResult_WithSingleItemAndShipping()
         {
             var cart = new List<CartItem> { new CartItem { ProductId = 2, UnitQuantity = 1 } };
+            var request = new ShoppingCartRequest { CartItems = cart };
 
-            var total = _sut.Total(cart);
+            var total = _sut.Total(request);
 
             total.ShouldBe(11);
         }
@@ -47,8 +48,9 @@ namespace ShoppingCart.Tests
         public void CorrectResult_WithMultipleQuantity()
         {
             var cart = new List<CartItem> { new CartItem { ProductId = 3, UnitQuantity = 2 } };
+            var request = new ShoppingCartRequest { CartItems = cart };
 
-            var total = _sut.Total(cart);
+            var total = _sut.Total(request);
 
             total.ShouldBe(200);
         }
@@ -61,8 +63,9 @@ namespace ShoppingCart.Tests
                 new CartItem { ProductId = 2, UnitQuantity = 1 },
                 new CartItem { ProductId = 4, UnitQuantity = 1 }
             };
+            var request = new ShoppingCartRequest { CartItems = cart };
 
-            var total = _sut.Total(cart);
+            var total = _sut.Total(request);
 
             total.ShouldBe(1004);
         }
