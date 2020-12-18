@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using ShoppingCart.Data;
+using ShoppingCart.Implementation;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 
@@ -33,6 +34,8 @@ namespace ShoppingCart
 
             services.AddSingleton<IRepository<int, Product>, ProductRepository>();
             services.AddSingleton<IRepository<string, Discount>, DiscountRepository>();
+            services.AddSingleton<IShippingCalculator, ShippingCalculator>();
+            services.AddSingleton<IShoppingCartCalculator, ShoppingCartCalculator>();
         }
 
         public void Configure(IApplicationBuilder app)
