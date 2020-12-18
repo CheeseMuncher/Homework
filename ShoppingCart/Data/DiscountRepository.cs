@@ -10,6 +10,7 @@ namespace ShoppingCart.Data
 
         public DiscountRepository()
         {
+            // TODO this should come from config or be backed by a database or a dedicated discount service
             _discounts = new Dictionary<string, Discount>
             {
                 ["BACKTOSCHOOL2019"] = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = "Apple", DiscountPercentage = 15 },
