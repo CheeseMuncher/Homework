@@ -1,6 +1,6 @@
 ﻿We have a Shopping Cart project that calculates the price of the items in the Cart and adds any shipping costs.
 
-Your task is to change the API to make it take exactly one Coupon Code that represents a Discount that can be applied on the Cart.  
+Your task is to change the API to make it take exactly one Coupon Code that represents a Discount that can be applied on the Cart. [Done](551c701a272d82ed70bf192302dbc1d1354e1d9c)
 You then need to change the implementation to apply the Discount associated with that Coupon Code.
 
 The current implementation can contain bugs or questionable error handling, feel free to change the code.
@@ -57,10 +57,10 @@ We would like to see:
 
 When we evaluate the solution we are looking for the following points (as per regular PR):
 
-- Good understanding of SOLID Principles    
-- Good understanding of DI    
-- Unit Testing    
-- Good data structure choices    
+- Good understanding of SOLID Principles
+- Good understanding of DI
+- Unit Testing
+- Good data structure choices
 - Appropriate refactoring of base implementation
 - Easy to follow and readable solution
 
