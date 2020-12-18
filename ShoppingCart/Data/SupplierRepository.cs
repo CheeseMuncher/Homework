@@ -1,9 +1,10 @@
 ﻿using ShoppingCart.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace ShoppingCart.Data
 {
-    public class SupplierRepository : IRepository
+    public class SupplierRepository : IRepository<string, string>
     {
         private readonly HashSet<string> _suppliers;
 
@@ -13,14 +14,17 @@ namespace ShoppingCart.Data
             _suppliers = new HashSet<string> { "HP", "Dell", "Apple" };
         }
 
-        public void Add(string item)
+        public void Add(string item, string value)
         {
-            _suppliers.Add(item);
+            if (item == value)
+                _suppliers.Add(item);
+
+            throw new ArgumentException("Key and value don't match");
         }
 
-        public bool Contains(string item)
+        public string Get(string item)
         {
-            return _suppliers.Contains(item);
+            return _suppliers.Contains(item) ? item : null;
         }
     }
 }

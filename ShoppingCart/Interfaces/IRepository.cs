@@ -1,16 +1,9 @@
 ﻿namespace ShoppingCart.Interfaces
 {
-    public interface IRepository<T>
+    public interface IRepository<TKey, TValue>
     {
-        void Add(T item);
+        void Add(TKey key, TValue value);
 
-        T Get(int id);
-    }
-
-    public interface IRepository
-    {
-        void Add(string item);
-
-        bool Contains(string item);
+        TValue Get(TKey key);
     }
 }

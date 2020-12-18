@@ -6,7 +6,7 @@ namespace ShoppingCart.Validation
 {
     public class CartItemValidator : AbstractValidator<CartItem>
     {
-        public CartItemValidator(IRepository<Product> productRepository)
+        public CartItemValidator(IRepository<int, Product> productRepository)
         {
             RuleFor(item => item.UnitQuantity)
                 .GreaterThan(-1)

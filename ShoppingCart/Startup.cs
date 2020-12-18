@@ -31,7 +31,7 @@ namespace ShoppingCart
                 c.EnableAnnotations();
             });
 
-            services.AddSingleton<IRepository<Product>, ProductRepository>();
+            services.AddSingleton<IRepository<int, Product>, ProductRepository>();
         }
 
         public void Configure(IApplicationBuilder app)
