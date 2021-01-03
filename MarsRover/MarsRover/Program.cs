@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MarsRover
 {
@@ -9,7 +10,18 @@ namespace MarsRover
         {
             Console.WriteLine("Hello Mars!");
 
-            var input = new[] { "5 5", "1 2 N", "LMLMLMLMM", "3 3 E", "MMRMMRMRRM" };
+            var input = args.Any() ? args : new[] { "5 5", "1 2 N", "LMLMLMLMM", "3 3 E", "MMRMMRMRRM" };
+
+            var validator = new InputValidator();
+            var result = validator.ValidateInput(input);
+            if (!result.IsValid)
+            {
+                foreach (var error in result.Errors)
+                    Console.WriteLine(error);
+
+                return;
+            }
+
             var output = new List<string>();
             var index = 0;
             RoverPosition currentRover = null;
