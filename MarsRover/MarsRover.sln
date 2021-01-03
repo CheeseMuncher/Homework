@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRover", "MarsRover\MarsRover.csproj", "{1113AF8D-77E6-4DDE-B3A6-D83363CFC9FE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarsRoverTests", "MarsRoverTests\MarsRoverTests.csproj", "{2A74FFAD-D4CB-4E08-A3EC-05205EC029C0}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{387E1269-EA24-4705-8D13-18F63241E4BF}"
 	ProjectSection(SolutionItems) = preProject
 		Readme.md = Readme.md
