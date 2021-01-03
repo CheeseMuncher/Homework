@@ -39,3 +39,20 @@ MMRMMRMRRM
 Expected Output:
 1 3 N
 5 1 E
+
+Arguably the task is done after this commit. However:
+We're not doing anything with the first line of input, the dimensions of the plateau, apart from ignoring it
+We're told this is for rovers on Mars, but so far all we're doing is navigating on a 2D grid.
+In addition, we know is that the objective is to photograph the area and that it'll be on a plateau on Mars
+We are also told that the rovers will move sequentially but we're not explicitly asked to check for collisions. 
+
+I have made the following assumptions based on this: 
+The primary objective is to take pictures ultimately the robots are expendable. 
+However, the robots are expensive to make and deploy. Therefore it would be nice if we didn't lose any, say by driving off the edge of a cliff or through a collision.
+It would also be better use of resources if they could all move and take photographs simultaneously
+With that in mind, I've added some of my own requirements, which will be configurable conditions to the solution:
+• Do we allow Rovers to start outside the plateau?
+• Do we allow them to travel outside the plateau at all? (maybe they need to take photographs of the target area from just outside)
+• Do we allow Rovers to finish outside the plateau? (maybe it's bounded by mountains and they need a clear view of the sky to transmit photo data)
+• Can we avoid collisions?
+• Can we get them to move simultaneously?
