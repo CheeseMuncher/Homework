@@ -1,4 +1,7 @@
-﻿namespace MarsRover
+﻿using System;
+using System.Linq;
+
+namespace MarsRover
 {
     public interface IRoverPosition
     {
@@ -11,6 +14,8 @@
         void SpinRight();
 
         void Move();
+
+        string ExecuteRoute(string route);
     }
 
     public class RoverPosition : IRoverPosition
@@ -24,6 +29,14 @@
             Orientation = orientation;
             X = x;
             Y = y;
+        }
+
+        public RoverPosition(string input)
+        {
+            var split = input.Split(" ");
+            Orientation = (Orientation)Enum.Parse(typeof(Orientation), split.Last());
+            X = int.Parse(split[0]);
+            Y = int.Parse(split[1]);
         }
 
         public void SpinLeft()
@@ -56,6 +69,33 @@
                     X--;
                     break;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{X} {Y} {Orientation}";
+        }
+
+        public string ExecuteRoute(string route)
+        {
+            foreach (char c in route)
+            {
+                switch (c)
+                {
+                    case 'L':
+                        SpinLeft();
+                        break;
+
+                    case 'R':
+                        SpinRight();
+                        break;
+
+                    case 'M':
+                        Move();
+                        break;
+                }
+            }
+            return ToString();
         }
     }
 }
