@@ -56,3 +56,23 @@ With that in mind, I've added some of my own requirements, which will be configu
 • Do we allow Rovers to finish outside the plateau? (maybe it's bounded by mountains and they need a clear view of the sky to transmit photo data)
 • Can we avoid collisions?
 • Can we get them to move simultaneously?
+
+In order to run and test this application:
+• Clone the git repository.
+• Compile the application.
+• Run the executable in the bin directory. If command line arguments are supplied, these will be used otherwise the application will use the data supplied in the brief.
+• For example, run this from the command line: `MarsRover "5 5" "1 2 N" "LMLMLMLMM"`,.
+• The output will include notifications about rovers straying out of the defined plateau area.
+• To experiment with the other settings I have mentioned above, edit the `appSettings.json` file
+• To run the "FourRoverFullReportScenario" from the unit tests, set the `RoverMovementType` to `Simultaneous`, compile and run `MarsRover "4 4" "1 2 E" "MMMLM" "5 2 N" "MLMLMRM" "2 0 N" "MMRM" "2 0 N" "RRM"` from the command line
+
+Other assumptions and comments:
+• We are using integer coordinates only for a small plateau. Otherwise, spherical polar coordinates would be more appropriate (and that would be challenging!)
+• Rover fits well within one grid cell, otherwise more sophisticated collision logic is required
+• Input will remain in the same format. A non-primitive input would justify doing away with the ValidationResult and using a dedicated validation framework, e.g. FluentValidation
+• I have allowed negatives in the plateau size input, assuming that the origin of the co-ordinate system is an arbitrary corner of the search area
+• Rover identifiers are zero indexed, but the steps are 1 indexed. This is to make messages more user friendly, but it does result in the odd +/- 1 here and there. This is less than ideal but as ever, the usability of the application trumps maintainability.
+• On reflection the use of `yield return` may not be the best way to go as it means a lot of ToList calls are needed. The logical next step is to use `async` and `await` but this felt like overkill here. 
+• I am failing on one of the key requirements here, which is to accept multi-line input. I weighed up the convenience of using a lightweight console app against parsing carriage returns. It should be straight forward enough to split the input by newline characters instead of accepting a collection of strings.
+• When running simultaneously, results are reported in the order that rovers finish moving, not the same order as the input. Once again, this is a slight deviation from the requirements. I'm making the assumption that it would be better for a rover to report its position as soon as it has finished moving, so it can accept new route instructions sooner. This would be easy enough to address if the requirement is non-negotiable.
+• Once the route execution is added to the PlateauRoverManager, we have some duplication of the code. Although the route execution on the RoverPosition object is no longer used it's still of potential value for this object to be able to evaluate its own navigation, for example if we wanted to upgrade the rovers to communicate with each other as part of a mesh network
