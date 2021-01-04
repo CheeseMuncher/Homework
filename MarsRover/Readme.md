@@ -82,4 +82,4 @@ Other assumptions and comments:
 • Once the route execution is added to the PlateauRoverManager, we have some duplication of the code. Although the route execution on the RoverPosition object is no longer used it's still of potential value for this object to be able to evaluate its own navigation, for example if we wanted to upgrade the rovers to communicate with each other as part of a mesh network.  
 
 The "FourRoverFullReportScenario": a representation of the paths travelled by the rovers. The format is R{A}.{B} {C} This translates as showing the location of rover identifier {A}, at the end of step {B} with orientation {C}. Step zero is the initial position.
-![FourRoverFullReportScenario](/images/FourRoverFullReportScenario.jpeg)
+![FourRoverFullReportScenario](https://github.com/CheeseMuncher/Homework/blob/mars_rover/MarsRover/Images/FourRoverFullReportScenario.jpeg)
