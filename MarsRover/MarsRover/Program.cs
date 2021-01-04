@@ -27,27 +27,33 @@ namespace MarsRover
                 return;
             }
 
-            var output = new List<string>();
+            var plateauRoverManager = serviceProvider.GetService<IPlateauRoverManager>();
+            var rovers = new List<string>();
+            var routes = new List<string>();
             var index = 0;
-            RoverPosition currentRover = null;
             Console.WriteLine("Input:");
             foreach (var line in input)
             {
                 Console.WriteLine(line);
                 if (index == 0)
                 {
+                    var split = line.Split(" ");
+                    plateauRoverManager.SetSize(int.Parse(split[0]), int.Parse(split[1]));
                     index++;
                     continue;
                 }
 
                 if (index % 2 == 1)
-                    currentRover = new RoverPosition(line);
+                    rovers.Add(line);
 
                 if (index % 2 == 0)
-                    output.Add(currentRover.ExecuteRoute(line));
+                    routes.Add(line);
 
                 index++;
             }
+
+            var output = plateauRoverManager.AddRovers(rovers).ToList();
+            output.AddRange(plateauRoverManager.MoveRovers(routes));
 
             Console.WriteLine("Output:");
             foreach (var line in output)
@@ -68,7 +74,8 @@ namespace MarsRover
             services
                 .AddSingleton(configuration)
                 .AddSingleton<IPlateauConfig>(plateauConfig)
-                .AddSingleton<IInputValidator, InputValidator>();
+                .AddSingleton<IInputValidator, InputValidator>()
+                .AddSingleton<IPlateauRoverManager, PlateauRoverManager>();
 
             return services.BuildServiceProvider();
         }
