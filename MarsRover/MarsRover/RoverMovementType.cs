@@ -3,6 +3,6 @@
     public enum RoverMovementType
     {
         Sequential = 0,
-        Simulatneous = 1
+        Simultaneous = 1
     }
 }
