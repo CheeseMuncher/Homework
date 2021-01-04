@@ -44,8 +44,7 @@ Expected Output:
 1 3 N  
 5 1 E  
   
-Arguably the task is done with [this commit](https://github.com/CheeseMuncher/Homework/pull/2/commits/e3ab4f36abcc03ce7e697eb7940e2300d34eb6ab) for hard coded input (test only) and in the executable output with the following commit, and with [this commit](https://github.com/CheeseMuncher/Homework/pull/2/commits/ce6f6d72c1cc2291dd822a66c2e7a94a0f12ab00) for any other input
-this commit. However:  
+Arguably the task is done with [this commit](https://github.com/CheeseMuncher/Homework/pull/2/commits/e3ab4f36abcc03ce7e697eb7940e2300d34eb6ab) for hard coded input (test only) and in the executable output with the following commit, and with [this commit](https://github.com/CheeseMuncher/Homework/pull/2/commits/ce6f6d72c1cc2291dd822a66c2e7a94a0f12ab00) for any other input. However:  
 We're not doing anything with the first line of input, the dimensions of the plateau, apart from ignoring it.  
 We're told this is for rovers on Mars, but so far all we're doing is navigating on a 2D grid.  
 In addition, we know is that the objective is to photograph the area and that it'll be on a plateau on Mars  
@@ -69,7 +68,7 @@ In order to run and test this application:
 • For example, run this from the command line: `MarsRover "5 5" "1 2 N" "LMLMLMLMM"`.  
 • The output will include notifications about rovers straying out of the defined plateau area.  
 • To experiment with the other settings I have mentioned above, edit the `appSettings.json` file.  
-• To run the "FourRoverFullReportScenario" from the unit tests, set the `RoverMovementType` to `Simultaneous`, compile and run `MarsRover "4 4" "1 2 E" "MMMLM" "5 2 N" "MLMLMRM" "2 0 N" "MMRM" "2 0 N" "RRM"` from the command line.  
+• To run the "FourRoverFullReportScenario" from the unit tests, set the `RoverMovementType` to `Simultaneous`, compile and run `MarsRover "4 4" "1 2 E" "MMMLM" "5 2 N" "MLMLMRM" "2 0 N" "MMRM" "2 0 N" "RRM"` from the command line. (see below for a visual representation of this scenario)  
   
 Other assumptions and comments:  
 • We are using integer coordinates only for a small plateau. Otherwise, spherical polar coordinates would be more appropriate (and that would be challenging!)  
@@ -81,3 +80,6 @@ Other assumptions and comments:
 • I am failing on one of the key requirements here, which is to accept multi-line input. I weighed up the convenience of using a lightweight console app against parsing carriage returns. It should be straight forward enough to split the input by newline characters instead of accepting a collection of strings.  
 • When running simultaneously, results are reported in the order that rovers finish moving, not the same order as the input. Once again, this is a slight deviation from the requirements. I'm making the assumption that it would be better for a rover to report its position as soon as it has finished moving, so it can accept new route instructions sooner. This would be easy enough to address if the requirement is non-negotiable.  
 • Once the route execution is added to the PlateauRoverManager, we have some duplication of the code. Although the route execution on the RoverPosition object is no longer used it's still of potential value for this object to be able to evaluate its own navigation, for example if we wanted to upgrade the rovers to communicate with each other as part of a mesh network.  
+
+The "FourRoverFullReportScenario": a representation of the paths travelled by the rovers. The format is R{A}.{B} {C} This translates as showing the location of rover identifier {A}, at the end of step {B} with orientation {C}. Step zero is the initial position.
+![FourRoverFullReportScenario](/images/FourRoverFullReportScenario.jpeg)
