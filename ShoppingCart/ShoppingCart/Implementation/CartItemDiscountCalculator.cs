@@ -7,7 +7,7 @@ namespace ShoppingCart.Implementation
 {
     public class CartItemDiscountCalculator : ICartItemDiscountCalculator
     {
-        public double CalculateLineTotal(Product item, int quantity, Discount discount)
+        public decimal CalculateLineTotal(Product item, int quantity, Discount discount)
         {
             switch (discount?.DiscountType)
             {

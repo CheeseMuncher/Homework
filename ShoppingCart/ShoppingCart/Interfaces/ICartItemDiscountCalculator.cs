@@ -4,6 +4,6 @@ namespace ShoppingCart.Interfaces
 {
     public interface ICartItemDiscountCalculator
     {
-        double CalculateLineTotal(Product item, int quantity, Discount discount);
+        decimal CalculateLineTotal(Product item, int quantity, Discount discount);
     }
 }

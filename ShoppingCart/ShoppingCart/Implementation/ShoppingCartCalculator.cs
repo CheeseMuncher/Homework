@@ -22,7 +22,7 @@ namespace ShoppingCart.Implementation
             _discountRepository = discountRepository ?? throw new ArgumentException(nameof(discountRepository));
         }
 
-        public double Total(ShoppingCartRequest request)
+        public decimal Total(ShoppingCartRequest request)
         {
             if (request.CartItems == null || !request.CartItems.Any()) return 0;
             var discount = _discountRepository.Get(request.CouponCode ?? "");
