@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ShoppingCart.Implementation
@@ -10,7 +11,13 @@ namespace ShoppingCart.Implementation
         private readonly IShippingCalculator _shippingCalculator;
         private readonly IRepository<int, Product> _productRepository;
         private readonly IRepository<string, Discount> _discountRepository;
-        private readonly CartItemDiscountCalculator cartItemCalculator = new CartItemDiscountCalculator();
+
+        private readonly CartItemDiscountCalculator cartItemCalculator = new CartItemDiscountCalculator(new Dictionary<DiscountType, ICartItemDiscountCalculator>
+        {
+            [DiscountType.Category] = new CartItemCategoryDiscountCalculator(),
+            [DiscountType.Shipping] = new CartItemShippingDiscountCalculator(),
+            [DiscountType.Supplier] = new CartItemSupplierDiscountCalculator()
+        });
 
         public ShoppingCartCalculator(
             IShippingCalculator shippingCalculator,

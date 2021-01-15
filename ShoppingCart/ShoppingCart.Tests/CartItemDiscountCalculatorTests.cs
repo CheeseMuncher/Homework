@@ -4,13 +4,20 @@ using ShoppingCart.Implementation;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using Shouldly;
+using System.Collections.Generic;
 
 namespace ShoppingCart.Tests
 {
     public class CartItemDiscountCalculatorTests
     {
         private readonly Fixture _fixture = new Fixture();
-        private readonly ICartItemDiscountCalculator _sut = new CartItemDiscountCalculator();
+
+        private readonly ICartItemDiscountCalculator _sut = new CartItemDiscountCalculator(new Dictionary<DiscountType, ICartItemDiscountCalculator>
+        {
+            [DiscountType.Category] = new CartItemCategoryDiscountCalculator(),
+            [DiscountType.Shipping] = new CartItemShippingDiscountCalculator(),
+            [DiscountType.Supplier] = new CartItemSupplierDiscountCalculator()
+        });
 
         [Test]
         public void CalculateLineTotal_AppliesNoDiscount_IfShippingDiscount()
