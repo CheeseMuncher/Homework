@@ -114,7 +114,7 @@ namespace ShoppingCart.Tests
 
             result.IsValid.ShouldBeFalse();
             result.Errors.Count.ShouldBe(1);
-            result.Errors.Single().PropertyName.ShouldContain(nameof(CartItem.ProductId));
+            result.Errors.Single().PropertyName.ShouldContain(nameof(ShoppingCartRequest.CouponCode));
             result.Errors.Single().ErrorMessage.ShouldBe("Coupon code not found");
         }
 

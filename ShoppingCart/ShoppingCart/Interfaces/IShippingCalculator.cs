@@ -2,6 +2,6 @@
 {
     public interface IShippingCalculator
     {
-        double CalcShipping(double cartTotal);
+        decimal CalcShipping(decimal cartTotal);
     }
 }

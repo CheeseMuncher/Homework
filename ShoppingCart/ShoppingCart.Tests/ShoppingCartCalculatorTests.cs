@@ -99,7 +99,7 @@ namespace ShoppingCart.Tests
         [TestCase("APPLE5", 1122.8)]
         [TestCase("FREESHIPPING", 1124)]
         [TestCase("TRYINGMYLUCK", 1124)]
-        public void CorrectResult_WithTestCaseCart(string couponCode, double expectedTotal)
+        public void CorrectResult_WithTestCaseCart(string couponCode, decimal expectedTotal)
         {
             var cart = GetTestCaseCart(couponCode);
 

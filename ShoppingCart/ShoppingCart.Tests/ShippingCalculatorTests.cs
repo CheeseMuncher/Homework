@@ -15,8 +15,8 @@ namespace ShoppingCart.Tests
         [TestCase(20, 5)]
         [TestCase(39.99, 5)]
         [TestCase(40, 0)]
-        [TestCase(double.MaxValue, 0)]
-        public void CalcShipping_AppliesCorrectShippingBelow(double cartTotal, double expected)
+        [TestCase(10000000, 0)]
+        public void CalcShipping_AppliesCorrectShippingBelow(decimal cartTotal, decimal expected)
         {
             var result = _sut.CalcShipping(cartTotal);
 
