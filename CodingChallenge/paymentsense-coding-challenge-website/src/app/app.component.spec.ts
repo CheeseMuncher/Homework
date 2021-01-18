@@ -39,4 +39,13 @@ describe('AppComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('h1').textContent).toContain('Paymentsense Coding Challenge!');
   });
+
+  it('should make api call', function () {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const app = fixture.debugElement.componentInstance;
+    expect(app.countryList).toContain('Canada');
+    expect(app.countryList).toContain('Senegal');
+    expect(app.countryList).toContain('France');
+  });
 });
