@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { PaymentsenseCodingChallengeApiService } from './services';
 import { take } from 'rxjs/operators';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { ICountry } from './models/country';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,11 @@ export class AppComponent {
   public paymentsenseCodingChallengeApiIsActive = false;
   public paymentsenseCodingChallengeApiActiveIcon = this.faThumbsDown;
   public paymentsenseCodingChallengeApiActiveIconColour = 'red';
-  public countryList = [];
+  public displayedColumns = ['Name', 'Flag'];
+  public dataSource: MatTableDataSource<ICountry>;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(private paymentsenseCodingChallengeApiService: PaymentsenseCodingChallengeApiService) {
     paymentsenseCodingChallengeApiService.getHealth().pipe(take(1))
@@ -38,9 +44,22 @@ export class AppComponent {
     paymentsenseCodingChallengeApiService.getCountries().pipe(take(1))
       .subscribe(
         result => {
-          this.countryList = result;
+          const countries: ICountry[] = [];
+          result.forEach(c => countries.push(createNewCountry(c.alpha3Code, c.name, c.flag)));
+
+          this.dataSource = new MatTableDataSource(countries);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         },
         _ => {
         });
   }
+}
+
+function createNewCountry(alpha3Code: string, name: string, flag: string): ICountry {
+  return {
+    alpha3Code: alpha3Code,
+    name: name,
+    flag: flag
+  };
 }

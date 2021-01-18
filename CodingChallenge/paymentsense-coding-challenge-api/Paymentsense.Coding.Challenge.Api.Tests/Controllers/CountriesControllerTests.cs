@@ -33,8 +33,8 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Controllers
             var result = response as OkObjectResult;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull();
-            result.Value.Should().BeOfType<string[]>();
-            (result.Value as string[]).Should().NotBeEmpty();
+            result.Value.Should().BeOfType<Country[]>();
+            (result.Value as Country[]).Should().NotBeEmpty();
         }
     }
 }

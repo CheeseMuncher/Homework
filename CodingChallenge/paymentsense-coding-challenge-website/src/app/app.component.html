@@ -6,11 +6,36 @@
   </h1>
   <h2>
     ... Paymentsense Coding Challenge API is <fa-icon [icon]=paymentsenseCodingChallengeApiActiveIcon
-          [styles]="{ 'stroke': paymentsenseCodingChallengeApiActiveIconColour, 'color': paymentsenseCodingChallengeApiActiveIconColour }"></fa-icon> ...
+                                                      [styles]="{ 'stroke': paymentsenseCodingChallengeApiActiveIconColour, 'color': paymentsenseCodingChallengeApiActiveIconColour }"></fa-icon> ...
   </h2>
   <h2>
-    {{countryList}}
+    Countries of the world:
   </h2>
+
+  <div>
+
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+      </ng-container>
+
+      <!-- Flag Column -->
+      <ng-container matColumnDef="Flag">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Flag </mat-header-cell>
+        <mat-cell *matCellDef="let row"> <img src={{row.flag}} /> </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;">
+      </mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+  </div>
 </div>
 
 <router-outlet></router-outlet>
