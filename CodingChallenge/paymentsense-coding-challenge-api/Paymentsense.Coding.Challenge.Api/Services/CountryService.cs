@@ -14,5 +14,7 @@ namespace Paymentsense.Coding.Challenge.Api.Services
         }
 
         public virtual async Task<IEnumerable<Country>> GetAllCountriesAsync() => await _restCountriesApi.GetAllCountriesAsync();
+
+        public virtual async Task<byte[]> GetFlagAsync(string alpha3Code) => await _restCountriesApi.GetFlagAsync(alpha3Code);
     }
 }

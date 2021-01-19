@@ -25,7 +25,7 @@
       <!-- Flag Column -->
       <ng-container matColumnDef="Flag">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Flag </mat-header-cell>
-        <mat-cell *matCellDef="let row"> <img src={{row.flag}} /> </mat-cell>
+        <mat-cell *matCellDef="let row"> <img src={{row.cachedFlag}} /> </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

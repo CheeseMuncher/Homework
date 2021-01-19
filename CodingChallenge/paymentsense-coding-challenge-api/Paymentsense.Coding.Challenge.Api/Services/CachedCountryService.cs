@@ -27,5 +27,15 @@ namespace Paymentsense.Coding.Challenge.Api.Services
             _cache.Set(_key, result, _cacheOptions);
             return result;
         }
+
+        public override async Task<byte[]> GetFlagAsync(string alpha3Code)
+        {
+            if (_cache.TryGetValue(alpha3Code, out byte[] data))
+                return data;
+
+            var result = await base.GetFlagAsync(alpha3Code);
+            _cache.Set(_key, result, _cacheOptions);
+            return result;
+        }
     }
 }

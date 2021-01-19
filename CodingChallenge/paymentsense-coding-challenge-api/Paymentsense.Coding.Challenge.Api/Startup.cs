@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Paymentsense.Coding.Challenge.Api.Services;
+using System;
+using System.Net.Http;
 
 namespace Paymentsense.Coding.Challenge.Api
 {
@@ -19,6 +22,8 @@ namespace Paymentsense.Coding.Challenge.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.TryAddTransient(s => s.GetRequiredService<IHttpClientFactory>().CreateClient(string.Empty));
+            services.AddHttpClient<IRestCountriesApi, RestCountriesApi>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.AddSingleton<IRestCountriesApi, RestCountriesApi>();
             services.AddSingleton<ICountryService, CachedCountryService>();
             services.AddMemoryCache();

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using Moq;
 using Paymentsense.Coding.Challenge.Api.Models;
 using Paymentsense.Coding.Challenge.Api.Services;
@@ -10,8 +11,9 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
 {
     public class CountryServiceTests
     {
+        private readonly Fixture _fixture = new Fixture();
         private readonly Mock<IRestCountriesApi> _mockRestApi = new Mock<IRestCountriesApi>();
-        private readonly ICountryService _sut;
+        private ICountryService _sut;
 
         public CountryServiceTests()
         {
@@ -32,10 +34,12 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
         public async Task GetAllCountriesAsync_MapsNamesFromApiResult()
         {
             // Arrange
-            var spain = new Country { Name = "Spain" };
-            var italy = new Country { Name = "Italy" };
-            var egypt = new Country { Name = "Egypt" };
-            var response = new[] { spain, italy, egypt };
+            var response = new[]
+            {
+                _fixture.Create<Country>(),
+                _fixture.Create<Country>(),
+                _fixture.Create<Country>()
+            };
 
             _mockRestApi
                 .Setup(api => api.GetAllCountriesAsync())
@@ -47,6 +51,33 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
             // Assert
             result.Count().Should().Be(3);
             result.Should().BeEquivalentTo(response);
+        }
+
+        [Fact]
+        public void GetFlag_InvokesRestApi_WithCorrectArguments()
+        {
+            var code = _fixture.Create<string>();
+
+            // Act
+            _sut.GetFlagAsync(code);
+
+            // Assert
+            _mockRestApi.Verify(api => api.GetFlagAsync(code), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetFlag_ReturnsApiData()
+        {
+            var data = _fixture.Create<byte[]>();
+            _mockRestApi
+                .Setup(api => api.GetFlagAsync(It.IsAny<string>()))
+                .ReturnsAsync(data);
+
+            // Act
+            var result = await _sut.GetFlagAsync(_fixture.Create<string>());
+
+            // Assert
+            result.Should().BeEquivalentTo(data);
         }
     }
 }

@@ -45,7 +45,10 @@ export class AppComponent {
       .subscribe(
         result => {
           const countries: ICountry[] = [];
-          result.forEach(c => countries.push(createNewCountry(c.alpha3Code, c.name, c.flag)));
+          result.forEach(c => {
+            c.cachedFlag = `https://localhost:5001/countries/${c.alpha3Code}/flag`;
+            countries.push(c);
+          });
 
           this.dataSource = new MatTableDataSource(countries);
           this.dataSource.paginator = this.paginator;
@@ -54,12 +57,4 @@ export class AppComponent {
         _ => {
         });
   }
-}
-
-function createNewCountry(alpha3Code: string, name: string, flag: string): ICountry {
-  return {
-    alpha3Code: alpha3Code,
-    name: name,
-    flag: flag
-  };
 }

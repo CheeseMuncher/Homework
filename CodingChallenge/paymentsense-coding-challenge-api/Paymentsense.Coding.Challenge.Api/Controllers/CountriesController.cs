@@ -24,5 +24,12 @@ namespace Paymentsense.Coding.Challenge.Api.Controllers
             var result = await _countryService.GetAllCountriesAsync();
             return Ok(result);
         }
+
+        [HttpGet("/countries/{alpha3Code}/flag")]
+        public async Task<IActionResult> Get(string alpha3Code)
+        {
+            var bytes = await _countryService.GetFlagAsync(alpha3Code.ToLower());
+            return File(bytes, "image/svg+xml");
+        }
     }
 }

@@ -7,5 +7,7 @@ namespace Paymentsense.Coding.Challenge.Api.Services
     public interface ICountryService
     {
         Task<IEnumerable<Country>> GetAllCountriesAsync();
+
+        Task<byte[]> GetFlagAsync(string alpha3Code);
     }
 }
