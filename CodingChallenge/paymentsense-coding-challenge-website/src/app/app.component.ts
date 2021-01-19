@@ -25,37 +25,16 @@ export class AppComponent {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(private paymentsenseCodingChallengeApiService: PaymentsenseCodingChallengeApiService) {
+
     paymentsenseCodingChallengeApiService.getHealth().pipe(take(1))
       .subscribe(
-        apiHealth => {
-          this.paymentsenseCodingChallengeApiIsActive = apiHealth === 'Healthy';
-          this.paymentsenseCodingChallengeApiActiveIcon = this.paymentsenseCodingChallengeApiIsActive
-            ? this.faThumbsUp
-            : this.faThumbsUp;
-          this.paymentsenseCodingChallengeApiActiveIconColour = this.paymentsenseCodingChallengeApiIsActive
-            ? 'green'
-            : 'red';
-        },
-        _ => {
-          this.paymentsenseCodingChallengeApiIsActive = false;
-          this.paymentsenseCodingChallengeApiActiveIcon = this.faThumbsDown;
-          this.paymentsenseCodingChallengeApiActiveIconColour = 'red';
-        });
+        apiHealth => this.handleApiHealthResult(apiHealth),
+        _ => this.handleApiHealthError());
 
     paymentsenseCodingChallengeApiService.getCountries().pipe(take(1))
       .subscribe(
-        result => {
-          result.forEach(c => {
-            c.cachedFlag = `https://localhost:5001/countries/${c.alpha3Code}/flag`;
-            this.countries.push(c);
-          });
-
-          this.dataSource = new MatTableDataSource(this.countries);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        },
-        _ => {
-        });
+        result => this.handleGetCountriesResult(result),
+        _ => this.handleGetCountriesError());
   }
 
   public displayCountryData(alpha3Code: string) {
@@ -66,8 +45,39 @@ export class AppComponent {
     messages.push(`Capital: ${country.capital}`);
     messages.push(`Timezone(s): ${country.timezones.join()}`);
     messages.push(`Currency(ies): ${country.currencies.map(function (c) { return `${c.code} ${c.name} (${c.symbol})` }).join()}`);
-    messages.push(`Language(s): ${country.languages.join()}`);
+    messages.push(`Language(s): ${country.languages.map(function (l) { return l.name }).join()}`);
     messages.push(`Neighbour(s): ${country.borders.join()}`);
     alert(messages.join('\r\n'));
+  }
+
+  private handleApiHealthResult(apiHealth: any) {
+    this.paymentsenseCodingChallengeApiIsActive = apiHealth === 'Healthy';
+    this.paymentsenseCodingChallengeApiActiveIcon = this.paymentsenseCodingChallengeApiIsActive
+      ? this.faThumbsUp
+      : this.faThumbsUp;
+    this.paymentsenseCodingChallengeApiActiveIconColour = this.paymentsenseCodingChallengeApiIsActive
+      ? 'green'
+      : 'red';
+  }
+
+  private handleApiHealthError() {
+    this.paymentsenseCodingChallengeApiIsActive = false;
+    this.paymentsenseCodingChallengeApiActiveIcon = this.faThumbsDown;
+    this.paymentsenseCodingChallengeApiActiveIconColour = 'red';
+  }
+
+  private handleGetCountriesResult(result: any) {
+    result.forEach(c => {
+      c.cachedFlag = `https://localhost:5001/countries/${c.alpha3Code}/flag`;
+      this.countries.push(c);
+    });
+
+    this.dataSource = new MatTableDataSource(this.countries);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  private handleGetCountriesError() {
+    // TODO
   }
 }
