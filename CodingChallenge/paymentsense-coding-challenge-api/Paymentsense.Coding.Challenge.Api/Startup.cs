@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Paymentsense.Coding.Challenge.Api.Services;
 using System;
 using System.Net.Http;
@@ -42,6 +43,11 @@ namespace Paymentsense.Coding.Challenge.Api
                         .AllowAnyHeader();
                 });
             });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = $"{Program.ApplicationName}", Version = $"{Program.ApplicationVersion}" });
+                c.EnableAnnotations();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +71,8 @@ namespace Paymentsense.Coding.Challenge.Api
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Program.ApplicationName} v{Program.ApplicationVersion}"));
         }
     }
 }
