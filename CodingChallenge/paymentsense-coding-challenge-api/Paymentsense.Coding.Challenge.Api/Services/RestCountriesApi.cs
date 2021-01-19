@@ -23,7 +23,13 @@ namespace Paymentsense.Coding.Challenge.Api.Services
                 {
                     Alpha3Code = country.Alpha3Code,
                     Name = country.Name,
-                    Flag = country.Flag
+                    Flag = country.Flag,
+                    Population = country.Population,
+                    Capital = country.Capital,
+                    Timezones = country.Timezones,
+                    Currencies = country.Currencies.Select(c => new Currency { Name = c.Name, Code = c.Code, Symbol = c.Symbol }),
+                    Languages = country.Languages.Select(l => new Language { Name = l.Name }),
+                    Borders = country.Borders
                 });
 
         public async Task<byte[]> GetFlagAsync(string alpha3Code)
