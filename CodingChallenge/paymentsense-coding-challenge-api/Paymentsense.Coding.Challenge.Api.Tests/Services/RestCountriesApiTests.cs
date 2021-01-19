@@ -4,6 +4,7 @@ using Moq;
 using Moq.Protected;
 using Paymentsense.Coding.Challenge.Api.Models;
 using Paymentsense.Coding.Challenge.Api.Services;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -89,6 +90,49 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
         }
 
         [Fact]
+        public async Task GetAllCountriesAsync_ThrowsHttpRequestException_IfAllRetriesFail()
+        {
+            // Arrange
+            var response = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent("Something went wrong") };
+
+            _mockMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(response);
+
+            // Act
+            Func<Task> func = async () => await _sut.GetAllCountriesAsync();
+
+            // Assert
+            await func.Should().ThrowAsync<HttpRequestException>();
+        }
+
+        [Fact]
+        public async Task GetAllCountriesAsync_ReturnsData_IfRetriesResultInSuccess()
+        {
+            // Arrange
+            var error = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent("Something went wrong") };
+            var success = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent($"[{ResponseExampleJson},{ResponseExampleJson}]") };
+            var retry = false;
+            _mockMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(() =>
+                {
+                    if (retry) return success;
+                    retry = true;
+                    return error;
+                });
+
+            // Act
+            var result = (await _sut.GetAllCountriesAsync()).ToList();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Count().Should().Be(2);
+        }
+
+        [Fact]
         public async Task GetFlagAsync_InvokesRestCountriesApi_WithCorrectArgs()
         {
             // Arrange
@@ -111,6 +155,27 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
         }
 
         [Fact]
+        public async Task GetFlagAsync_InvokesRestCountriesApi_WithCorrectCase()
+        {
+            // Arrange
+            var code = _fixture.Create<string>().ToUpper();
+            var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("[]") };
+            HttpRequestMessage payload = null;
+            _mockMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .Callback((HttpRequestMessage message, CancellationToken token) => payload = message)
+                .ReturnsAsync(response);
+
+            // Act
+            await _sut.GetFlagAsync(code);
+
+            // Assert
+            payload.Should().NotBeNull();
+            payload.RequestUri.Should().Be($"https://restcountries.eu/data/{code.ToLower()}.svg");
+        }
+
+        [Fact]
         public async Task GetFlagAsync_MapsResponseData_IfGetAsyncCallSuccessful()
         {
             // Arrange
@@ -121,6 +186,49 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(response);
+
+            // Act
+            var result = await _sut.GetFlagAsync(_fixture.Create<string>());
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(Encoding.ASCII.GetBytes(data));
+        }
+
+        [Fact]
+        public async Task GetFlagAsync_ThrowsHttpRequestException_IfAllRetriesFail()
+        {
+            // Arrange
+            var response = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent("Something went wrong") };
+            _mockMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(response);
+
+            // Act
+            Func<Task> func = async () => await _sut.GetFlagAsync(_fixture.Create<string>());
+
+            // Assert
+            await func.Should().ThrowAsync<HttpRequestException>();
+        }
+
+        [Fact]
+        public async Task GetFlagAsync__ReturnsData_IfRetriesResultInSuccess()
+        {
+            // Arrange
+            var data = _fixture.Create<string>();
+            var error = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError, Content = new StringContent("Something went wrong") };
+            var success = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(data) };
+            var retry = false;
+            _mockMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(() =>
+                {
+                    if (retry) return success;
+                    retry = true;
+                    return error;
+                });
 
             // Act
             var result = await _sut.GetFlagAsync(_fixture.Create<string>());
