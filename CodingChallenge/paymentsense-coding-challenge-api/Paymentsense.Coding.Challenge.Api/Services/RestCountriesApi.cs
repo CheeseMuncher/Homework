@@ -25,7 +25,7 @@ namespace Paymentsense.Coding.Challenge.Api.Services
 
         public async Task<byte[]> GetFlagAsync(string alpha3Code)
         {
-            var response = await _httpClient.GetAsync($"{BasePath}data/{alpha3Code}.svg");
+            var response = await _httpClient.GetAsync($"{BasePath}data/{alpha3Code.ToLower()}.svg");
             return response.Content.ReadAsByteArrayAsync().Result;
         }
     }
