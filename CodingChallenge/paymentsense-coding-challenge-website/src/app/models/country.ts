@@ -1,13 +1,14 @@
 import { Currency } from './currency';
+import { Language } from './language';
 
 export interface ICountry {
   alpha3Code: string;
   name: string;
   flag: string;
   population: number;
-  timeZones: string[];
+  timezones: string[];
   currencies: Currency[];
-  languages: string[];
+  languages: Language[];
   capital: string;
   borders: string[];
   cachedFlag: string;
