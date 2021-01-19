@@ -12,14 +12,14 @@ namespace Paymentsense.Coding.Challenge.Api.Services
 {
     public class RestCountriesApi : IRestCountriesApi
     {
-        private const string BasePath = "https://restcountries.eu/";
+        private readonly string _basePath;
         private readonly AsyncRetryPolicy _retryPolicy;
         private readonly HttpClient _httpClient;
 
-        public RestCountriesApi(HttpClient httpClient)
+        public RestCountriesApi(HttpClient httpClient, ApiConfig config)
         {
-            var retryBackoffPeriodsMilliseconds = new[] { 100, 200, 400, 800 };
-            _retryPolicy = Policy.Handle<HttpRequestException>().WaitAndRetryAsync(retryBackoffPeriodsMilliseconds.Select(i => TimeSpan.FromMilliseconds(i)));
+            _basePath = config.RestCountriesBasePath;
+            _retryPolicy = Policy.Handle<HttpRequestException>().WaitAndRetryAsync(config.RetryBackoffPeriodsMilliseconds.Select(i => TimeSpan.FromMilliseconds(i)).ToArray());
             _httpClient = httpClient;
         }
 
@@ -27,12 +27,13 @@ namespace Paymentsense.Coding.Challenge.Api.Services
         {
             return await _retryPolicy.ExecuteAsync(async () =>
             {
-                var response = await _httpClient.GetAsync($"{BasePath}rest/v2/all");
+                var response = await _httpClient.GetAsync($"{_basePath}rest/v2/all");
                 if (response.IsSuccessStatusCode)
                 {
                     JArray jsonArray = JArray.Parse(await response.Content.ReadAsStringAsync());
                     return jsonArray.ToObject<List<Country>>();
                 }
+                // TODO Logging
                 throw new HttpRequestException("Something went wrong fetching country data");
             });
         }
@@ -41,10 +42,11 @@ namespace Paymentsense.Coding.Challenge.Api.Services
         {
             return await _retryPolicy.ExecuteAsync(async () =>
             {
-                var response = await _httpClient.GetAsync($"{BasePath}data/{alpha3Code.ToLower()}.svg");
+                var response = await _httpClient.GetAsync($"{_basePath}data/{alpha3Code.ToLower()}.svg");
                 if (response.IsSuccessStatusCode)
                     return response.Content.ReadAsByteArrayAsync().Result;
 
+                // TODO Logging
                 throw new HttpRequestException("Something went wrong fetching country data");
             });
         }

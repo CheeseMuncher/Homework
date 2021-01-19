@@ -21,11 +21,16 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
         private readonly Mock<HttpMessageHandler> _mockMessageHandler = new Mock<HttpMessageHandler>();
         private readonly HttpClient _httpClient;
         private readonly IRestCountriesApi _sut;
+        private const string BasePath = "https://test.com/";
 
         public RestCountriesApiTests()
         {
             _httpClient = new HttpClient(_mockMessageHandler.Object);
-            _sut = new RestCountriesApi(_httpClient);
+            var config = _fixture
+                .Build<ApiConfig>()
+                .With(ac => ac.RestCountriesBasePath, BasePath)
+                .Create();
+            _sut = new RestCountriesApi(_httpClient, config);
         }
 
         [Fact]
@@ -46,7 +51,7 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
             // Assert
             payload.Should().NotBeNull();
             payload.Method.Should().Be(HttpMethod.Get);
-            payload.RequestUri.Should().Be("https://restcountries.eu/rest/v2/all");
+            payload.RequestUri.Should().Be($"{BasePath}rest/v2/all");
         }
 
         [Fact]
@@ -151,7 +156,7 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
             // Assert
             payload.Should().NotBeNull();
             payload.Method.Should().Be(HttpMethod.Get);
-            payload.RequestUri.Should().Be($"https://restcountries.eu/data/{code}.svg");
+            payload.RequestUri.Should().Be($"{BasePath}data/{code}.svg");
         }
 
         [Fact]
@@ -172,7 +177,7 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
 
             // Assert
             payload.Should().NotBeNull();
-            payload.RequestUri.Should().Be($"https://restcountries.eu/data/{code.ToLower()}.svg");
+            payload.RequestUri.Should().Be($"{BasePath}data/{code.ToLower()}.svg");
         }
 
         [Fact]

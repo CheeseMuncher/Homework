@@ -14,10 +14,10 @@ namespace Paymentsense.Coding.Challenge.Api.Services
         private readonly IMemoryCache _cache;
         private readonly MemoryCacheEntryOptions _cacheOptions;
 
-        public CachedCountryService(IRestCountriesApi restCountriesApi, IMemoryCache cache) : base(restCountriesApi)
+        public CachedCountryService(IRestCountriesApi restCountriesApi, IMemoryCache cache, ApiConfig config) : base(restCountriesApi)
         {
             _cache = cache;
-            _cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(1));
+            _cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(config.CacheLifeTimeSeconds));
         }
 
         public override async Task<IEnumerable<Country>> GetAllCountriesAsync()

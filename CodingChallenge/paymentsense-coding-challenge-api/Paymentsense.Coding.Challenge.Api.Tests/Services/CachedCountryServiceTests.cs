@@ -33,7 +33,7 @@ namespace Paymentsense.Coding.Challenge.Api.Tests.Services
                 .Setup(mc => mc.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
 
-            _sut = new CachedCountryService(_mockRestApi.Object, _mockCache.Object);
+            _sut = new CachedCountryService(_mockRestApi.Object, _mockCache.Object, _fixture.Create<ApiConfig>());
         }
 
         [Fact]

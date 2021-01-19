@@ -22,6 +22,10 @@ namespace Paymentsense.Coding.Challenge.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var apiConfig = new ApiConfig();
+            Configuration.GetSection("ApiConfig").Bind(apiConfig);
+            services.AddSingleton(apiConfig);
+
             services.TryAddTransient(s => s.GetRequiredService<IHttpClientFactory>().CreateClient(string.Empty));
             services.AddHttpClient<IRestCountriesApi, RestCountriesApi>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.AddSingleton<IRestCountriesApi, RestCountriesApi>();
