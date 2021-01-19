@@ -19,17 +19,41 @@ namespace Paymentsense.Coding.Challenge.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(Country[]), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _countryService.GetAllCountriesAsync();
-            return Ok(result);
+            try
+            {
+                var result = await _countryService.GetAllCountriesAsync();
+                return Ok(result);
+            }
+            catch
+            {
+                // TODO Logging
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpGet("/countries/{alpha3Code}/flag")]
+        [ProducesResponseType(typeof(Country[]), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(NotFoundResult), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(string alpha3Code)
         {
-            var bytes = await _countryService.GetFlagAsync(alpha3Code);
-            return File(bytes, "image/svg+xml");
+            try
+            {
+                var bytes = await _countryService.GetFlagAsync(alpha3Code);
+                if (bytes is null)
+                    // TODO Logging
+                    return new NotFoundResult();
+
+                return File(bytes, "image/svg+xml");
+            }
+            catch
+            {
+                // TODO Logging
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }
