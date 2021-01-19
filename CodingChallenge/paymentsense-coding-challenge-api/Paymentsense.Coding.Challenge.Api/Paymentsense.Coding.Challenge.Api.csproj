@@ -5,8 +5,8 @@
     <StartupObject>Paymentsense.Coding.Challenge.Api.Program</StartupObject>
   </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="RESTCountries.NET" Version="1.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
 
 </Project>
