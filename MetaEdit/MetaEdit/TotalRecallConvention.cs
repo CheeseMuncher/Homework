@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MetaEdit
 {
     public class TotalRecallConvention : IDecodeConvention
     {
-        private readonly string[] _separators = new[] { "_", " (", ")" };
+        private readonly HashSet<string> _extensions = new HashSet<string> { ".amr" };
+        private readonly HashSet<string> _separators = new HashSet<string> { "_", " (", ")" };
 
         private readonly string[] _convention = new[]
         {
@@ -15,7 +17,9 @@ namespace MetaEdit
             nameof(CallData.ContactNumber)
         };
 
-        public string[] Separators => _separators;
+        public HashSet<string> Extensions => _extensions;
+
+        public HashSet<string> Separators => _separators;
 
         public string[] Convention => _convention;
 

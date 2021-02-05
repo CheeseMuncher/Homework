@@ -8,12 +8,24 @@ namespace MetaEditTests
     public class TotalRecallConventionTests : TestFixture<TotalRecallConvention>
     {
         [Fact]
+        public void Extensions_ReturnsExpectedExtensions()
+        {
+            // Act
+            var result = Sut.Extensions;
+
+            // Assert
+            result.Count.Should().Be(1);
+            result.Should().Contain(".amr");
+        }
+
+        [Fact]
         public void Separators_ReturnsExpectedSeparators()
         {
             // Act
             var result = Sut.Separators;
 
             // Assert
+            result.Count.Should().Be(3);
             result.Should().Contain("_");
             result.Should().Contain(" (");
             result.Should().Contain(")");

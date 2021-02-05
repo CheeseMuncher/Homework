@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MetaEdit
 {
     public interface IDecodeConvention
     {
-        string[] Separators { get; }
+        HashSet<string> Extensions { get; }
+
+        HashSet<string> Separators { get; }
 
         string[] Convention { get; }
 
