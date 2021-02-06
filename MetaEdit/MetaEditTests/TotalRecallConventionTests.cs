@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MetaEdit;
+using MetaEdit.Conventions;
 using System;
 using Xunit;
 

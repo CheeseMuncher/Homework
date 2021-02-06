@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MetaEdit
+namespace MetaEdit.Conventions
 {
     public class TotalRecallConvention : IDecodeConvention
     {

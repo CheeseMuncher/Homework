@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MetaEdit
+namespace MetaEdit.Conventions
 {
     public interface IDecodeConvention
     {
