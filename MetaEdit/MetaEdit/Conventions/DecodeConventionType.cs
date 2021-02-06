@@ -2,6 +2,7 @@
 {
     public enum DecodeConventionType
     {
-        TotalRecallConvention
+        None = 0,
+        TotalRecall = 1
     }
 }
