@@ -14,5 +14,7 @@ namespace MetaEdit.Conventions
         CallType GetCallType(string input);
 
         DateTime GetDateTime(string input);
+
+        TimeSpan GetTimeSpan(string input);
     }
 }

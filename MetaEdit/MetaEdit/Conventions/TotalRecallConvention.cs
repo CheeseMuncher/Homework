@@ -39,5 +39,10 @@ namespace MetaEdit.Conventions
             var components = input.Split("@").SelectMany(c => c.Split("-")).Select(c => int.Parse(c)).ToArray();
             return new DateTime(components[0], components[1], components[2], components[3], components[4], components[5]);
         }
+
+        public TimeSpan GetTimeSpan(string input)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
