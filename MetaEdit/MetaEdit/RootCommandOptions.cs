@@ -10,18 +10,23 @@ namespace MetaEdit
             getDefaultValue: () => $"{DecodeConventionType.TotalRecall}",
             description: "The convention used to decode file names");
 
-        public static Option<string> InputPath => new Option<string>(
-            new[] { "--input-path", "-i" },
+        public static Option<string> Source => new Option<string>(
+            new[] { "--source", "-s" },
             getDefaultValue: () => "./data",
-            description: "The location of the input files to process");
+            description: "The source location of the input files to process");
 
-        public static Option<string> OutputPath => new Option<string>(
-            new[] { "--output-path", "-o" },
+        public static Option<string> Destination => new Option<string>(
+            new[] { "--destination", "-d" },
             getDefaultValue: () => "./output",
-            description: "The location to save the output files");
+            description: "The destination location to save the output files");
 
-        public static Option<bool> DryRun => new Option<bool>(
-            new[] { "--dry-run", "-d" },
+        public static Option<string> FileData => new Option<string>(
+            new[] { "--file-data", "-f" },
+            getDefaultValue: () => null,
+            description: "The name of a file where supplementary data will be obtained from");
+
+        public static Option<bool> TrialRun => new Option<bool>(
+            new[] { "--trial-run", "-t" },
             getDefaultValue: () => true,
             description: "Print expected output without creating");
 
