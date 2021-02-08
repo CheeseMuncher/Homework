@@ -68,22 +68,16 @@ namespace MetaEditTests
             Assert.Throws<ArgumentException>(action);
         }
 
-        [Fact]
-        public void GetDateTime_ConvertsDateCorrectly()
+        [Theory]
+        [InlineData("06 Jun 2020 15:59", 2020, 06, 06, 15, 59, 00)]
+        [InlineData("23 Jan 2021 09:58", 2021, 01, 23, 09, 58, 00)]
+        public void GetDateTime_ConvertsDateCorrectly(string input, int year, int month, int day, int hour, int minute, int second)
         {
-            // Arrange
-            var input1 = "06 Jun 2020 15:59";
-            var input2 = "23 Jan 2021 09:58";
-
             // Act
-            var result1 = Sut.GetDateTime(input1);
-            var result2 = Sut.GetDateTime(input2);
+            var result = Sut.GetDateTime(input);
 
             // Assert
-            var expected1 = new DateTime(2020, 06, 06, 15, 59, 00);
-            var expected2 = new DateTime(2021, 01, 23, 09, 58, 00);
-            result1.Should().Be(expected1);
-            result2.Should().Be(expected2);
+            result.Should().Be(new DateTime(year, month, day, hour, minute, second));
         }
 
         [Fact]

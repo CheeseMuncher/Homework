@@ -68,22 +68,30 @@ namespace MetaEditTests
             Assert.Throws<ArgumentException>(action);
         }
 
-        [Fact]
-        public void GetDateTime_ConvertsDateCorrectly()
+        [Theory]
+        [InlineData("2020-01-14@19-29-20", 2020, 01, 14, 19, 29, 20)]
+        [InlineData("2021-02-15@18-28-19", 2021, 02, 15, 18, 28, 19)]
+        public void GetDateTime_ConvertsDateCorrectly(string input, int year, int month, int day, int hour, int minute, int second)
         {
-            // Arrange
-            var input1 = "2020-01-14@19-29-20";
-            var input2 = "2021-02-15@18-28-19";
-
             // Act
-            var result1 = Sut.GetDateTime(input1);
-            var result2 = Sut.GetDateTime(input2);
+            var result = Sut.GetDateTime(input);
 
             // Assert
-            var expected1 = new DateTime(2020, 01, 14, 19, 29, 20);
-            var expected2 = new DateTime(2021, 02, 15, 18, 28, 19);
-            result1.Should().Be(expected1);
-            result2.Should().Be(expected2);
+            result.Should().Be(new DateTime(year, month, day, hour, minute, second));
+        }
+
+        [Theory]
+        [InlineData("1 h 24 min", 0, 1, 24, 0, 0)]
+        [InlineData("1 min 12 s", 0, 0, 1, 12, 0)]
+        [InlineData("59 s 800 ms", 0, 0, 0, 59, 800)]
+        [InlineData("500 ms", 0, 0, 0, 0, 500)]
+        public void GetTimeSpan_ConvertsTimeSpanCorrectly(string input, int days, int hours, int minutes, int seconds, int milliseconds)
+        {
+            // Act
+            var result = Sut.GetTimeSpan(input);
+
+            // Assert
+            result.Should().Be(new TimeSpan(days, hours, minutes, seconds, milliseconds));
         }
     }
 }
