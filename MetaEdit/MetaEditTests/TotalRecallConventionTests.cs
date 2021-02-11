@@ -93,5 +93,18 @@ namespace MetaEditTests
             // Assert
             result.Should().Be(new TimeSpan(days, hours, minutes, seconds, milliseconds));
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("Cheese")]
+        public void GetTimeSpan_HandlesDodgyInputs(string input)
+        {
+            // Act
+            var result = Sut.GetTimeSpan(input);
+
+            // Assert
+            result.Should().Be(new TimeSpan());
+        }
     }
 }

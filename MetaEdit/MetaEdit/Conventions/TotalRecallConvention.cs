@@ -46,6 +46,9 @@ namespace MetaEdit.Conventions
 
         public TimeSpan GetTimeSpan(string input)
         {
+            if (input is null)
+                return new TimeSpan();
+
             if (input.EndsWith(_milliseconds))
             {
                 var split = input.Substring(0, input.Length - 3).Split(_seconds, StringSplitOptions.RemoveEmptyEntries);
@@ -67,7 +70,7 @@ namespace MetaEdit.Conventions
                 return new TimeSpan(0, int.Parse(split.First()), int.Parse(split.Last()), 0, 0);
             }
 
-            return new TimeSpan(0, 0, 0, 0, 0);
+            return new TimeSpan();
         }
     }
 }
