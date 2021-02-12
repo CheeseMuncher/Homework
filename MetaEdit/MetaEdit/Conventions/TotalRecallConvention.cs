@@ -35,7 +35,7 @@ namespace MetaEdit.Conventions
             if (input == "Out")
                 return CallType.Dialed;
 
-            throw new ArgumentException();
+            throw new ArgumentException($"{nameof(TotalRecallConvention)}.{nameof(GetCallType)} was unable to convert input {input} into {nameof(CallType)}");
         }
 
         public DateTime GetDateTime(string input)

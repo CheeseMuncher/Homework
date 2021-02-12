@@ -13,7 +13,7 @@ namespace MetaEdit
             _convention = convention ?? new TotalRecallConvention();
         }
 
-        public CallData DecodeFileName(string fileName, params string[] paramaters)
+        public CallData DecodeFileName(string fileName, params string[] parameters)
         {
             var result = new CallData();
             var components = fileName.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -29,13 +29,13 @@ namespace MetaEdit
                     propertyInfo.SetValue(result, components[i]);
             }
 
-            if (paramaters == null || paramaters.Length == 0)
+            if (parameters == null || parameters.Length == 0)
                 return result;
 
-            if (paramaters.Length > 1)
-                throw new ArgumentException();
+            if (parameters.Length > 1)
+                throw new ArgumentException($"{nameof(CallDataDecoder)}.{nameof(DecodeFileName)} expected 1 parameter decoding file: {fileName} but found {parameters.Length}: {string.Join(",", parameters)}");
 
-            result.CallDuration = _convention.GetTimeSpan(paramaters.Single());
+            result.CallDuration = _convention.GetTimeSpan(parameters.Single());
             return result;
         }
 

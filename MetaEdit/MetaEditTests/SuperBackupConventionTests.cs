@@ -61,11 +61,17 @@ namespace MetaEditTests
         [Fact]
         public void GetCallType_ThrowsArgumentException_IfInputUnexpected()
         {
+            // Arrange
+            var input = Create<string>();
+
             // Act
-            Action action = () => Sut.GetCallType("Test");
+            Action action = () => Sut.GetCallType(input);
 
             // Assert
-            Assert.Throws<ArgumentException>(action);
+            var ex = Assert.Throws<ArgumentException>(action);
+            ex.Message.Should().Contain(nameof(SuperBackupConvention));
+            ex.Message.Should().Contain(nameof(SuperBackupConvention.GetCallType));
+            ex.Message.Should().Contain(input);
         }
 
         [Theory]

@@ -53,12 +53,20 @@ namespace MetaEditTests
         {
             // Arrange
             var input = "2022-01-14@19-29-20_In_John.M.Smith (07123456789)";
+            var param1 = Create<string>();
+            var param2 = Create<string>();
 
             // Act
-            Action action = () => Sut.DecodeFileName(input, "test1", "test2");
+            Action action = () => Sut.DecodeFileName(input, param1, param2);
 
             // Assert
-            Assert.Throws<ArgumentException>(action);
+            var ex = Assert.Throws<ArgumentException>(action);
+            ex.Message.Should().Contain(nameof(CallDataDecoder));
+            ex.Message.Should().Contain(nameof(CallDataDecoder.DecodeFileName));
+            ex.Message.Should().Contain(input);
+            ex.Message.Should().Contain("2");
+            ex.Message.Should().Contain(param1);
+            ex.Message.Should().Contain(param2);
         }
     }
 }

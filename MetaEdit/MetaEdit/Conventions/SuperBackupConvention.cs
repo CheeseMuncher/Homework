@@ -29,7 +29,7 @@ namespace MetaEdit.Conventions
             if (Enum.TryParse(input, out CallType callType))
                 return callType;
 
-            throw new ArgumentException();
+            throw new ArgumentException($"{nameof(SuperBackupConvention)}.{nameof(GetCallType)} was unable to convert {input} to {nameof(CallType)}");
         }
 
         public DateTime GetDateTime(string input)
