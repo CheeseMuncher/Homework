@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediaInfo.Wrapper.Core" Version="20.9.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
   </ItemGroup>
 

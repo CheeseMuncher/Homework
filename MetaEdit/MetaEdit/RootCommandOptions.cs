@@ -1,5 +1,6 @@
 ﻿using MetaEdit.Conventions;
 using System.CommandLine;
+using System.IO;
 
 namespace MetaEdit
 {
@@ -12,17 +13,17 @@ namespace MetaEdit
 
         public static Option<string> Source => new Option<string>(
             new[] { "--source", "-s" },
-            getDefaultValue: () => "./data",
+            getDefaultValue: () => $".{Path.DirectorySeparatorChar}data",
             description: "The source location of the input files to process");
 
         public static Option<string> Destination => new Option<string>(
             new[] { "--destination", "-d" },
-            getDefaultValue: () => "./output",
+            getDefaultValue: () => $".{Path.DirectorySeparatorChar}output",
             description: "The destination location to save the output files");
 
         public static Option<string> FileData => new Option<string>(
             new[] { "--file-data", "-f" },
-            getDefaultValue: () => null,
+            getDefaultValue: () => "callLog.csv",
             description: "The name of a file where supplementary data will be obtained from");
 
         public static Option<bool> TrialRun => new Option<bool>(

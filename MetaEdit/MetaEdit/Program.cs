@@ -1,4 +1,5 @@
 ﻿using MetaEdit.Conventions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -46,7 +47,7 @@ namespace MetaEdit
             if (!replace && !ValidatePath(destination))
                 return;
 
-            if (!ValidateFileData(source, fileData))
+            if (conventionType == DecodeConventionType.TotalRecall && !ValidateFileData(source, fileData))
                 return;
 
             if (!ValidatePossibleIoException(source, destination, replace))
@@ -59,6 +60,17 @@ namespace MetaEdit
                 Console.WriteLine($"Output directory will be ignored and input files will be overwritten");
             else
                 Console.WriteLine($"Output files will be written to {destination}");
+
+            var serviceProvider = ConfigureServiceProvider();
+            var processor = serviceProvider.GetService<IFileProcessor>();
+            try
+            {
+                processor.ProcessData(source, destination, fileData, trialRun);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static bool ValidatePath(string path)
@@ -97,5 +109,20 @@ namespace MetaEdit
             .Where(t => t != DecodeConventionType.None)
             .Select(t => $"{t}")
             .ToArray();
+
+        private static ServiceProvider ConfigureServiceProvider()
+        {
+            var services = new ServiceCollection();
+
+            services.AddSingleton<IFileProcessor, CallDataFileProcessor>();
+            services.AddSingleton<Func<DecodeConventionType, IDecodeConvention>>(conventionSelector => key => key switch
+            {
+                DecodeConventionType.TotalRecall => new TotalRecallConvention(),
+                DecodeConventionType.SuperBackup => new SuperBackupConvention(),
+                DecodeConventionType.None => throw new ArgumentException("No Convention Defined")
+            });
+
+            return services.BuildServiceProvider();
+        }
     }
 }
