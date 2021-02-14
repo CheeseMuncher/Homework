@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace MetaEdit
 {
-    public class CallDataDecoder : IFileNameDecoder<CallData>
+    public class TotalRecallDecoder : IFileNameDecoder<CallData>
     {
         private readonly IDecodeConvention _convention;
 
-        public CallDataDecoder(IDecodeConvention convention)
+        public TotalRecallDecoder(IDecodeConvention convention)
         {
             _convention = convention ?? new TotalRecallConvention();
         }
@@ -33,7 +33,7 @@ namespace MetaEdit
                 return result;
 
             if (parameters.Length > 1)
-                throw new ArgumentException($"{nameof(CallDataDecoder)}.{nameof(DecodeFileName)} expected 1 parameter decoding file: {fileName} but found {parameters.Length}: {string.Join(",", parameters)}");
+                throw new ArgumentException($"{nameof(TotalRecallDecoder)}.{nameof(DecodeFileName)} expected 1 parameter decoding file: {fileName} but found {parameters.Length}: {string.Join(",", parameters)}");
 
             result.CallDuration = _convention.GetTimeSpan(parameters.Single());
             return result;
