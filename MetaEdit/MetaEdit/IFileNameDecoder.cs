@@ -5,6 +5,6 @@
     /// </summary>
     public interface IFileNameDecoder<T>
     {
-        T DecodeFileName(string fileName, params string[] paramaters);
+        T DecodeFileName(string fileName, params string[] parameters);
     }
 }
