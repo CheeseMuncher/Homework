@@ -1,4 +1,5 @@
 ﻿using MetaEdit.Conventions;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -19,6 +20,13 @@ namespace MetaEdit
                 .GetFiles(relativePath)
                 .Where(file => file.EndsWith(ext)))
                 .ToArray();
+        }
+
+        public IEnumerable<string> GetData(string relativePath)
+        {
+            using (var reader = new StreamReader(relativePath))
+                while (!reader.EndOfStream)
+                    yield return $"{reader.ReadLine()}";
         }
 
         public bool TryExtractFileName(string path, out string name)
