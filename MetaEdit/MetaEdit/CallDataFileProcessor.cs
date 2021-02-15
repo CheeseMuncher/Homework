@@ -28,21 +28,13 @@ namespace MetaEdit
         public void ProcessData(string source, string destination, string fileData, bool trialRun)
         {
             var callFiles = _totalRecallFileOperations.GetFiles(source);
-            var callLog = _superBackupFileOperations
-                .GetData($"{source}{Path.DirectorySeparatorChar}{fileData}")
-                .Skip(1)
-                .Reverse()
-                .Select(cl => _superBackupDecoder.DecodeFileName(cl))
-                .ToArray();
+            var callLog = GetCallLogs(source, fileData);
 
             CallData match = null;
-
             foreach (var callFile in callFiles)
             {
                 var callData = ExtractCallData(callFile);
-                match = callLog.LastOrDefault(cl => cl.CallType != CallType.Missed
-                                                    && cl.CallTime < callData.CallTime
-                                                    && callData.CallTime.AddMinutes(-1) < cl.CallTime);
+                match = TryGetMatch(callLog, callData);
 
                 if (match != null)
                 {
@@ -65,6 +57,18 @@ namespace MetaEdit
             }
         }
 
+        private CallData[] GetCallLogs(string source, string fileName)
+        {
+            return fileName is null
+                ? null
+                : _superBackupFileOperations
+                    .GetData($"{source}{Path.DirectorySeparatorChar}{fileName}")
+                    .Skip(1)
+                    .Reverse()
+                    .Select(cl => _superBackupDecoder.DecodeFileName(cl))
+                    .ToArray();
+        }
+
         private CallData ExtractCallData(string filePath)
         {
             if (_totalRecallFileOperations.TryExtractFileName(filePath, out var fileName))
@@ -85,6 +89,15 @@ namespace MetaEdit
                 .First(line => line.StartsWith("Duration"))
                 .Split(":")
                 .Last();
+        }
+
+        private CallData TryGetMatch(CallData[] callLog, CallData callData)
+        {
+            return callLog
+                ?.LastOrDefault(cl =>
+                    cl.CallType != CallType.Missed
+                    && cl.CallTime < callData.CallTime
+                    && callData.CallTime.AddMinutes(-1) < cl.CallTime);
         }
     }
 }

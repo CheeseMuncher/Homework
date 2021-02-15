@@ -47,8 +47,9 @@ namespace MetaEdit
             if (!replace && !ValidatePath(destination))
                 return;
 
-            if (conventionType == DecodeConventionType.TotalRecall && !ValidateFileData(source, fileData))
-                return;
+            bool useCallLogs = false;
+            if (conventionType == DecodeConventionType.TotalRecall)
+                useCallLogs = ValidateFileData(source, fileData);
 
             if (!ValidatePossibleIoException(source, destination, replace))
                 return;
@@ -65,7 +66,7 @@ namespace MetaEdit
             var processor = serviceProvider.GetService<IFileProcessor>();
             try
             {
-                processor.ProcessData(source, destination, fileData, trialRun);
+                processor.ProcessData(source, destination, useCallLogs ? fileData : null, trialRun);
             }
             catch (Exception ex)
             {
@@ -77,7 +78,7 @@ namespace MetaEdit
         {
             if (!Directory.Exists(path))
             {
-                Console.WriteLine($"Supplied file path {path} does not exist");
+                Console.WriteLine($"Supplied file path {path} does not exist, call logs will not be used.");
                 return false;
             }
             return true;
