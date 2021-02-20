@@ -87,7 +87,7 @@ namespace MetaEdit
             _mediaInfo.Open(filePath);
             return _mediaInfo
                 .Inform()
-                .Split("\r\n")
+                .Split(Environment.NewLine)
                 .First(line => line.StartsWith("Duration"))
                 .Split(":")
                 .Last();
