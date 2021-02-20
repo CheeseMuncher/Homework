@@ -21,8 +21,9 @@ namespace MetaEdit
 
     public enum CallType
     {
-        Dialed, // US spelling is deliberate
-        Received,
-        Missed
+        Unknown = 0,
+        Dialed = 1, // US spelling is deliberate
+        Received = 2,
+        Missed = 3
     }
 }

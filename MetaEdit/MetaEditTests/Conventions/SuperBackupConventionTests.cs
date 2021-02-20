@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MetaEditTests
+namespace MetaEditTests.Conventions
 {
     public class SuperBackupConventionTests : TestFixture<SuperBackupConvention>
     {

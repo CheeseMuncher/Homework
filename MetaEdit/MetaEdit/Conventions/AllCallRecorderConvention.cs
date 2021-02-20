@@ -17,7 +17,7 @@ namespace MetaEdit.Conventions
 
         public CallType GetCallType(string input)
         {
-            throw new NotImplementedException();
+            return CallType.Unknown;
         }
 
         public DateTime GetDateTime(string input)
@@ -34,7 +34,7 @@ namespace MetaEdit.Conventions
 
         public TimeSpan GetTimeSpan(string input)
         {
-            throw new NotImplementedException();
+            return MediaInfoConvention.GetTimeSpan(input);
         }
     }
 }
