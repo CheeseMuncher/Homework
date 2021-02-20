@@ -71,7 +71,7 @@ namespace MetaEdit
 
         private CallData ExtractCallData(string filePath)
         {
-            if (_totalRecallFileOperations.TryExtractFileName(filePath, out var fileName))
+            if (_totalRecallFileOperations.TryExtractFileName(filePath, out string fileName))
             {
                 var duration = GetDurationString(filePath);
                 return _totalRecallDecoder.DecodeFileName(fileName, duration);

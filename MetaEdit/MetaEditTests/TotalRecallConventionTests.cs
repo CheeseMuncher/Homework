@@ -15,8 +15,8 @@ namespace MetaEditTests
             var result = Sut.Extensions;
 
             // Assert
-            result.Count.Should().Be(1);
-            result.Should().Contain(".amr");
+            result.Count.Should().Be(2);
+            result.Should().Contain(".amr", ".mp3");
         }
 
         [Fact]

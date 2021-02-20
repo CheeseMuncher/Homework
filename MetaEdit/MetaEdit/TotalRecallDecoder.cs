@@ -15,8 +15,9 @@ namespace MetaEdit
 
         public CallData DecodeFileName(string fileName, params string[] parameters)
         {
-            var result = new CallData();
-            var components = fileName.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            var result = new CallData { FileExtension = fileName.Split(".").Last() };
+            var name = fileName.Substring(0, fileName.Length - result.FileExtension.Length - 1);
+            var components = name.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
             var callDataType = typeof(CallData);
             for (int i = 0; i < components.Length; i++)
             {

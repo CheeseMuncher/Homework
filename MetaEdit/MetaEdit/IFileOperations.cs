@@ -15,7 +15,7 @@ namespace MetaEdit
         IEnumerable<string> GetData(string relativePath);
 
         /// <summary>
-        /// Attempts to extract the file name from the supplied path, without extension
+        /// Attempts to extract the file name from the supplied path, with extension
         /// </summary>
         bool TryExtractFileName(string path, out string name);
     }

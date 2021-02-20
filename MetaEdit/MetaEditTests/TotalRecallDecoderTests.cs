@@ -18,7 +18,7 @@ namespace MetaEditTests
         {
             // Arrange
             var duration = "59 s 800 ms";
-            var input = "2022-01-14@19-29-20_In_John.M.Smith (07123456789)";
+            var input = "2022-01-14@19-29-20_In_John.M.Smith (07123456789).amr";
 
             // Act
             var result = Sut.DecodeFileName(input, duration);
@@ -29,13 +29,14 @@ namespace MetaEditTests
             result.ContactName.Should().Be("John.M.Smith");
             result.ContactNumber.Should().Be("07123456789");
             result.CallDuration.Should().Be(TimeSpan.Parse("00:00:59.800"));
+            result.FileExtension.Should().Be("amr");
         }
 
         [Fact]
         public void DecodeFileName_DecodesPartialFileNameCorrectly()
         {
             // Arrange
-            var input = "2020-01-14@19-29-20_Out_Unknown.Contact (PrivateNumber)";
+            var input = "2020-01-14@19-29-20_Out_Unknown.Contact (PrivateNumber).amr";
 
             // Act
             var result = Sut.DecodeFileName(input);
@@ -52,7 +53,7 @@ namespace MetaEditTests
         public void DecodeFileName_ThrowsIfMultipleParamsPassedIn()
         {
             // Arrange
-            var input = "2022-01-14@19-29-20_In_John.M.Smith (07123456789)";
+            var input = "2022-01-14@19-29-20_In_John.M.Smith (07123456789).amr";
             var param1 = Create<string>();
             var param2 = Create<string>();
 

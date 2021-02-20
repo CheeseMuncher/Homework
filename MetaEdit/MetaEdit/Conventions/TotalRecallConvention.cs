@@ -10,7 +10,7 @@ namespace MetaEdit.Conventions
         private const string _seconds = "s";
         private const string _minutes = "min";
         private const string _hours = "h";
-        private readonly HashSet<string> _extensions = new HashSet<string> { ".amr" };
+        private readonly HashSet<string> _extensions = new HashSet<string> { ".amr", ".mp3" };
         private readonly HashSet<string> _separators = new HashSet<string> { "_", " (", ")" };
 
         private readonly string[] _convention = new[]

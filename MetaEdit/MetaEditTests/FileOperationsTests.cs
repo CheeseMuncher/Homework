@@ -10,6 +10,7 @@ namespace MetaEditTests
     public class FileOperationsTests : TestFixture<FileOperations>
     {
         private const string FileName = "Test String";
+        private const string FileExt = "amr";
 
         public FileOperationsTests()
         {
@@ -56,8 +57,8 @@ namespace MetaEditTests
 
         public static IEnumerable<object[]> ValidPathTestData => new List<object[]>
             {
-                new object[] { $".{Path.DirectorySeparatorChar}{FileName}.amr" } ,
-                new object[] { $".{Path.DirectorySeparatorChar}pathto{Path.DirectorySeparatorChar}{FileName}.amr" }
+                new object[] { $".{Path.DirectorySeparatorChar}{FileName}.{FileExt}" } ,
+                new object[] { $".{Path.DirectorySeparatorChar}pathto{Path.DirectorySeparatorChar}{FileName}.{FileExt}" }
             };
 
         [Theory]
@@ -65,11 +66,11 @@ namespace MetaEditTests
         public void TryExtractFileName_ReturnsTrueWithOutput_IfInputAsExpected(string input)
         {
             // Act
-            var result = Sut.TryExtractFileName(input, out var output);
+            var result = Sut.TryExtractFileName(input, out var file);
 
             // Assert
             result.Should().BeTrue();
-            output.Should().Be(FileName);
+            file.Should().Be($"{FileName}.{FileExt}");
         }
     }
 }

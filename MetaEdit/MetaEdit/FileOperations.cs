@@ -35,7 +35,7 @@ namespace MetaEdit
             if (string.IsNullOrEmpty(path) || !PathInExpectedFormat(path))
                 return false;
 
-            name = path.Split(Path.DirectorySeparatorChar.ToString()).Last().Split(".").First();
+            name = path.Split(Path.DirectorySeparatorChar.ToString()).Last();
             return true;
         }
 
