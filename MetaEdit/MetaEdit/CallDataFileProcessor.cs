@@ -10,17 +10,18 @@ namespace MetaEdit
     public class CallDataFileProcessor : IFileProcessor
     {
         private readonly Media _mediaInfo = new Media();
-        public readonly IFileOperations _totalRecallFileOperations;
+        public readonly IFileOperations _callDataFileOperations;
         public readonly IFileOperations _superBackupFileOperations;
-        private readonly IFileNameDecoder<CallData> _totalRecallDecoder;
+        private readonly IFileNameDecoder<CallData> _callDataDecoder;
         private readonly IFileNameDecoder<CallData> _superBackupDecoder;
 
-        public CallDataFileProcessor(Func<DecodeConventionType, IDecodeConvention> conventionSelector)
+        public CallDataFileProcessor(IDecodeConvention convention)
         {
-            _totalRecallFileOperations = new FileOperations(conventionSelector(DecodeConventionType.TotalRecall));
-            _superBackupFileOperations = new FileOperations(conventionSelector(DecodeConventionType.SuperBackup));
-            _totalRecallDecoder = new CallDataDecoder(conventionSelector(DecodeConventionType.TotalRecall));
-            _superBackupDecoder = new SuperBackupDecoder(conventionSelector(DecodeConventionType.SuperBackup));
+            var superBackupConvention = new SuperBackupConvention();
+            _callDataFileOperations = new FileOperations(convention);
+            _superBackupFileOperations = new FileOperations(superBackupConvention);
+            _callDataDecoder = new CallDataDecoder(convention);
+            _superBackupDecoder = new SuperBackupDecoder(superBackupConvention);
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace MetaEdit
         /// </summary>
         public void ProcessData(string source, string destination, string fileData, bool trialRun)
         {
-            var callFiles = _totalRecallFileOperations.GetFiles(source);
+            var callFiles = _callDataFileOperations.GetFiles(source);
             var callLog = GetCallLogs(source, fileData);
 
             CallData match = null;
@@ -72,10 +73,10 @@ namespace MetaEdit
 
         private CallData ExtractCallData(string filePath)
         {
-            if (_totalRecallFileOperations.TryExtractFileName(filePath, out string fileName))
+            if (_callDataFileOperations.TryExtractFileName(filePath, out string fileName))
             {
                 var duration = GetDurationString(filePath);
-                return _totalRecallDecoder.DecodeFileName(fileName, duration);
+                return _callDataDecoder.DecodeFileName(fileName, duration);
             }
 
             throw new ArgumentException($"{nameof(CallDataFileProcessor)}.{nameof(ExtractCallData)} could not extract file name from path {filePath}");

@@ -62,7 +62,7 @@ namespace MetaEdit
             else
                 Console.WriteLine($"Output files will be written to {destination}");
 
-            var serviceProvider = ConfigureServiceProvider();
+            var serviceProvider = ConfigureServiceProvider(conventionType);
             var processor = serviceProvider.GetService<IFileProcessor>();
             try
             {
@@ -111,17 +111,21 @@ namespace MetaEdit
             .Select(t => $"{t}")
             .ToArray();
 
-        private static ServiceProvider ConfigureServiceProvider()
+        private static ServiceProvider ConfigureServiceProvider(DecodeConventionType conventionType)
         {
-            var services = new ServiceCollection();
-
-            services.AddSingleton<IFileProcessor, CallDataFileProcessor>();
-            services.AddSingleton<Func<DecodeConventionType, IDecodeConvention>>(conventionSelector => key => key switch
+            Func<DecodeConventionType, IDecodeConvention> conventionSelector = (DecodeConventionType convention) => convention switch
             {
                 DecodeConventionType.TotalRecall => new TotalRecallConvention(),
+                DecodeConventionType.AllCallRecorder => new AllCallRecorderConvention(),
                 DecodeConventionType.SuperBackup => new SuperBackupConvention(),
                 DecodeConventionType.None => throw new ArgumentException("No Convention Defined")
-            });
+            };
+
+            var services = new ServiceCollection();
+
+            services.AddSingleton<Func<DecodeConventionType>>(() => conventionType);
+            services.AddSingleton<IFileProcessor, CallDataFileProcessor>();
+            services.AddSingleton(conventionSelector(conventionType));
 
             return services.BuildServiceProvider();
         }

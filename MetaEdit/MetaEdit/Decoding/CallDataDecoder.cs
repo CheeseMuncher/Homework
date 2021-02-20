@@ -10,7 +10,7 @@ namespace MetaEdit.Decoding
 
         public CallDataDecoder(IDecodeConvention convention)
         {
-            _convention = convention ?? new TotalRecallConvention();
+            _convention = convention;
         }
 
         public CallData DecodeFileName(string fileName, params string[] parameters)
