@@ -4,6 +4,7 @@
     {
         None = 0,
         TotalRecall = 1,
-        SuperBackup = 2
+        AllCallRecorder = 2,
+        SuperBackup = 3
     }
 }

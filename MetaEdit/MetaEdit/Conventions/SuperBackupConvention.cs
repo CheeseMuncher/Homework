@@ -6,23 +6,18 @@ namespace MetaEdit.Conventions
 {
     public class SuperBackupConvention : IDecodeConvention
     {
-        private readonly HashSet<string> _extensions = new HashSet<string> { ".csv" };
-        private readonly HashSet<string> _separators = new HashSet<string> { "," };
+        public HashSet<string> Extensions { get; } = new HashSet<string> { ".csv" };
 
-        private readonly string[] _convention = new[]
-{
+        public HashSet<string> Separators { get; } = new HashSet<string> { "," };
+
+        public string[] Convention { get; } = new[]
+        {
             nameof(CallData.ContactName),
             nameof(CallData.ContactNumber),
             nameof(CallData.CallTime),
             nameof(CallData.CallType),
             nameof(CallData.CallDuration)
         };
-
-        public HashSet<string> Extensions => _extensions;
-
-        public HashSet<string> Separators => _separators;
-
-        public string[] Convention => _convention;
 
         public CallType GetCallType(string input)
         {

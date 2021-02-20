@@ -2,6 +2,7 @@
 using MetaEdit;
 using MetaEdit.Conventions;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace MetaEditTests
@@ -16,7 +17,7 @@ namespace MetaEditTests
 
             // Assert
             result.Count.Should().Be(1);
-            result.Should().Contain(".csv");
+            result.Single().Should().Be(".csv");
         }
 
         [Fact]
@@ -24,6 +25,7 @@ namespace MetaEditTests
         {
             // Act
             var result = Sut.Separators;
+            result.Single().Should().Be(",");
 
             // Assert
             result.Count.Should().Be(1);

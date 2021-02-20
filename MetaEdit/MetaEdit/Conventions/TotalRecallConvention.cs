@@ -10,22 +10,18 @@ namespace MetaEdit.Conventions
         private const string _seconds = "s";
         private const string _minutes = "min";
         private const string _hours = "h";
-        private readonly HashSet<string> _extensions = new HashSet<string> { ".amr", ".mp3" };
-        private readonly HashSet<string> _separators = new HashSet<string> { "_", " (", ")" };
 
-        private readonly string[] _convention = new[]
+        public HashSet<string> Extensions { get; } = new HashSet<string> { ".amr", ".mp3" };
+
+        public HashSet<string> Separators { get; } = new HashSet<string> { "_", " (", ")" };
+
+        public string[] Convention { get; } = new[]
         {
             nameof(CallData.CallTime),
             nameof(CallData.CallType),
             nameof(CallData.ContactName),
             nameof(CallData.ContactNumber)
         };
-
-        public HashSet<string> Extensions => _extensions;
-
-        public HashSet<string> Separators => _separators;
-
-        public string[] Convention => _convention;
 
         public CallType GetCallType(string input)
         {

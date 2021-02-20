@@ -27,9 +27,7 @@ namespace MetaEditTests
 
             // Assert
             result.Count.Should().Be(3);
-            result.Should().Contain("_");
-            result.Should().Contain(" (");
-            result.Should().Contain(")");
+            result.Should().Contain("_", " (", ")");
         }
 
         [Fact]
