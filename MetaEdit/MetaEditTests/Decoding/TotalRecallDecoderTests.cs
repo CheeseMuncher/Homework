@@ -7,7 +7,7 @@ using Xunit;
 
 namespace MetaEditTests
 {
-    public class TotalRecallDecoderTests : TestFixture<TotalRecallDecoder>
+    public class TotalRecallDecoderTests : TestFixture<CallDataDecoder>
     {
         public TotalRecallDecoderTests()
         {
@@ -63,8 +63,9 @@ namespace MetaEditTests
 
             // Assert
             var ex = Assert.Throws<ArgumentException>(action);
-            ex.Message.Should().Contain(nameof(TotalRecallDecoder));
-            ex.Message.Should().Contain(nameof(TotalRecallDecoder.DecodeFileName));
+            ex.Message.Should().Contain(nameof(CallDataDecoder));
+            ex.Message.Should().Contain(nameof(TotalRecallConvention));
+            ex.Message.Should().Contain(nameof(CallDataDecoder.DecodeFileName));
             ex.Message.Should().Contain(input);
             ex.Message.Should().Contain("2");
             ex.Message.Should().Contain(param1);

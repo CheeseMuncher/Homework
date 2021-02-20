@@ -19,7 +19,7 @@ namespace MetaEdit
         {
             _totalRecallFileOperations = new FileOperations(conventionSelector(DecodeConventionType.TotalRecall));
             _superBackupFileOperations = new FileOperations(conventionSelector(DecodeConventionType.SuperBackup));
-            _totalRecallDecoder = new TotalRecallDecoder(conventionSelector(DecodeConventionType.TotalRecall));
+            _totalRecallDecoder = new CallDataDecoder(conventionSelector(DecodeConventionType.TotalRecall));
             _superBackupDecoder = new SuperBackupDecoder(conventionSelector(DecodeConventionType.SuperBackup));
         }
 
