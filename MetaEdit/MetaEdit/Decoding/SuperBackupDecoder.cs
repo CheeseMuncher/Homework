@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace MetaEdit
+namespace MetaEdit.Decoding
 {
     public class SuperBackupDecoder : IFileNameDecoder<CallData>
     {

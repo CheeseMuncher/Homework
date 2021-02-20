@@ -1,4 +1,5 @@
 ﻿using MetaEdit.Conventions;
+using MetaEdit.Decoding;
 using System;
 using System.IO;
 using System.Linq;

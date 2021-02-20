@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using MetaEdit;
 using MetaEdit.Conventions;
+using MetaEdit.Decoding;
 using System;
 using Xunit;
 
