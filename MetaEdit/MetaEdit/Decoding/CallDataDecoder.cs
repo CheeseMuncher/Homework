@@ -45,7 +45,7 @@ namespace MetaEdit.Decoding
             if (conventionIndex == 2 && value == "Unknown.Contact")
                 return true;
 
-            if (conventionIndex == 3 && value == "PrivateNumber")
+            if (conventionIndex == 3 && value == "Private Number")
                 return true;
 
             return false;

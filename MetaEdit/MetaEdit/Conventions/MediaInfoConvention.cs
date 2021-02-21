@@ -18,6 +18,9 @@ namespace MetaEdit.Conventions
             if (input is null)
                 return new TimeSpan();
 
+            if (TimeSpan.TryParse(input, out var result))
+                return result;
+
             if (input.EndsWith(_milliseconds))
             {
                 var split = input.Substring(0, input.Length - 3).Split(_seconds, StringSplitOptions.RemoveEmptyEntries);

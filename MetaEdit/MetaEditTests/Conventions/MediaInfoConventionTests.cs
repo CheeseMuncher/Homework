@@ -8,10 +8,12 @@ namespace MetaEditTests.Conventions
     public class MediaInfoConventionTests
     {
         [Theory]
+        [InlineData("12:34:56.789", 0, 12, 34, 56, 789)]
         [InlineData("1 h 24 min", 0, 1, 24, 0, 0)]
         [InlineData("1 min 12 s", 0, 0, 1, 12, 0)]
         [InlineData("59 s 800 ms", 0, 0, 0, 59, 800)]
         [InlineData("500 ms", 0, 0, 0, 0, 500)]
+        [InlineData("Cheese", 0, 0, 0, 0, 0)]
         public void GetTimeSpan_ConvertsTimeSpanCorrectly(string input, int days, int hours, int minutes, int seconds, int milliseconds)
         {
             // Act
