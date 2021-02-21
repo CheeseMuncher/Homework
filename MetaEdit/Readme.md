@@ -19,8 +19,8 @@ A command line application to modify a collection of files' names and metadata a
   * `-c|--convention` 
   The convention that will be used to try to extract information from the file name. Defaults to TotalRecall. The application will validate the input and print out valid inputs if validation fails.
   Available values are:  
-  [TotalRecall](https://play.google.com/store/apps/details?id=com.killermobile.totalrecall) although file naming is now configurable
-  [AllCallRecorder](https://play.google.com/store/apps/details?id=androidlab.allcall)
+  [TotalRecall](https://play.google.com/store/apps/details?id=com.killermobile.totalrecall) although file naming is now configurable  
+  [AllCallRecorder](https://play.google.com/store/apps/details?id=androidlab.allcall)  
 
   * `-s|--source` 
   The source directory the application will scan for files to work on. Defaults to a nested folder called 'data'.
