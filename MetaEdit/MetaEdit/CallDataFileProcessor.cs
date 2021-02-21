@@ -29,7 +29,7 @@ namespace MetaEdit
         /// </summary>
         public void ProcessData(string source, string destination, string fileData, bool trialRun)
         {
-            var callFiles = _callDataFileOperations.GetFiles(source);
+            var callFiles = _callDataFileOperations.GetFiles(source).OrderBy(f => f);
             var callLog = GetCallLogs(source, fileData);
 
             CallData match = null;
@@ -88,9 +88,9 @@ namespace MetaEdit
             return _mediaInfo
                 .Inform()
                 .Split(Environment.NewLine)
-                .First(line => line.StartsWith("Duration"))
-                .Split(":")
-                .Last();
+                .FirstOrDefault(line => line.StartsWith("Duration"))
+                ?.Split(":")
+                ?.Last();
         }
 
         private CallData TryGetMatch(CallData[] callLog, CallData callData)

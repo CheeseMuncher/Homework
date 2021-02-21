@@ -6,7 +6,7 @@ A command line application to modify a collection of files' names and metadata a
   * You need to have [.Net Core installed on your machine](https://docs.microsoft.com/en-us/dotnet/core/install/)
   * Clone this repository, e.g. to `cd "C:\Code"`
   * Cmd to the main project, e.g. `cd "C:\Code\MetaEdit\MetaEdit"`
-  * Compile as required by your system, `e.g. dotnet build -c Release -o "C:\Apps\MetaEdit" -r ubuntu.20.04-x64`
+  * Compile as required by your system, `e.g. dotnet build -c Release -o "../../../Apps/MetaEdit" -r ubuntu.20.04-x64`
   * From the compile location run the app with 
 
 ## Usage
