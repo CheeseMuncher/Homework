@@ -5,7 +5,7 @@ namespace MetaEdit
     public interface IFileOperations
     {
         /// <summary>
-        /// Attepts to fetch the files to be processed
+        /// Attempts to fetch the files to be processed
         /// </summary>
         string[] GetFiles(string relativePath);
 

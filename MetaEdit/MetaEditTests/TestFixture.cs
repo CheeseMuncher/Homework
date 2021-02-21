@@ -1,28 +1,23 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Dsl;
-using AutoFixture.Kernel;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace MetaEditTests
 {
     public class TestFixture
     {
-        protected readonly Fixture _fixture;
+        protected readonly Fixture _fixture = new Fixture();
 
         protected TestFixture()
         {
-            _fixture = new Fixture();
             _fixture.Customize(new AutoMoqCustomization());
         }
 
         protected T Create<T>() => _fixture.Create<T>();
-
-        protected object CreateType(Type type) => new SpecimenContext(_fixture).Resolve(type);
 
         protected IPostprocessComposer<T> Build<T>() => _fixture.Build<T>();
 
@@ -35,18 +30,6 @@ namespace MetaEditTests
         protected T Create<T>(Expression<Func<T, object>> propertyPicker, object value) => _fixture.Build<T>().With(propertyPicker, value).Create();
 
         protected void Inject<T>(T injectedType) => _fixture.Inject(injectedType);
-
-        protected T Not<T>(T valueToAvoid)
-        {
-            T newFake;
-
-            do
-            {
-                newFake = Create<T>();
-            } while (newFake.Equals(valueToAvoid));
-
-            return newFake;
-        }
     }
 
     public class TestFixture<TSut> : TestFixture where TSut : class

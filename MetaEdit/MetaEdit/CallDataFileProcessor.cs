@@ -25,7 +25,7 @@ namespace MetaEdit
         }
 
         /// <summary>
-        /// Update Call Audio files from TotalRecall using CallLog published by SuperBackup
+        /// Update Call Audio files from source using CallLog published by SuperBackup
         /// </summary>
         public void ProcessData(string source, string destination, string fileData, bool trialRun)
         {

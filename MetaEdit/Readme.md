@@ -6,8 +6,9 @@ A command line application to modify a collection of files' names and metadata a
   * You need to have [.Net Core installed on your machine](https://docs.microsoft.com/en-us/dotnet/core/install/)
   * Clone this repository, e.g. to `cd "C:\Code"`
   * Cmd to the main project, e.g. `cd "C:\Code\MetaEdit\MetaEdit"`
-  * Compile as required by your system, `e.g. dotnet build -c Release -o "../../../Apps/MetaEdit" -r ubuntu.20.04-x64`
-  * From the compile location run the app with 
+  * Compile as required by your system, e.g. `dotnet build -c Release -o "../../../Apps/MetaEdit" -r ubuntu.20.04-x64`
+  * From the compile location run the app with, e.g.`MetaEdit -c TotalRecall -s "C:\Calls" -d CallLog.csv -t false -r true`
+
 
 ## Usage
 
@@ -17,6 +18,9 @@ A command line application to modify a collection of files' names and metadata a
 
   * `-c|--convention` 
   The convention that will be used to try to extract information from the file name. Defaults to TotalRecall. The application will validate the input and print out valid inputs if validation fails.
+  Available values are:  
+  [TotalRecall](https://play.google.com/store/apps/details?id=com.killermobile.totalrecall) although file naming is now configurable
+  [AllCallRecorder](https://play.google.com/store/apps/details?id=androidlab.allcall)
 
   * `-s|--source` 
   The source directory the application will scan for files to work on. Defaults to a nested folder called 'data'.
