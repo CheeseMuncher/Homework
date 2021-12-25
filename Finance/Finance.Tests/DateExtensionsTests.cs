@@ -117,4 +117,50 @@ public class DateExtensionsTests : TestFixture
         // Assert
         result.Should().BeTrue();
     }
+
+    [Fact]
+    public void IsGoodFriday_ReturnsFalse_EveryOtherDay()
+    {
+        for (DateTime date = new DateTime(2018,01,01); date <= new DateTime(2018,12,31); date = date.AddDays(1))
+        {
+            // Arrange
+            if (date.Month == 3 && date.Day == 30)
+                continue;            
+
+            // Act
+            var result = date.IsGoodFriday();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+    }
+
+    [Fact]
+    public void IsGoodFriday_ReturnsTrue_OnGoodFriday()
+    {
+        // Arrange
+        var date = new DateTime(2018, 03, 30);
+
+        // Act
+        var result = date.IsGoodFriday();
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+
+    [Fact]
+    public void IsGoodFriday_ThrowsException_IfGoodFridayMissingForRequestedYear()
+    {
+        // Arrange
+        var date = new DateTime(2012, 01, 01);
+
+        // Act
+        Action action = () => date.IsGoodFriday();
+
+        // Assert
+        var ex = Assert.Throws<Exception>(action);
+        ex.Message.Should().Contain("2012");
+        ex.Message.Should().Contain("Good Friday");        
+    }
 }
