@@ -42,28 +42,34 @@ public class DateExtensionsTests : TestFixture
         result.Should().BeTrue();
     }
 
-    [Fact]
-    public void IsXmas_ReturnsFalse_IfNotXmasDay()
+    [Theory]
+    [InlineData(2021, 12, 20)] // Monday
+    [InlineData(2021, 12, 25)] // Saturday
+    [InlineData(2022, 12, 25)] // Sunday
+    public void IsXmasHoliday_ReturnsFalse_IfNotXmasHoliday(int year, int month, int day)
     {
-        // Arrange
-        var date = Create<DateTime>();
-        date = date.AddDays(date.Day == 25 ? 1 : 0);
+        // Arrange        
+        var date = new DateTime(year, month, day);
 
         // Act
-        var result = date.IsXmas();
+        var result = date.IsXmasHoliday();
 
         // Assert
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public void IsXmas_ReturnsTrue_IfXmasDay()
+    [Theory]
+    [InlineData(2020, 12, 25)] // Friday
+    [InlineData(2021, 12, 27)] // Monday
+    [InlineData(2022, 12, 26)] // Monday
+    [InlineData(2023, 12, 25)] // Monday
+    public void IsXmasHoliday_ReturnsTrue_IfXmasHoliday(int year, int month, int day)
     {
         // Arrange
-        var date = new DateTime(Create<int>(), 12, 25);
+        var date = new DateTime(year, month, day);
 
         // Act
-        var result = date.IsXmas();
+        var result = date.IsXmasHoliday();
 
         // Assert
         result.Should().BeTrue();
@@ -80,13 +86,13 @@ public class DateExtensionsTests : TestFixture
     [InlineData(2022, 01, 01)] // Sunday
     [InlineData(2019, 01, 07)] // Monday
     [InlineData(2021, 01, 04)] // Monday
-    public void IsFirstWorkday_ReturnsFalse_IfNotFirstWorkday(int year, int month, int day)
+    public void IsNewYearHoliday_ReturnsFalse_IfNotNewYearHoliday(int year, int month, int day)
     {
         // Arrange
         var date = new DateTime(year, month, day);
 
         // Act
-        var result = date.IsFirstWorkday();
+        var result = date.IsNewYearHoliday();
 
         // Assert
         result.Should().BeFalse();
@@ -100,16 +106,15 @@ public class DateExtensionsTests : TestFixture
     [InlineData(2021, 01, 01)] // Friday
     [InlineData(2017, 01, 02)] // Monday
     [InlineData(2022, 01, 03)] // Monday
-    public void IsFirstWorkday_ReturnsTrue_IfFirstWorkday(int year, int month, int day)
+    public void IsNewYearHoliday_ReturnsTrue_IfNewYearHoliday(int year, int month, int day)
     {
         // Arrange
         var date = new DateTime(year, month, day);
 
         // Act
-        var result = date.IsFirstWorkday();
+        var result = date.IsNewYearHoliday();
 
         // Assert
         result.Should().BeTrue();
     }
-
 }
