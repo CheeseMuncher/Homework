@@ -1,5 +1,3 @@
-using Finance.Domain.Dividends;
-
 namespace Finance.Domain.Yahoo;
 
 public class Result
