@@ -42,7 +42,7 @@ public class WebDataFetcherTests : TestFixture<WebDataFetcher>
         var start = Create<double>();
         var end = Create<double>();
 
-        string stockPayload = null;
+        string stockPayload = null!;
         double startPayload = 0;
         double endPayload = 0;
         _mockFactory
@@ -73,7 +73,7 @@ public class WebDataFetcherTests : TestFixture<WebDataFetcher>
                 .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>()))
                 .Returns(factoryRequest);        
 
-            HttpRequestMessage payload = null;
+            HttpRequestMessage payload = null!;
             _mockHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
                 .Callback((HttpRequestMessage hrm, CancellationToken ct) => payload = hrm)
