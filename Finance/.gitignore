@@ -223,3 +223,6 @@ project.lock.json
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+
+# Credentials (need a longer term solution)
+*ApiCredentials.cs
