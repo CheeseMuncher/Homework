@@ -34,6 +34,6 @@ public class TestFixture
 
 public class TestFixture<TSut> : TestFixture where TSut : class
 {
-    private TSut _sut;
+    private TSut _sut = default!;
     protected TSut Sut => _sut ??= _fixture.Create<TSut>();
 }
