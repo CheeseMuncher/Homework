@@ -20,6 +20,4 @@ public class DateTimeExtensionsTests : TestFixture
         // Assert
         result.Should().Be(25.December(2021).At(23,20,46));
     }
-
-
 }
