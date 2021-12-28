@@ -20,4 +20,17 @@ public class DateTimeExtensionsTests : TestFixture
         // Assert
         result.Should().Be(25.December(2021).At(23,20,46));
     }
+
+    [Fact]
+    public void ToUnixTimeStamp_ReturnsCorrectValue()
+    {
+        // Arrange
+        var instant = new DateTime(2021, 12, 25, 23, 20, 46);
+
+        // Act
+        var result = instant.ToUnixTimeStamp();
+
+        // Assert
+        result.Should().Be(1640474446);
+    }
 }
