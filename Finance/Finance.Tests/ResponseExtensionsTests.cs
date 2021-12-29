@@ -58,6 +58,23 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
+    public void ToPriceSet_DoesNotAddDividendPriceDataFromResult()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Response>();
+        apiResult.prices[0].close = 0m;
+        foreach(var price in apiResult.prices)
+            price.date *= 1000000;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), stock);
+
+        // Assert
+        result.Prices[apiResult.prices[0].date.UnixToDateTime().Date].Should().NotContain(sp => sp.Stock == stock);
+    }
+
+    [Fact]
     public void ToPriceSet_TakesClosingPrice()
     {
         // Arrange
