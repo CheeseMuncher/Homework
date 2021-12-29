@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Finance.Domain.Prices;
 
 public static class PriceSetExtensions
@@ -56,5 +58,22 @@ public static class PriceSetExtensions
             }
             return prices;
 
+    }
+
+    public static string ConvertToCsv(this PriceSet prices, string[] headers)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(string.Join(",", headers));
+        foreach (var key in prices.Prices.Keys.OrderBy(k => k))
+        {
+            sb.Append($"{key.ToString("yyyy-MM-dd")}");
+            foreach (var stock in headers.Skip(1))
+            {                
+                var price = prices.Prices[key].SingleOrDefault(sp => sp.Stock == stock);
+                sb.Append(price == null ? "," : $",{price.Price}");
+            }
+            sb.AppendLine();
+        }
+        return sb.ToString();
     }
 }

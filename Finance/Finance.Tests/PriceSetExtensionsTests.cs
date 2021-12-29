@@ -283,4 +283,81 @@ public class PriceSetExtensionsTests : TestFixture
         result.Prices[date.AddDays(5)].Single().Should().BeEquivalentTo(new StockPrice { Stock = stock2, Price = 2.5m });
         result.Prices[date.AddDays(6)].Count.Should().Be(1);
     }
+
+    [Fact]
+    public void ConvertToCsv_CreatesHeaderRowWithSuppliedHeaderValues()
+    {
+        // Arrange
+        var priceSet = Create<PriceSet>();
+        var headers = Create<string[]>();
+
+        // Act
+        var result = priceSet.ConvertToCsv(headers);
+
+        // Assert
+        var lines = result.Split('\n');
+        lines.Count().Should().BeGreaterThan(0);
+        lines.First().Should().BeEquivalentTo(string.Join(",", headers));
+    }
+
+    [Fact]
+    public void ConvertToCsv_CreatesDateColumn()
+    {
+        // Arrange
+        var prices = Create<PriceSet>();
+        var headers = Create<string[]>();
+
+        // Act
+        var result = prices.ConvertToCsv(headers);
+
+        // Assert
+        var split = result.Split('\n');
+        var lines = split.Take(split.Length - 1); // because the last line finishes with a newline char
+        lines.Count().Should().Be(prices.Prices.Keys.Count() + 1);
+        foreach(var line in lines.Skip(1))
+            prices.Prices.Keys.Contains(DateTime.Parse(line.Split(",").First()));
+    }   
+
+    [Fact]
+    public void ConvertToCsv_PopulatesMatchingPriceSetData()
+    {
+        // Arrange
+        var stock1 = Create<string>();
+        var stock2 = Create<string>();
+        var stock3 = Create<string>();
+        var headers = new [] { "Date", stock1, "", stock2, "CHEESE", stock3 };
+        var stockPrice1 = new StockPrice { Stock = stock1, Price = 1.234m };
+        var stockPrice2 = new StockPrice { Stock = stock2, Price = 2.345m };
+        var stockPrice3 = new StockPrice { Stock = stock3, Price = 3.456m };
+        var stockPrice4 = new StockPrice { Stock = stock3, Price = 4.567m };
+        var date = Create<DateTime>();
+        var prices = new PriceSet
+        {
+            Prices = new Dictionary<DateTime, HashSet<StockPrice>>
+            {
+                [date.AddDays(0)] = new HashSet<StockPrice> { stockPrice1, stockPrice3 },
+                [date.AddDays(1)] = new HashSet<StockPrice>(),
+                [date.AddDays(2)] = new HashSet<StockPrice> { stockPrice2 },
+                [date.AddDays(3)] = new HashSet<StockPrice> { stockPrice4 },
+            }
+        };        
+
+        // Act
+        var result = prices.ConvertToCsv(headers);
+
+        // Assert
+        var split = result.Split('\n');
+        var line = split[1];
+        var expectedData = new [] { date.ToString("yyyy-MM-dd"), $"{stockPrice1.Price}", "", "", "", $"{stockPrice3.Price}" };
+        line.Should().BeEquivalentTo(string.Join(",", expectedData));
+        line = split[2];
+        expectedData = new [] { date.AddDays(1).ToString("yyyy-MM-dd"), "", "", "", "", "" };
+        line.Should().BeEquivalentTo(string.Join(",", expectedData));
+        line = split[3];
+        expectedData = new [] { date.AddDays(2).ToString("yyyy-MM-dd"), "", "", $"{stockPrice2.Price}", "", "" };
+        line.Should().BeEquivalentTo(string.Join(",", expectedData));
+        line = split[4];
+        expectedData = new [] { date.AddDays(3).ToString("yyyy-MM-dd"), "", "", "", "", $"{stockPrice4.Price}" };
+        line.Should().BeEquivalentTo(string.Join(",", expectedData));
+    }   
 }
