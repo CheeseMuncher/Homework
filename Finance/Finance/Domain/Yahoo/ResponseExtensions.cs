@@ -11,10 +11,11 @@ public static class ResponseExtensions
         foreach (var price in result.prices)
         {
             var date = price.date.UnixToDateTime().Date;
-            if(!prices.ContainsKey(date))
+            if (!prices.ContainsKey(date))
                 prices[date] = new HashSet<StockPrice>();
 
-            prices[date].Add(new StockPrice { Stock = stock, Price = price.close.RoundToSignificantDigits(6) });
+            if (price.close > 0)
+                prices[date].Add(new StockPrice { Stock = stock, Price = price.close.RoundToSignificantDigits(6) });
         }
         return new PriceSet { Prices = prices };        
     }
