@@ -13,13 +13,13 @@ using Xunit;
 
 namespace Finance.Tests;
 
-public class WebDataFetcherTests : TestFixture<WebDataFetcher>
+public class WebDataClientTests : TestFixture<WebDataClient>
 {
     private readonly Mock<IFileIO> _mockFileIO = new Mock<IFileIO>();
     private readonly Mock<IHttpRequestFactory> _mockFactory = new Mock<IHttpRequestFactory>();
     private readonly Mock<HttpMessageHandler> _mockHandler = new Mock<HttpMessageHandler>();
 
-    public WebDataFetcherTests()
+    public WebDataClientTests()
     {
         _mockFactory
             .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>()))

@@ -4,13 +4,13 @@ using System.Text.Json;
 
 namespace Finance.Data;
 
-public class WebDataFetcher
+public class WebDataClient
 {
     private readonly IFileIO _fileIO;
     private readonly HttpClient _client;
     private readonly IHttpRequestFactory _requestFactory;
 
-    public WebDataFetcher(IFileIO fileIO, HttpClient client, IHttpRequestFactory requestFactory)
+    public WebDataClient(IFileIO fileIO, HttpClient client, IHttpRequestFactory requestFactory)
     {
         _fileIO = fileIO ?? throw new ArgumentException(nameof(fileIO));
         _client = client ?? throw new ArgumentException(nameof(client));
