@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Finance.Data;
 
-public class WebDataClient
+public class WebDataClient : IWebDataClient
 {
     private readonly IFileIO _fileIO;
     private readonly HttpClient _client;
@@ -32,4 +32,9 @@ public class WebDataClient
             return JsonSerializer.Deserialize<Response>(body.ToString());
         }
     }
+}
+
+public interface IWebDataClient
+{
+    Task<Response> GetYahooApiData(string stock, double start, double end, bool writeRawData = false);
 }
