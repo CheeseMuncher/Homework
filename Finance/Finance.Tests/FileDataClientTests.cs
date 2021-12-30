@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Finance.Tests;
 
-public class FileDataFetcherTests : TestFixture<FileDataFetcher>
+public class FileDataClientTests : TestFixture<FileDataClient>
 {
     private readonly Mock<IFileIO> _mockFileIO = new Mock<IFileIO>();
 
-    public FileDataFetcherTests()
+    public FileDataClientTests()
     {
         _mockFileIO
             .Setup(io => io.FileExists(It.IsAny<string>()))

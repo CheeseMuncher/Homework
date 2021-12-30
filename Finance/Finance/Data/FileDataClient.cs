@@ -5,11 +5,11 @@ using System.Text.Json;
 
 namespace Finance.Data;
 
-public class FileDataFetcher
+public class FileDataClient
 {
     private readonly IFileIO _fileIO;
 
-    public FileDataFetcher(IFileIO fileIO)
+    public FileDataClient(IFileIO fileIO)
     {
         _fileIO = fileIO ?? throw new ArgumentException(nameof(fileIO));
     }
