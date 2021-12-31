@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Finance.Data;
 
-public class FileDataClient
+public class FileDataClient : IFileDataClient
 {
     private readonly IFileIO _fileIO;
 
@@ -25,4 +25,9 @@ public class FileDataClient
 
         return JsonSerializer.Deserialize<Response>(sb.ToString());
     }
+}
+
+public interface IFileDataClient
+{
+    Response GetYahooFileData(string fileName);
 }
