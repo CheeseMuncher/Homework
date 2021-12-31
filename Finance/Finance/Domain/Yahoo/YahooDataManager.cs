@@ -6,12 +6,14 @@ namespace Finance.Domain.Yahoo;
 
 public class YahooDataManager
 {
-    private readonly IWebDataClient _dataClient;
+    private readonly IWebDataClient _webClient;
+    private readonly IFileDataClient _fileClient;
     private readonly IFileIO _fileIO;
 
-    public YahooDataManager(IWebDataClient dataClient, IFileIO fileIO)
+    public YahooDataManager(IWebDataClient webClient, IFileDataClient fileClient, IFileIO fileIO)
     {
-        _dataClient = dataClient ?? throw new NullReferenceException(nameof(dataClient));
+        _webClient = webClient ?? throw new NullReferenceException(nameof(webClient));
+        _fileClient = fileClient ?? throw new NullReferenceException(nameof(fileClient));
         _fileIO = fileIO ?? throw new NullReferenceException(nameof(fileIO));
     }
 
@@ -22,7 +24,7 @@ public class YahooDataManager
         var allPrices = new PriceSet();
         foreach(var stock in stocks)
         {
-            var response = await _dataClient.GetYahooApiData(stock, start, end, writeRawData);            
+            var response = await _webClient.GetYahooApiData(stock, start, end, writeRawData);            
             allPrices = allPrices.AddPrices(response.ToPriceSet(dates, stock.HandleIndex()), stock.HandleIndex());
         }
         var trimmedStocks = stocks.Select(s => s.HandleIndex()).ToArray();
@@ -31,6 +33,15 @@ public class YahooDataManager
             .Interpolate(trimmedStocks)
             .ConvertToCsv(Constants.Headers), 
                 FileNameTemplate($"Prices_{string.Join("_", trimmedStocks)}", ".csv"));
+    }
+
+    public void GeneratePriceDataFromFile(string fileName, string stock)
+    {        
+        _fileIO.WriteText(_fileClient.GetYahooFileData(fileName)
+            .ToPriceSet(new DateTime[0], stock)
+            .Interpolate(new [] { stock })
+            .ConvertToCsv(Constants.Headers), 
+                FileNameTemplate($"Prices_{stock}", ".csv"));
     }
 
     private static string FileNameTemplate(string datatype, string extension) =>

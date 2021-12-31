@@ -88,7 +88,5 @@ public class FileDataClientTests : TestFixture<FileDataClient>
 
         // Assert
         result.Should().BeEquivalentTo(response);
-    }
-
-            
+    }            
 }
