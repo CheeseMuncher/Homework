@@ -27,7 +27,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             price.date *= 1000000;
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoricalData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(response);
 
         _mockFileClient
@@ -54,7 +54,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var startDate = (long)dates.First().ToUnixTimeStamp();
         var endDate = (long)dates.Last().ToUnixTimeStamp();
         foreach (var stock in stocks)
-            _mockWebClient.Verify(client => client.GetYahooApiData(stock, startDate, endDate, writeFlag), Times.Once);
+            _mockWebClient.Verify(client => client.GetYahooHistoricalData(stock, startDate, endDate, writeFlag), Times.Once);
 
         _mockWebClient.VerifyNoOtherCalls();
     }
@@ -92,11 +92,11 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var dddPrice = new Price { date = (long)unixDate, close = Create<decimal>() };
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(GE, unixDate, unixDate, It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoricalData(GE, unixDate, unixDate, It.IsAny<bool>()))
             .ReturnsAsync(new Response { prices = new [] { gePrice }});
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(DDD, unixDate, unixDate, It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoricalData(DDD, unixDate, unixDate, It.IsAny<bool>()))
             .ReturnsAsync(new Response { prices = new [] { dddPrice }});
 
         string writePayload = null!;
@@ -134,7 +134,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         };
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoricalData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(new Response { prices = prices });
 
         string writePayload = null!;
@@ -164,7 +164,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var price = new Price { date = unixDate, close = Create<decimal>() };
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoricalData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))
             .ReturnsAsync(new Response { prices = new [] { price }});
 
         string writePayload = null!;

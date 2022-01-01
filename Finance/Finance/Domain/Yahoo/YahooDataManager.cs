@@ -24,7 +24,7 @@ public class YahooDataManager
         var allPrices = new PriceSet();
         foreach(var stock in stocks)
         {
-            var response = await _webClient.GetYahooApiData(stock, start, end, writeRawData);            
+            var response = await _webClient.GetYahooHistoricalData(stock, start, end, writeRawData);            
             allPrices = allPrices.AddPrices(response.ToPriceSet(dates, stock.HandleSuffix()), stock.HandleSuffix());
         }
         var trimmedStocks = stocks.Select(s => s.HandleSuffix()).ToArray();
