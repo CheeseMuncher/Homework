@@ -7,6 +7,7 @@ public static class DateExtensions
 {
     private static HashSet<DateTime> _goodFridays = new HashSet<DateTime>
     {
+        new DateTime(2012,04,06),
         new DateTime(2013,03,29),
         new DateTime(2014,04,18),
         new DateTime(2015,04,03),
