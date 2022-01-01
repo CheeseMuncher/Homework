@@ -1,4 +1,6 @@
 using Finance.Domain.Prices;
+using Finance.Data;
+using Finance.Utils;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -360,4 +362,28 @@ public class PriceSetExtensionsTests : TestFixture
         expectedData = new [] { date.AddDays(3).ToString("yyyy-MM-dd"), "", "", "", "", $"{stockPrice4.Price}" };
         line.Should().BeEquivalentTo(string.Join(",", expectedData));
     }   
+
+    [Fact]
+    public void ConvertToCsv_HandlesSuffixes()
+    {
+        // Arrange
+        var stock = Constants.ForexTickers.First();
+        var headers = new [] { "Date", stock.HandleSuffix() };
+        var stockPrice = new StockPrice { Stock = stock, Price = Create<decimal>() };
+        var date = Create<DateTime>();
+        var prices = new PriceSet
+        {
+            Prices = new Dictionary<DateTime, HashSet<StockPrice>>
+            {
+                [date] = new HashSet<StockPrice> { stockPrice }
+            }
+        };        
+
+        // Act
+        var result = prices.ConvertToCsv(headers);
+
+        // Assert
+        var split = result.Split('\n');       
+        split[1].Split(",").Last().Should().Be($"{stockPrice.Price}");
+    }
 }

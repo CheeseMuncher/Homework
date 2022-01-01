@@ -1,3 +1,4 @@
+using Finance.Utils;
 using System.Text;
 
 namespace Finance.Domain.Prices;
@@ -68,11 +69,14 @@ public static class PriceSetExtensions
             sb.Append($"{key.ToString("yyyy-MM-dd")}");
             foreach (var stock in headers.Skip(1))
             {                
-                var price = prices.Prices[key].SingleOrDefault(sp => sp.Stock == stock);
+                var price = prices.Prices[key].SingleOrDefault(sp => MatchStock(sp, stock));
                 sb.Append(price == null ? "," : $",{price.Price}");
             }
             sb.AppendLine();
         }
         return sb.ToString();
     }
+
+    private static bool MatchStock(StockPrice price, string stock) =>
+        price.Stock == stock || price.Stock.HandleSuffix() == stock;
 }
