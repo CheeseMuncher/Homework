@@ -19,8 +19,8 @@ public class YahooDataManager
 
     public async Task GeneratePriceDataFromApi(DateTime[] dates, string[] stocks, bool writeRawData = false)
     {
-        var start = dates.OrderBy(d => d).First().ToUnixTimeStamp();
-        var end = dates.OrderBy(d => d).Last().ToUnixTimeStamp();
+        var start = (long)dates.OrderBy(d => d).First().ToUnixTimeStamp();
+        var end = (long)dates.OrderBy(d => d).Last().ToUnixTimeStamp();
         var allPrices = new PriceSet();
         foreach(var stock in stocks)
         {

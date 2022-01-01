@@ -22,7 +22,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
     public WebDataClientTests()
     {
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>()))
+            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
             .Returns(Create<HttpRequestMessage>());
 
         _mockHandler.Protected()            
@@ -39,19 +39,19 @@ public class WebDataClientTests : TestFixture<WebDataClient>
     {
         // Arrange
         var stock = Create<string>();
-        var start = Create<double>();
-        var end = Create<double>();
+        var start = Create<long>();
+        var end = Create<long>();
 
         string stockPayload = null!;
-        double startPayload = 0;
-        double endPayload = 0;
+        long startPayload = 0;
+        long endPayload = 0;
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>()))
-            .Callback((string s, double d1, double d2) => 
+            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
+            .Callback((string s, long l1, long l2) => 
             {
                 stockPayload = s;
-                startPayload = d1;
-                endPayload = d2;
+                startPayload = l1;
+                endPayload = l2;
             })
             .Returns(Create<HttpRequestMessage>());
 
@@ -70,7 +70,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
         // Arrange
         var factoryRequest = Create<HttpRequestMessage>();
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>()))
+            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
             .Returns(factoryRequest);        
 
         HttpRequestMessage payload = null!;
@@ -80,7 +80,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             .ReturnsAsync(new HttpResponseMessage { Content = new StringContent("{}")});
 
         // Act
-        await Sut.GetYahooApiData(Create<string>(), Create<double>(), Create<double>());
+        await Sut.GetYahooApiData(Create<string>(), Create<long>(), Create<long>());
 
         // Assert
         payload.Should().NotBeNull();
@@ -93,7 +93,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
         // Arrange
 
         // Act
-        await Sut.GetYahooApiData(Create<string>(), Create<double>(), Create<double>());
+        await Sut.GetYahooApiData(Create<string>(), Create<long>(), Create<long>());
 
         // Assert
         _mockFileIO.Verify(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -116,7 +116,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             });
 
         // Act
-        await Sut.GetYahooApiData(stock, Create<double>(), Create<double>(), true);
+        await Sut.GetYahooApiData(stock, Create<long>(), Create<long>(), true);
 
         // Assert
         _mockFileIO.Verify(io => io.WriteText(content, It.Is<string>(str => str.Contains(stock))), Times.Once);
@@ -138,7 +138,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             });
 
         // Act
-        var result = await Sut.GetYahooApiData(Create<string>(), Create<double>(), Create<double>(), true);
+        var result = await Sut.GetYahooApiData(Create<string>(), Create<long>(), Create<long>(), true);
 
         // Assert
         result.Should().BeEquivalentTo(response);

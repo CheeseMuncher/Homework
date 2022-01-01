@@ -27,7 +27,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             price.date *= 1000000;
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<bool>()))
+            .Setup(client => client.GetYahooApiData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(response);
 
         _mockFileClient
@@ -51,8 +51,8 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         await Sut.GeneratePriceDataFromApi(dates, stocks, writeFlag);
 
         // Assert
-        var startDate = dates.First().ToUnixTimeStamp();
-        var endDate = dates.Last().ToUnixTimeStamp();
+        var startDate = (long)dates.First().ToUnixTimeStamp();
+        var endDate = (long)dates.Last().ToUnixTimeStamp();
         foreach (var stock in stocks)
             _mockWebClient.Verify(client => client.GetYahooApiData(stock, startDate, endDate, writeFlag), Times.Once);
 
@@ -85,7 +85,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     {
         // Arrange
         var date = Create<DateTime>();
-        var unixDate = date.ToUnixTimeStamp();
+        var unixDate = (long)date.ToUnixTimeStamp();
         var dates = new [] { date };
         var stocks = new [] { GE, DDD };
         var gePrice = new Price { date = (long)unixDate, close = Create<decimal>() };
@@ -134,7 +134,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         };
 
         _mockWebClient
-            .Setup(client => client.GetYahooApiData(GE, It.IsAny<double>(), It.IsAny<double>(), It.IsAny<bool>()))
+            .Setup(client => client.GetYahooApiData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(new Response { prices = prices });
 
         string writePayload = null!;
@@ -158,10 +158,10 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     {
         // Arrange
         var date = Create<DateTime>().Date;
-        var unixDate = date.ToUnixTimeStamp();
+        var unixDate = (long)date.ToUnixTimeStamp();
         var dates = new [] { date };
         var stocks = new [] { SGE + ".L" };
-        var price = new Price { date = (long)unixDate, close = Create<decimal>() };
+        var price = new Price { date = unixDate, close = Create<decimal>() };
 
         _mockWebClient
             .Setup(client => client.GetYahooApiData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))

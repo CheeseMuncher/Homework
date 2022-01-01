@@ -17,7 +17,7 @@ public class WebDataClient : IWebDataClient
         _requestFactory = requestFactory ?? throw new ArgumentException(nameof(requestFactory));
     }
 
-    public async Task<Response> GetYahooApiData(string stock, double start, double end, bool writeRawData = false)
+    public async Task<Response> GetYahooApiData(string stock, long start, long end, bool writeRawData = false)
     {
         var request = _requestFactory.GetYahooFinanceRequest(stock, start, end);
         using (var response = await _client.SendAsync(request))
@@ -36,5 +36,5 @@ public class WebDataClient : IWebDataClient
 
 public interface IWebDataClient
 {
-    Task<Response> GetYahooApiData(string stock, double start, double end, bool writeRawData = false);
+    Task<Response> GetYahooApiData(string stock, long start, long end, bool writeRawData = false);
 }
