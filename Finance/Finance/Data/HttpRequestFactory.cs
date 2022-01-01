@@ -11,8 +11,8 @@ public class HttpRequestFactory : IHttpRequestFactory
             RequestUri = new Uri($"{GetHistoricalDataUri()}{GetHistoricalDataQueryString(stock, start, end)}"),
             Headers = 
             {
-                { YahooConstants.HeaderKeyKey, YahooFinanceApiCredentials.HeaderKeyValue },
-                { YahooConstants.HeaderHostKey, YahooConstants.HeaderHostValue }
+                { YahooConstants.RapidApiHeaderKey, YahooFinanceApiCredentials.RapidApiHeaderValue },
+                { YahooConstants.HostHeaderKey, YahooConstants.HostHeaderValue }
             }
         };
 
