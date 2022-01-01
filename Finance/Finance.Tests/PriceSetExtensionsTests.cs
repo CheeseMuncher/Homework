@@ -367,7 +367,7 @@ public class PriceSetExtensionsTests : TestFixture
     public void ConvertToCsv_HandlesSuffixes()
     {
         // Arrange
-        var stock = Constants.ForexTickers.First();
+        var stock = QuoteKeys.ForexTickers.First();
         var headers = new [] { "Date", stock.HandleSuffix() };
         var stockPrice = new StockPrice { Stock = stock, Price = Create<decimal>() };
         var date = Create<DateTime>();
