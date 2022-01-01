@@ -5,34 +5,39 @@ namespace Finance.Data;
 
 public static class Constants
 {
-    public static readonly HashSet<string> DelistedStocks = new HashSet<string>
+    public static readonly string[] ForexTickers = new []
     {
-        "AZEM.L", 
+        "GBPUSD=X"
     };
 
-    public static readonly HashSet<string> ClosedPositions = new HashSet<string>
+    public static readonly string[] DelistedStocks = new []
     {
-        "NWG.L","GRG.L","VAL.L","WTG.L","GE","DDD","RIO.L","SGE.L", 
+        "AZEM.L", "BG.L","XONE"
     };
 
-    public static readonly HashSet<string> LiveMixedStocks = new HashSet<string>
+    public static readonly string[] ClosedPositions = new []
+    {
+        "NWG.L","GRG.L","VAL.L","WTG.L","GE","DDD","RIO.L","SGE.L","BBOX.L" 
+    };
+
+    public static readonly string[] LiveMixedStocks = new []
     { 
         "BLTG.L","AXS.L","TPK.L","WIX.L","BOO.L","DARK.L","PUR.L"
     };
 
-    public static readonly HashSet<string> LiveIsaStocks = new HashSet<string>
+    public static readonly string[] LiveIsaStocks = new []
     { 
-        "GSK.L","BARC.L","HSBA.L","IPF.L","TLW.L","BBOX.L","AFX.L","XLM.L","PHE.L","HEIQ.L","AEG.L"
+        "GSK.L","BARC.L","HSBA.L","IPF.L","TLW.L","AFX.L","XLM.L","PHE.L","HEIQ.L","AEG.L"
     };
 
-    public static readonly HashSet<string> LiveSippStocks = new HashSet<string>
+    public static readonly string[] LiveSippStocks = new []
     { 
         "RDSB.L","FRES.L","IAG.L","HSX.L","LSEG.L"
     };
 
-    public static readonly HashSet<string> LiveSchwabStocks = new HashSet<string>
+    public static readonly string[] LiveSchwabStocks = new []
     { 
-        "SSYS","XONE" 
+        "SSYS","DM" 
     };
 
     public static readonly Dictionary<string, string> VanguardTickers = new Dictionary<string, string>
@@ -45,17 +50,18 @@ public static class Constants
         ["0P0000KSPA.L"] = "U.S. Equity Index",
     };
 
-    public static string[] HeaderConcat(this string[] current, string[] toAdd) =>        
+    public static string[] HeaderConcat(this IEnumerable<string> current, IEnumerable<string> toAdd) =>        
         current.Concat(new [] { "" }).Concat(toAdd).ToArray();
 
     public static string[] Headers =>
-        new [] { "Date", "USDGBP" }
+        new [] { "Date" }
+            .Concat(ForexTickers.OrderBy(t => t))
             .HeaderConcat(VanguardTickers.Keys.OrderBy(k => k).ToArray())
-            .HeaderConcat(DelistedStocks.Concat(ClosedPositions).OrderBy(s => s).ToArray())            
-            .HeaderConcat(LiveSchwabStocks.OrderBy(s => s).ToArray())
-            .HeaderConcat(LiveMixedStocks.OrderBy(s => s).ToArray())
-            .HeaderConcat(LiveIsaStocks.OrderBy(s => s).ToArray())
-            .HeaderConcat(LiveSippStocks.OrderBy(s => s).ToArray())
-            .Select(value => value.HandleIndex())
+            .HeaderConcat(DelistedStocks.Concat(ClosedPositions).OrderBy(s => s))
+            .HeaderConcat(LiveSchwabStocks.OrderBy(s => s))
+            .HeaderConcat(LiveMixedStocks.OrderBy(s => s))
+            .HeaderConcat(LiveIsaStocks.OrderBy(s => s))
+            .HeaderConcat(LiveSippStocks.OrderBy(s => s))
+            .Select(value => value.HandleSuffix())
             .ToArray();
 }
