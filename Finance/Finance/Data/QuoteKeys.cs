@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace Finance.Data;
 
-public static class Constants
+/// <summary>
+/// Yahoo Finance API tickers
+/// </summary>
+public static class QuoteKeys
 {
     public static readonly string[] ForexTickers = new []
     {

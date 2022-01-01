@@ -77,7 +77,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         // Assert
         writePayload.Should().NotBeNull();
         var headerRow = writePayload.Split('\n').First();
-        headerRow.Should().Be(string.Join(",", Constants.Headers));
+        headerRow.Should().Be(string.Join(",", QuoteKeys.Headers));
     }
 
     [Fact]
@@ -213,7 +213,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         // Assert
         writePayload.Should().NotBeNull();
         var headerRow = writePayload.Split('\n').First();
-        headerRow.Should().Be(string.Join(",", Constants.Headers));
+        headerRow.Should().Be(string.Join(",", QuoteKeys.Headers));
     }
 
     [Fact]

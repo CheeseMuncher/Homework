@@ -31,7 +31,7 @@ public class YahooDataManager
         
         _fileIO.WriteText(allPrices
             .Interpolate(trimmedStocks)
-            .ConvertToCsv(Constants.Headers), 
+            .ConvertToCsv(QuoteKeys.Headers), 
                 FileNameTemplate($"Prices_{string.Join("_", trimmedStocks)}", ".csv"));
     }
 
@@ -40,7 +40,7 @@ public class YahooDataManager
         _fileIO.WriteText(_fileClient.GetYahooFileData(fileName)
             .ToPriceSet(new DateTime[0], stock)
             .Interpolate(new [] { stock })
-            .ConvertToCsv(Constants.Headers), 
+            .ConvertToCsv(QuoteKeys.Headers), 
                 FileNameTemplate($"Prices_{stock}", ".csv"));
     }
 
