@@ -10,11 +10,12 @@ public class StringExtensionsTests : TestFixture
     [InlineData("GE", "GE")]
     [InlineData("HSBA.L", "HSBA")]
     [InlineData("VAL.L", "VAL")]
-    public void HandleIndex_TrimsSuffix(string input, string output)
+    [InlineData("GBPUSD=X", "GBPUSD")]
+    public void HandleSuffix_TrimsSuffix(string input, string output)
     {
         // Arrange
         // Act
-        var result = input.HandleIndex();
+        var result = input.HandleSuffix();
 
         // Assert
         result.Should().Be(output);
