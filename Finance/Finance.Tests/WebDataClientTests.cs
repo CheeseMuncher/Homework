@@ -22,7 +22,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
     public WebDataClientTests()
     {
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
+            .Setup(factory => factory.GetHistoricalDataYahooRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
             .Returns(Create<HttpRequestMessage>());
 
         _mockHandler.Protected()            
@@ -46,7 +46,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
         long startPayload = 0;
         long endPayload = 0;
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
+            .Setup(factory => factory.GetHistoricalDataYahooRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
             .Callback((string s, long l1, long l2) => 
             {
                 stockPayload = s;
@@ -70,7 +70,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
         // Arrange
         var factoryRequest = Create<HttpRequestMessage>();
         _mockFactory
-            .Setup(factory => factory.GetYahooFinanceRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
+            .Setup(factory => factory.GetHistoricalDataYahooRequest(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>()))
             .Returns(factoryRequest);        
 
         HttpRequestMessage payload = null!;

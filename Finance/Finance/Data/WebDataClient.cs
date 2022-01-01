@@ -19,7 +19,7 @@ public class WebDataClient : IWebDataClient
 
     public async Task<Response> GetYahooApiData(string stock, long start, long end, bool writeRawData = false)
     {
-        var request = _requestFactory.GetYahooFinanceRequest(stock, start, end);
+        var request = _requestFactory.GetHistoricalDataYahooRequest(stock, start, end);
         using (var response = await _client.SendAsync(request))
         {
             if (!response.IsSuccessStatusCode)
