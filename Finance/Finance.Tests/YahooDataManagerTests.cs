@@ -5,6 +5,7 @@ using Finance.Domain.Yahoo.Models;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -30,6 +31,10 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         _mockWebClient
             .Setup(client => client.GetYahooHistoryData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(response);
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithSinglePrice(Create<string>(), Create<long>(), Create<decimal>()));
 
         _mockFileClient
             .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
@@ -186,6 +191,147 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
+    public async Task GeneratePriceChartDataFromApi_InvokesWebClientWithCorrectArgs()
+    {
+        // Arrange
+        var dates = Create<DateTime[]>().OrderBy(d => d).ToArray();
+        var stocks = Create<string[]>();
+        var writeFlag = Create<bool>();
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks, writeFlag);
+
+        // Assert
+        var startDate = (long)dates.First().ToUnixTimeStamp();
+        var endDate = (long)dates.Last().ToUnixTimeStamp();
+        foreach (var stock in stocks)
+            _mockWebClient.Verify(client => client.GetYahooChartData(stock, startDate, endDate, writeFlag), Times.Once);
+
+        _mockWebClient.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GeneratePriceChartDataFromApi_GeneratesCsvWithHeaders()
+    {
+        // Arrange
+        var date = Create<DateTime>();        
+        var dates = new [] { date };
+        var stocks = Create<string[]>();
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks);
+
+        // Assert
+        writePayload.Should().NotBeNull();
+        var headerRow = writePayload.Split('\n').First();
+        headerRow.Should().Be(string.Join(",", QuoteKeys.Headers));
+    }
+
+    [Fact]
+    public async Task GeneratePriceChartDataFromApi_AddsPricesFromEachResponse()
+    {
+        // Arrange
+        var date = Create<DateTime>();
+        var unixDate = (long)date.ToUnixTimeStamp();
+        var dates = new [] { date };
+        var stocks = new [] { GE, DDD };
+        var gePrice = Create<decimal>();
+        var dddPrice = Create<decimal>();
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(GE, unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithSinglePrice(GE, unixDate, gePrice));
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(DDD, unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithSinglePrice(DDD, unixDate, dddPrice));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var geIndex = Array.FindIndex(headerRow.Split(","), val => val == GE);
+        var dddIndex = Array.FindIndex(headerRow.Split(","), val => val == DDD);
+
+        var dataRow = rows[1];
+        var data = dataRow.Split(",");
+        data[geIndex].Should().Be($"{gePrice}");
+        data[dddIndex].Should().Be($"{dddPrice}");
+    }
+
+    [Fact]
+    public async Task GeneratePriceChartDataFromApi_InterpolatesData()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;        
+        var dates = new [] { date, date.AddDays(1), date.AddDays(2) };
+        var yahooDates = dates.Select(d => (long)d.ToUnixTimeStamp()).ToArray();
+        var stocks = new [] { GE };
+        var prices = new [] { 1.2m, 0m, 3.6m };
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithMultiplePrices(GE, yahooDates, prices));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == GE);        
+        var data = rows[2].Split(",");
+        data[index].Should().Be($"{2.4m}");
+    }
+
+    [Fact]
+    public async Task GeneratePriceChartDataFromApi_HandlesExchangeSuffix()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;
+        var unixDate = (long)date.ToUnixTimeStamp();
+        var dates = new [] { date };
+        var stocks = new [] { SGE + ".L" };
+        var price = Create<decimal>();
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithSinglePrice(stocks.First(), unixDate, price));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var sgeIndex = Array.FindIndex(headerRow.Split(","), val => val == SGE);
+
+        var data = rows[1].Split(",");        
+        data[sgeIndex].Should().Be($"{price}");
+    }
+
+    [Fact]
     public void GeneratePriceHistoryDataFromFile_InvokesFileClientWithCorrectArgs()
     {
         // Arrange
@@ -304,4 +450,40 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var data = rows[2].Split(",");
         data[index].Should().Be($"{2.4m}");
     }
+
+    private ChartResponse CreateChartResponseWithSinglePrice(string stock, long date, decimal price) =>
+        new ChartResponse 
+            {
+                chart = new Chart
+                {
+                    
+                    result = new [] { new Result
+                    {
+                        meta = new Dictionary<string, object> { ["symbol"] = stock },
+                        timestamp = new [] { date },
+                        indicators = new Indicators 
+                        {
+                            quote = new [] { new Quote { close = new [] { price as decimal? } } }
+                        }
+                    }}
+                }
+            };
+
+    private ChartResponse CreateChartResponseWithMultiplePrices(string stock, long[] dates, decimal[] prices) =>
+        new ChartResponse 
+            {
+                chart = new Chart
+                {
+                    
+                    result = new [] { new Result
+                    {
+                        meta = new Dictionary<string, object> { ["symbol"] = stock },
+                        timestamp = dates,
+                        indicators = new Indicators 
+                        {
+                            quote = new [] { new Quote { close = prices.Select(p => p as decimal?).ToArray() } }
+                        }
+                    }}
+                }
+            };
 }
