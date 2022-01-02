@@ -10,6 +10,6 @@ public class YahooConstants
     public static class Endpoints
     {
         public static readonly string GetChart = "/stock/v3/get-chart";
-        public static readonly string GetHistoricalData = "stock/v3/get-historical-data";
+        public static readonly string GetHistoryData = "stock/v3/get-historical-data";
     }
 }
