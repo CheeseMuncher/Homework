@@ -14,20 +14,20 @@ public class FileDataClient : IFileDataClient
         _fileIO = fileIO ?? throw new ArgumentException(nameof(fileIO));
     }
 
-    public Response GetYahooFileData(string fileName)
+    public HistoryResponse GetYahooFileHistoryData(string fileName)
     {
         if (!_fileIO.FileExists(fileName))
-            return new Response();
+            return new HistoryResponse();
 
         var sb = new StringBuilder();
         foreach(var line in _fileIO.ReadLinesFromFile(fileName))
             sb.AppendLine(line);
 
-        return JsonSerializer.Deserialize<Response>(sb.ToString());
+        return JsonSerializer.Deserialize<HistoryResponse>(sb.ToString());
     }
 }
 
 public interface IFileDataClient
 {
-    Response GetYahooFileData(string fileName);
+    HistoryResponse GetYahooFileHistoryData(string fileName);
 }

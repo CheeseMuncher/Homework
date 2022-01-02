@@ -17,14 +17,14 @@ public class YahooDataManager
         _fileIO = fileIO ?? throw new NullReferenceException(nameof(fileIO));
     }
 
-    public async Task GeneratePriceDataFromApi(DateTime[] dates, string[] stocks, bool writeRawData = false)
+    public async Task GeneratePriceHistoryDataFromApi(DateTime[] dates, string[] stocks, bool writeRawData = false)
     {
         var start = (long)dates.OrderBy(d => d).First().ToUnixTimeStamp();
         var end = (long)dates.OrderBy(d => d).Last().ToUnixTimeStamp();
         var allPrices = new PriceSet();
         foreach(var stock in stocks)
         {
-            var response = await _webClient.GetYahooHistoricalData(stock, start, end, writeRawData);            
+            var response = await _webClient.GetYahooHistoryData(stock, start, end, writeRawData);            
             allPrices = allPrices.AddPrices(response.ToPriceSet(dates, stock.HandleSuffix()), stock.HandleSuffix());
         }
         var trimmedStocks = stocks.Select(s => s.HandleSuffix()).ToArray();
@@ -35,9 +35,9 @@ public class YahooDataManager
                 FileNameTemplate($"Prices_{string.Join("_", trimmedStocks)}", ".csv"));
     }
 
-    public void GeneratePriceDataFromFile(string fileName, string stock)
+    public void GeneratePriceHistoryDataFromFile(string fileName, string stock)
     {        
-        _fileIO.WriteText(_fileClient.GetYahooFileData(fileName)
+        _fileIO.WriteText(_fileClient.GetYahooFileHistoryData(fileName)
             .ToPriceSet(new DateTime[0], stock)
             .Interpolate(new [] { stock })
             .ConvertToCsv(QuoteKeys.Headers), 

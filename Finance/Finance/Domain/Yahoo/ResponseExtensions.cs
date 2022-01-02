@@ -6,7 +6,7 @@ namespace Finance.Domain.Yahoo;
 
 public static class ResponseExtensions
 {
-    public static PriceSet ToPriceSet(this Response result, DateTime[] allDates, string stock)
+    public static PriceSet ToPriceSet(this HistoryResponse result, DateTime[] allDates, string stock)
     {
         var prices = allDates.ToDictionary(date => date, date => new HashSet<StockPrice>());
         foreach (var price in result.prices)

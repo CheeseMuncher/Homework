@@ -15,7 +15,7 @@ public class ResultExtensionsTests : TestFixture
     {
         // Arrange
         var newDate = Create<DateTime>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
 
         // Act
         var result = apiResult.ToPriceSet(new [] { newDate }, Create<string>());
@@ -29,7 +29,7 @@ public class ResultExtensionsTests : TestFixture
     public void ToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
     {
         // Arrange
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
 
@@ -46,7 +46,7 @@ public class ResultExtensionsTests : TestFixture
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
 
@@ -63,7 +63,7 @@ public class ResultExtensionsTests : TestFixture
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices[0].close = 0m;
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
@@ -80,7 +80,7 @@ public class ResultExtensionsTests : TestFixture
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices = new [] { apiResult.prices.First() };
 
         // Act
@@ -95,7 +95,7 @@ public class ResultExtensionsTests : TestFixture
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices = new [] { apiResult.prices.First() };
         apiResult.prices.Single().close = 0.123456789m;
 

@@ -23,16 +23,16 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
 
     public YahooDataManagerTests()
     {
-        var response = Create<Response>();
+        var response = Create<HistoryResponse>();
         foreach(var price in response.prices)
             price.date *= 1000000;
 
         _mockWebClient
-            .Setup(client => client.GetYahooHistoricalData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .Setup(client => client.GetYahooHistoryData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(response);
 
         _mockFileClient
-            .Setup(client => client.GetYahooFileData(It.IsAny<string>()))
+            .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
             .Returns(response);
 
         Inject(_mockWebClient.Object);
@@ -41,7 +41,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public async Task GeneratePriceDataFromApi_InvokesWebClientWithCorrectArgs()
+    public async Task GeneratePriceHistoryDataFromApi_InvokesWebClientWithCorrectArgs()
     {
         // Arrange
         var dates = Create<DateTime[]>().OrderBy(d => d).ToArray();
@@ -49,19 +49,19 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var writeFlag = Create<bool>();
 
         // Act
-        await Sut.GeneratePriceDataFromApi(dates, stocks, writeFlag);
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks, writeFlag);
 
         // Assert
         var startDate = (long)dates.First().ToUnixTimeStamp();
         var endDate = (long)dates.Last().ToUnixTimeStamp();
         foreach (var stock in stocks)
-            _mockWebClient.Verify(client => client.GetYahooHistoricalData(stock, startDate, endDate, writeFlag), Times.Once);
+            _mockWebClient.Verify(client => client.GetYahooHistoryData(stock, startDate, endDate, writeFlag), Times.Once);
 
         _mockWebClient.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task GeneratePriceDataFromApi_GeneratesCsvWithHeaders()
+    public async Task GeneratePriceHistoryDataFromApi_GeneratesCsvWithHeaders()
     {
         // Arrange
         var date = Create<DateTime>();        
@@ -73,7 +73,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GeneratePriceDataFromApi(dates, stocks);
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks);
 
         // Assert
         writePayload.Should().NotBeNull();
@@ -82,7 +82,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public async Task GeneratePriceDataFromApi_AddsPricesFromEachResponse()
+    public async Task GeneratePriceHistoryDataFromApi_AddsPricesFromEachResponse()
     {
         // Arrange
         var date = Create<DateTime>();
@@ -93,12 +93,12 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var dddPrice = new Price { date = (long)unixDate, close = Create<decimal>() };
 
         _mockWebClient
-            .Setup(client => client.GetYahooHistoricalData(GE, unixDate, unixDate, It.IsAny<bool>()))
-            .ReturnsAsync(new Response { prices = new [] { gePrice }});
+            .Setup(client => client.GetYahooHistoryData(GE, unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(new HistoryResponse { prices = new [] { gePrice }});
 
         _mockWebClient
-            .Setup(client => client.GetYahooHistoricalData(DDD, unixDate, unixDate, It.IsAny<bool>()))
-            .ReturnsAsync(new Response { prices = new [] { dddPrice }});
+            .Setup(client => client.GetYahooHistoryData(DDD, unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(new HistoryResponse { prices = new [] { dddPrice }});
 
         string writePayload = null!;
         _mockFileIO
@@ -106,7 +106,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GeneratePriceDataFromApi(dates, stocks);
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks);
 
         // Assert
         var rows = writePayload.Split('\n');
@@ -121,7 +121,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public async Task GeneratePriceDataFromApi_InterpolatesData()
+    public async Task GeneratePriceHistoryDataFromApi_InterpolatesData()
     {
         // Arrange
         var date = Create<DateTime>().Date;        
@@ -135,8 +135,8 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         };
 
         _mockWebClient
-            .Setup(client => client.GetYahooHistoricalData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
-            .ReturnsAsync(new Response { prices = prices });
+            .Setup(client => client.GetYahooHistoryData(GE, It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .ReturnsAsync(new HistoryResponse { prices = prices });
 
         string writePayload = null!;
         _mockFileIO
@@ -144,7 +144,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GeneratePriceDataFromApi(dates, stocks);
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks);
 
         // Assert
         var rows = writePayload.Split('\n');
@@ -155,7 +155,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public async Task GeneratePriceDataFromApi_HandlesExchangeSuffix()
+    public async Task GeneratePriceHistoryDataFromApi_HandlesExchangeSuffix()
     {
         // Arrange
         var date = Create<DateTime>().Date;
@@ -165,8 +165,8 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var price = new Price { date = unixDate, close = Create<decimal>() };
 
         _mockWebClient
-            .Setup(client => client.GetYahooHistoricalData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))
-            .ReturnsAsync(new Response { prices = new [] { price }});
+            .Setup(client => client.GetYahooHistoryData(stocks.First(), unixDate, unixDate, It.IsAny<bool>()))
+            .ReturnsAsync(new HistoryResponse { prices = new [] { price }});
 
         string writePayload = null!;
         _mockFileIO
@@ -174,7 +174,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GeneratePriceDataFromApi(dates, stocks);
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks);
 
         // Assert
         var rows = writePayload.Split('\n');
@@ -186,21 +186,21 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public void GeneratePriceDataFromFile_InvokesFileClientWithCorrectArgs()
+    public void GeneratePriceHistoryDataFromFile_InvokesFileClientWithCorrectArgs()
     {
         // Arrange
         var file = Create<string>();
 
         // Act
-        Sut.GeneratePriceDataFromFile(file, Create<string>());
+        Sut.GeneratePriceHistoryDataFromFile(file, Create<string>());
 
         // Assert
-        _mockFileClient.Verify(client => client.GetYahooFileData(file), Times.Once);
+        _mockFileClient.Verify(client => client.GetYahooFileHistoryData(file), Times.Once);
         _mockFileClient.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public void GeneratePriceDataFromFile_GeneratesCsvWithHeaders()
+    public void GeneratePriceHistoryDataFromFile_GeneratesCsvWithHeaders()
     {
         // Arrange
         string writePayload = null!;
@@ -209,7 +209,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        Sut.GeneratePriceDataFromFile(Create<string>(), Create<string>());
+        Sut.GeneratePriceHistoryDataFromFile(Create<string>(), Create<string>());
 
         // Assert
         writePayload.Should().NotBeNull();
@@ -218,7 +218,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public void GeneratePriceDataFromFile_AddsPricesFromFileData()
+    public void GeneratePriceHistoryDataFromFile_AddsPricesFromFileData()
     {
         // Arrange
         var file = Create<string>();
@@ -226,8 +226,8 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var price = new Price { date = date, close = Create<decimal>() };
 
         _mockFileClient
-            .Setup(client => client.GetYahooFileData(It.IsAny<string>()))
-            .Returns(new Response { prices = new [] { price }});
+            .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
+            .Returns(new HistoryResponse { prices = new [] { price }});
 
         string writePayload = null!;
         _mockFileIO
@@ -235,7 +235,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        Sut.GeneratePriceDataFromFile(file, GE);
+        Sut.GeneratePriceHistoryDataFromFile(file, GE);
 
         // Assert
         var rows = writePayload.Split('\n');
@@ -246,13 +246,13 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public void GeneratePriceDataFromFile_GeneratesOneRowPerDate()
+    public void GeneratePriceHistoryDataFromFile_GeneratesOneRowPerDate()
     {
         // Arrange
         var date = Create<DateTime>().Date;
         _mockFileClient
-            .Setup(client => client.GetYahooFileData(It.IsAny<string>()))
-            .Returns(new Response { prices = new [] 
+            .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
+            .Returns(new HistoryResponse { prices = new [] 
             {
                 new Price { date = (long)date.AddDays(1).ToUnixTimeStamp(), close = Create<decimal>() },
                 new Price { date = (long)date.AddDays(2).ToUnixTimeStamp(), close = Create<decimal>() },
@@ -265,7 +265,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        Sut.GeneratePriceDataFromFile(Create<string>(), GE);
+        Sut.GeneratePriceHistoryDataFromFile(Create<string>(), GE);
 
         // Assert
         var rows = writePayload.Split('\n');
@@ -274,15 +274,15 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     }
 
     [Fact]
-    public void GeneratePriceDataFromFile_InterpolatesData()
+    public void GeneratePriceHistoryDataFromFile_InterpolatesData()
     {
         // Arrange
         var date = Create<DateTime>().Date;        
         var stocks = new [] { GE };
 
         _mockFileClient
-            .Setup(client => client.GetYahooFileData(It.IsAny<string>()))
-            .Returns(new Response { prices = new [] 
+            .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
+            .Returns(new HistoryResponse { prices = new [] 
             {
                 new Price { date = (long)date.AddDays(0).ToUnixTimeStamp(), close = 1.2m },
                 new Price { date = (long)date.AddDays(1).ToUnixTimeStamp(), close = 0m },
@@ -295,7 +295,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        Sut.GeneratePriceDataFromFile(Create<string>(), GE);
+        Sut.GeneratePriceHistoryDataFromFile(Create<string>(), GE);
 
         // Assert
         var rows = writePayload.Split('\n');
