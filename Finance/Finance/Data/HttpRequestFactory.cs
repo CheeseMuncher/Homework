@@ -4,11 +4,11 @@ namespace Finance.Data;
 
 public class HttpRequestFactory : IHttpRequestFactory 
 {
-    public HttpRequestMessage GetHistoricalDataYahooRequest(string stock, long start, long end) =>
+    public HttpRequestMessage GetHistoryDataYahooRequest(string stock, long start, long end) =>
         new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri($"{GetHistoricalDataUri()}{GetHistoricalDataQueryString(stock, start, end)}"),
+            RequestUri = new Uri($"{GetHistoryDataUri()}{GetHistoryDataQueryString(stock, start, end)}"),
             Headers = 
             {
                 { YahooConstants.RapidApiHeaderKey, YahooFinanceApiCredentials.RapidApiHeaderValue },
@@ -16,14 +16,33 @@ public class HttpRequestFactory : IHttpRequestFactory
             }
         };
 
-    private string GetHistoricalDataUri() =>
-        $"{YahooConstants.BasePath}{YahooConstants.Endpoints.GetHistoricalData}";
+    public HttpRequestMessage GetChartDataYahooRequest(string stock, long start, long end) =>
+        new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"{GetChartDataUri()}{GetChartDataQueryString(stock, start, end)}"),
+            Headers = 
+            {
+                { YahooConstants.RapidApiHeaderKey, YahooFinanceApiCredentials.RapidApiHeaderValue },
+                { YahooConstants.HostHeaderKey, YahooConstants.HostHeaderValue }
+            }
+        };
+
+    private string GetHistoryDataUri() =>
+        $"{YahooConstants.BasePath}{YahooConstants.Endpoints.GetHistoryData}";
     
-    private string GetHistoricalDataQueryString(string stock, long start, long end) =>
-        $"?symbol={stock}&from={start}&to={end}&events=div&interval=1d&region=UK";
+    private string GetHistoryDataQueryString(string stock, long start, long end) =>
+        $"?symbol={stock}&from={start}&to={end}&events=div&interval=1d&region=GB";
+
+    private string GetChartDataUri() =>
+        $"{YahooConstants.BasePath}{YahooConstants.Endpoints.GetChart}";
+    
+    private string GetChartDataQueryString(string stock, long start, long end) =>
+        $"?symbol={stock}&period1={start}&period2={end}&range=max&interval=1d&region=GB";
 }
 
 public interface IHttpRequestFactory
 {
-    HttpRequestMessage GetHistoricalDataYahooRequest(string stock, long start, long end);
+    HttpRequestMessage GetHistoryDataYahooRequest(string stock, long start, long end);
+    HttpRequestMessage GetChartDataYahooRequest(string stock, long start, long end);
 }
