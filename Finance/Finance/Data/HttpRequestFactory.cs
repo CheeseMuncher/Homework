@@ -38,7 +38,7 @@ public class HttpRequestFactory : IHttpRequestFactory
         $"{YahooConstants.BasePath}{YahooConstants.Endpoints.GetChart}";
     
     private string GetChartDataQueryString(string stock, long start, long end) =>
-        $"?symbol={stock}&period1={start}&period2={end}&range=max&interval=1d&region=GB";
+        $"?symbol={stock}&period1={start}&period2={end}&range=10y&interval=1d&region=GB";
 }
 
 public interface IHttpRequestFactory
