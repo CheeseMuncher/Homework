@@ -26,7 +26,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     }
 
     [Fact]
-    public void GetYahooFileData_ReturnsEmptyResponse_IfFileDoesNotExist()
+    public void GetYahooFileHistoryData_ReturnsEmptyResponse_IfFileDoesNotExist()
     {
         // Arrange
         _mockFileIO
@@ -34,20 +34,20 @@ public class FileDataClientTests : TestFixture<FileDataClient>
             .Returns(false);
 
         // Act
-        var result = Sut.GetYahooFileData(Create<string>());
+        var result = Sut.GetYahooFileHistoryData(Create<string>());
 
         // Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
-    public void GetYahooFileData_ReadsDataFromCorrectFile()
+    public void GetYahooFileHistoryData_ReadsDataFromCorrectFile()
     {
         // Arrange
         var fileName = Create<string>();
         
         // Act
-        Sut.GetYahooFileData(fileName);
+        Sut.GetYahooFileHistoryData(fileName);
 
         // Assert
         _mockFileIO.Verify(io => io.ReadLinesFromFile(fileName), Times.Once);
@@ -56,26 +56,26 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     }
 
     [Fact]
-    public void GetYahooFileData_DeserialisesFileData()
+    public void GetYahooFileHistoryData_DeserialisesFileData()
     {
         // Arrange
-        var response = Create<Response>();
+        var response = Create<HistoryResponse>();
         _mockFileIO
             .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
             .Returns(new [] { JsonSerializer.Serialize(response) } );
         
         // Act
-        var result = Sut.GetYahooFileData(Create<string>());
+        var result = Sut.GetYahooFileHistoryData(Create<string>());
 
         // Assert
         result.Should().BeEquivalentTo(response);
     }
 
     [Fact]
-    public void GetYahooFileData_DeserialisesMultilineFileData()
+    public void GetYahooFileHistoryData_DeserialisesMultilineFileData()
     {
         // Arrange
-        var response = Create<Response>();
+        var response = Create<HistoryResponse>();
         var json = JsonSerializer.Serialize(response);
         json = json.Replace("{", "{\n").Replace("}", "}\n");
 
@@ -84,7 +84,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
             .Returns(json.Split("\n").ToArray());
         
         // Act
-        var result = Sut.GetYahooFileData(Create<string>());
+        var result = Sut.GetYahooFileHistoryData(Create<string>());
 
         // Assert
         result.Should().BeEquivalentTo(response);

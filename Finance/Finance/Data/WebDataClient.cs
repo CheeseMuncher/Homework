@@ -17,7 +17,7 @@ public class WebDataClient : IWebDataClient
         _requestFactory = requestFactory ?? throw new ArgumentException(nameof(requestFactory));
     }
 
-    public async Task<Response> GetYahooHistoricalData(string stock, long start, long end, bool writeRawData = false)
+    public async Task<HistoryResponse> GetYahooHistoryData(string stock, long start, long end, bool writeRawData = false)
     {
         var request = _requestFactory.GetHistoricalDataYahooRequest(stock, start, end);
         using (var response = await _client.SendAsync(request))
@@ -29,12 +29,12 @@ public class WebDataClient : IWebDataClient
             if (writeRawData)
                 _fileIO.WriteText(body, $"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss")}_RawData_{stock}.json");
 
-            return JsonSerializer.Deserialize<Response>(body.ToString());
+            return JsonSerializer.Deserialize<HistoryResponse>(body.ToString());
         }
     }
 }
 
 public interface IWebDataClient
 {
-    Task<Response> GetYahooHistoricalData(string stock, long start, long end, bool writeRawData = false);
+    Task<HistoryResponse> GetYahooHistoryData(string stock, long start, long end, bool writeRawData = false);
 }

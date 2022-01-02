@@ -56,7 +56,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             .Returns(Create<HttpRequestMessage>());
 
         // Act
-        await Sut.GetYahooHistoricalData(stock, start, end);
+        await Sut.GetYahooHistoryData(stock, start, end);
 
         // Assert
         stockPayload.Should().Be(stock);
@@ -80,7 +80,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             .ReturnsAsync(new HttpResponseMessage { Content = new StringContent("{}")});
 
         // Act
-        await Sut.GetYahooHistoricalData(Create<string>(), Create<long>(), Create<long>());
+        await Sut.GetYahooHistoryData(Create<string>(), Create<long>(), Create<long>());
 
         // Assert
         payload.Should().NotBeNull();
@@ -93,7 +93,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
         // Arrange
 
         // Act
-        await Sut.GetYahooHistoricalData(Create<string>(), Create<long>(), Create<long>());
+        await Sut.GetYahooHistoryData(Create<string>(), Create<long>(), Create<long>());
 
         // Assert
         _mockFileIO.Verify(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -105,7 +105,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
     {
         // Arrange
         var stock = Create<string>();
-        var response = Create<Response>();
+        var response = Create<HistoryResponse>();
         var content = JsonSerializer.Serialize(response);
         _mockHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())                
@@ -116,7 +116,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             });
 
         // Act
-        await Sut.GetYahooHistoricalData(stock, Create<long>(), Create<long>(), true);
+        await Sut.GetYahooHistoryData(stock, Create<long>(), Create<long>(), true);
 
         // Assert
         _mockFileIO.Verify(io => io.WriteText(content, It.Is<string>(str => str.Contains(stock))), Times.Once);
@@ -127,7 +127,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
     public async void GetYahooApiData_DeserialisesResponseData()
     {
         // Arrange
-        var response = Create<Response>();
+        var response = Create<HistoryResponse>();
         var content = JsonSerializer.Serialize(response);
         _mockHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())                
@@ -138,7 +138,7 @@ public class WebDataClientTests : TestFixture<WebDataClient>
             });
 
         // Act
-        var result = await Sut.GetYahooHistoricalData(Create<string>(), Create<long>(), Create<long>(), true);
+        var result = await Sut.GetYahooHistoryData(Create<string>(), Create<long>(), Create<long>(), true);
 
         // Assert
         result.Should().BeEquivalentTo(response);
