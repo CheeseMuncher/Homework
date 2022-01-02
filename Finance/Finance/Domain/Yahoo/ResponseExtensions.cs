@@ -1,4 +1,5 @@
 using Finance.Domain.Prices;
+using Finance.Domain.Yahoo.Models;
 using Finance.Utils;
 
 namespace Finance.Domain.Yahoo;

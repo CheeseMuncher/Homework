@@ -1,4 +1,4 @@
-namespace Finance.Domain.Yahoo;
+namespace Finance.Domain.Yahoo.Models;
 
 public class DividendSet
 {
