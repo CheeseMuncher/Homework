@@ -35,7 +35,7 @@ public static class ResponseExtensions
             {
                 prices[dates[i]].Add(new StockPrice 
                 { 
-                    Stock = result.meta["symbol"].ToString(), 
+                    Stock = result.meta["symbol"].ToString().HandleSuffix(), 
                     Price = price.RoundToSignificantDigits(6)
                 });                    
             }

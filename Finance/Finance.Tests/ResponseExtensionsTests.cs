@@ -160,6 +160,26 @@ public class ResponseExtensionsTests : TestFixture
     }
 
     [Fact]
+    public void ChartResultToPriceSet_AddsStockPricesFromResultWithoutSuffix()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.meta["symbol"] = stock + ".L";
+        for(int i = 0; i < apiResult.timestamp.Count(); i++)
+            apiResult.timestamp[i] *= 1000000;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert
+        foreach (var stamp in apiResult.timestamp)
+        {
+            result.Prices[stamp.UnixToDateTime().Date].Should().Contain(sp => sp.Stock == stock);
+        }
+    }
+
+    [Fact]
     public void ChartResultToPriceSet_TakesClosingPrice()
     {
         // Arrange
