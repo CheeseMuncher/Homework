@@ -51,6 +51,6 @@ class Program
 
         var dates = Reference.GetMarketDays(startDate.AddDays(-1), endDate.AddDays(1));
 
-        await _yahooDataManager.GeneratePriceHistoryDataFromApi(dates, stocks, writeRawData:true);
+        await _yahooDataManager.GeneratePriceChartDataFromApi(dates, stocks, writeRawData:true);
     }
 }
