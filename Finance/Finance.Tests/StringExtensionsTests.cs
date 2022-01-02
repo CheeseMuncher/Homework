@@ -10,7 +10,7 @@ public class StringExtensionsTests : TestFixture
     [InlineData("GE", "GE")]
     [InlineData("HSBA.L", "HSBA")]
     [InlineData("VAL.L", "VAL")]
-    [InlineData("GBPUSD=X", "GBPUSD")]
+    [InlineData("GBP=X", "USDGBP")]
     public void HandleSuffix_TrimsSuffix(string input, string output)
     {
         // Arrange
