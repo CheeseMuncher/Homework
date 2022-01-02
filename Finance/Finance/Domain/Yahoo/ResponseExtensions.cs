@@ -31,13 +31,15 @@ public static class ResponseExtensions
                 prices[dates[i]] = new HashSet<StockPrice>();
 
             var price = result.indicators.quote.First().close[i] ?? 0;
-            prices[dates[i]].Add(new StockPrice 
-            { 
-                Stock = result.meta["symbol"].ToString(), 
-                Price = price.RoundToSignificantDigits(6)
-            });                    
+            if (price > 0)
+            {
+                prices[dates[i]].Add(new StockPrice 
+                { 
+                    Stock = result.meta["symbol"].ToString(), 
+                    Price = price.RoundToSignificantDigits(6)
+                });                    
+            }
         }
         return new PriceSet { Prices = prices };
     }    
 }
-

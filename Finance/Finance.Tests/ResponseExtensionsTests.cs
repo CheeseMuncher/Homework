@@ -178,6 +178,24 @@ public class ResponseExtensionsTests : TestFixture
     }
 
     [Fact]
+    public void ChartResultToPriceSet_DoesNotAddZeroPrices()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { apiResult.timestamp.First() };
+        apiResult.indicators.quote = new [] { apiResult.indicators.quote.First() };
+        apiResult.indicators.quote.Single().close[0] = 0m;
+        apiResult.meta["symbol"] = stock;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert        
+        result.Prices.Values.Single().Should().BeEmpty();
+    }
+
+    [Fact]
     public void ChartResultToPriceSet_RoundsClosingPrice()
     {
         // Arrange
