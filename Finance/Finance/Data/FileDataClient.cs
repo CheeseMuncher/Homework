@@ -16,18 +16,29 @@ public class FileDataClient : IFileDataClient
 
     public HistoryResponse GetYahooFileHistoryData(string fileName)
     {
+        return GetYahooFileData<HistoryResponse>(fileName);
+    }
+
+    public ChartResponse GetYahooFileChartData(string fileName)
+    {
+        return GetYahooFileData<ChartResponse>(fileName);
+    }
+
+    private T GetYahooFileData<T>(string fileName) where T : new()
+    {
         if (!_fileIO.FileExists(fileName))
-            return new HistoryResponse();
+            return new T();
 
         var sb = new StringBuilder();
         foreach(var line in _fileIO.ReadLinesFromFile(fileName))
             sb.AppendLine(line);
 
-        return JsonSerializer.Deserialize<HistoryResponse>(sb.ToString());
+        return JsonSerializer.Deserialize<T>(sb.ToString());
     }
 }
 
 public interface IFileDataClient
 {
     HistoryResponse GetYahooFileHistoryData(string fileName);
+    ChartResponse GetYahooFileChartData(string fileName);
 }

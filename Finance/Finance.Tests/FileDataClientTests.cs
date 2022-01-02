@@ -89,4 +89,69 @@ public class FileDataClientTests : TestFixture<FileDataClient>
         // Assert
         result.Should().BeEquivalentTo(response);
     }            
+
+    [Fact]
+    public void GetYahooFileChartData_ReturnsEmptyResponse_IfFileDoesNotExist()
+    {
+        // Arrange
+        _mockFileIO
+            .Setup(io => io.FileExists(It.IsAny<string>()))
+            .Returns(false);
+
+        // Act
+        var result = Sut.GetYahooFileChartData(Create<string>());
+
+        // Assert
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void GetYahooFileChartData_ReadsDataFromCorrectFile()
+    {
+        // Arrange
+        var fileName = Create<string>();
+        
+        // Act
+        Sut.GetYahooFileChartData(fileName);
+
+        // Assert
+        _mockFileIO.Verify(io => io.ReadLinesFromFile(fileName), Times.Once);
+        _mockFileIO.Verify(io => io.FileExists(fileName), Times.Once);
+        _mockFileIO.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void GetYahooFileChartData_DeserialisesFileData()
+    {
+        // Arrange
+        var response = Create<ChartResponse>();
+        _mockFileIO
+            .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
+            .Returns(new [] { JsonSerializer.Serialize(response) } );
+        
+        // Act
+        var result = Sut.GetYahooFileChartData(Create<string>());
+
+        // Assert
+        result.Should().BeEquivalentTo(response);
+    }
+
+    [Fact]
+    public void GetYahooFileChartData_DeserialisesMultilineFileData()
+    {
+        // Arrange
+        var response = Create<ChartResponse>();
+        var json = JsonSerializer.Serialize(response);
+        json = json.Replace("{", "{\n").Replace("}", "}\n");
+
+        _mockFileIO
+            .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
+            .Returns(json.Split("\n").ToArray());
+        
+        // Act
+        var result = Sut.GetYahooFileChartData(Create<string>());
+
+        // Assert
+        result.Should().BeEquivalentTo(response);
+    }            
 }
