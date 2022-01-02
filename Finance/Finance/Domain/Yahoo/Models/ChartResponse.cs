@@ -1,6 +1,6 @@
 namespace Finance.Domain.Yahoo.Models;
 
-public class Response
+public class ChartResponse
 {
     public Chart chart {get;set;} = null!;
 }
