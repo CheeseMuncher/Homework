@@ -2,10 +2,14 @@ namespace Finance.Utils;
 
 public static class StringExtensions
 {
-    public static string HandleSuffix(this string stock) =>
-        
-        stock.EndsWith(".L")
-            || stock.EndsWith("=X")
-                ? stock[..^2] 
-                : stock;
+    public static string HandleSuffix(this string stock)
+    {
+        if (stock.EndsWith("=X"))
+            return $"USD{stock[..^2]}";
+
+        if (stock.EndsWith(".L"))
+            return stock[..^2];
+
+        return stock;
+    }
 }
