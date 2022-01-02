@@ -1,6 +1,6 @@
 using Finance.Data;
 using Finance.Utils;
-using Finance.Domain.Yahoo;
+using Finance.Domain.Yahoo.Models;
 using FluentAssertions;
 using Moq;
 using System.Linq;

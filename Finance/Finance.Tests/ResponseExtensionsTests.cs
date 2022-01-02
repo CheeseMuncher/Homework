@@ -1,4 +1,5 @@
 using Finance.Domain.Yahoo;
+using Finance.Domain.Yahoo.Models;
 using Finance.Utils;
 using FluentAssertions;
 using System;
