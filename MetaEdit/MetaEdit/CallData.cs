@@ -24,6 +24,7 @@ namespace MetaEdit
         Unknown = 0,
         Dialed = 1, // US spelling is deliberate
         Received = 2,
-        Missed = 3
+        Missed = 3,
+        Rejected = 4
     }
 }

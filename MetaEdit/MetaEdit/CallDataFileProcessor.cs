@@ -75,14 +75,19 @@ namespace MetaEdit
         {
             if (_callDataFileOperations.TryExtractFileName(filePath, out string fileName))
             {
-                var duration = GetDurationString(filePath);
+                var duration = filePath.EndsWith(".mp3") 
+                    ? GetTagLibDuration(filePath)
+                    : GetMediaInfoDuration(filePath);
                 return _callDataDecoder.DecodeFileName(fileName, duration);
             }
 
             throw new ArgumentException($"{nameof(CallDataFileProcessor)}.{nameof(ExtractCallData)} could not extract file name from path {filePath}");
         }
 
-        private string GetDurationString(string filePath)
+        private string GetTagLibDuration(string filePath) => 
+            TagLib.File.Create(filePath).Properties.Duration.ToString();
+            
+        private string GetMediaInfoDuration(string filePath)
         {
             _mediaInfo.Open(filePath);
             return _mediaInfo
@@ -91,15 +96,12 @@ namespace MetaEdit
                 .FirstOrDefault(line => line.StartsWith("Duration"))
                 ?.Split(":")
                 ?.Last();
-        }
+        }            
 
-        private CallData TryGetMatch(CallData[] callLog, CallData callData)
-        {
-            return callLog
-                ?.LastOrDefault(cl =>
-                    cl.CallType != CallType.Missed
-                    && cl.CallTime < callData.CallTime
-                    && callData.CallTime.AddMinutes(-1) < cl.CallTime);
-        }
+        private CallData TryGetMatch(CallData[] callLog, CallData callData) =>
+            callLog?.LastOrDefault(cl =>
+                cl.CallType != CallType.Missed
+                && cl.CallTime < callData.CallTime
+                && callData.CallTime.AddMinutes(-2) < cl.CallTime);
     }
 }
