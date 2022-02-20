@@ -66,5 +66,22 @@ namespace MetaEditTests
             ex.Message.Should().Contain("1");
             ex.Message.Should().Contain(param1);
         }
+
+        [Fact]
+        public void DecodeFileName_HandlesDoubleQuotesInInput()
+        {
+            // Arrange
+            var input = "\"Bupa Dental Care Haven Grenn, Ealing\",02089981712,18 Mar 2021 17:28,Dialed,00:00:09";
+
+            // Act
+            var result = Sut.DecodeFileName(input);
+
+            // Assert
+            result.CallTime.Should().Be(new DateTime(2021, 03, 18, 17, 28, 00));
+            result.CallType.Should().Be(CallType.Dialed);
+            result.ContactName.Should().Be("Bupa Dental Care Haven Grenn, Ealing");
+            result.ContactNumber.Should().Be("02089981712");
+            result.CallDuration.Should().Be(TimeSpan.Parse("00:00:09"));
+        }               
     }
 }
