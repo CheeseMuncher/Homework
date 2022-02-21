@@ -30,7 +30,7 @@ public static class ResponseExtensions
             if(!prices.ContainsKey(dates[i]))
                 prices[dates[i]] = new HashSet<StockPrice>();
 
-            var price = result.indicators.quote.First().close[i] ?? 0;
+            var price = result.indicators.quote.First().close[i];
             if (price > 0)
             {
                 prices[dates[i]].Add(new StockPrice 
