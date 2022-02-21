@@ -51,6 +51,15 @@ public class YahooDataManager
                 FileNameTemplate($"Prices_{stock}", ".csv"));
     }
 
+    public void GeneratePriceChartDataFromFile(string fileName, string stock)
+    {        
+        _fileIO.WriteText(_fileClient.GetYahooFileChartData(fileName).chart.result.Single()
+            .ToPriceSet(new DateTime[0])
+            .Interpolate(new [] { stock })
+            .ConvertToCsv(QuoteKeys.Headers), 
+                FileNameTemplate($"Prices_{stock}", ".csv"));
+    }
+
     private async Task GeneratePriceDataFromApi(Func<PriceSet, string, DateTime[], long, long, bool, Task> dataDelegate, DateTime[] dates, string[] stocks, bool writeRawData = false)
     {
         var start = (long)dates.OrderBy(d => d).First().ToUnixTimeStamp();

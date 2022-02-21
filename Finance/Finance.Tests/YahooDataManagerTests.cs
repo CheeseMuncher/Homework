@@ -40,6 +40,10 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
             .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
             .Returns(response);
 
+        _mockFileClient
+            .Setup(client => client.GetYahooFileChartData(It.IsAny<string>()))
+            .Returns(CreateChartResponseWithSinglePrice(Create<string>(), Create<long>(), Create<decimal>()));
+
         Inject(_mockWebClient.Object);
         Inject(_mockFileClient.Object);
         Inject(_mockFileIO.Object);
@@ -442,6 +446,134 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
 
         // Act
         Sut.GeneratePriceHistoryDataFromFile(Create<string>(), GE);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == GE);        
+        var data = rows[2].Split(",");
+        data[index].Should().Be($"{2.4m}");
+    }
+
+    [Fact]
+    public void GeneratePriceChartDataFromFile_InvokesFileClientWithCorrectArgs()
+    {
+        // Arrange
+        var file = Create<string>();
+
+        // Act
+        Sut.GeneratePriceChartDataFromFile(file, Create<string>());
+
+        // Assert
+        _mockFileClient.Verify(client => client.GetYahooFileChartData(file), Times.Once);
+        _mockFileClient.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void GeneratePriceChartDataFromFile_GeneratesCsvWithHeaders()
+    {
+        // Arrange
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GeneratePriceChartDataFromFile(Create<string>(), Create<string>());
+
+        // Assert
+        writePayload.Should().NotBeNull();
+        var headerRow = writePayload.Split('\n').First();
+        headerRow.Should().Be(string.Join(",", QuoteKeys.Headers));
+    }
+
+    [Fact]
+    public void GeneratePriceChartDataFromFile_AddsPricesFromFileData()
+    {
+        // Arrange
+        var file = Create<string>();
+        var date = (long)Create<DateTime>().Date.ToUnixTimeStamp();
+        var price = Create<decimal>();
+
+        _mockFileClient
+            .Setup(client => client.GetYahooFileChartData(It.IsAny<string>()))
+            .Returns(CreateChartResponseWithSinglePrice(GE, date, price));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GeneratePriceChartDataFromFile(file, GE);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == GE);        
+        var data = rows[1].Split(",").ToArray();
+        data[index].Should().Be($"{price}");
+    }
+
+    [Fact]
+    public void GeneratePriceChartDataFromFile_GeneratesOneRowPerDate()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;
+        var dates = new [] 
+        { 
+            (long)date.AddDays(1).ToUnixTimeStamp(),
+            (long)date.AddDays(2).ToUnixTimeStamp(),
+            (long)date.AddDays(3).ToUnixTimeStamp()
+        };
+        var prices = new [] { Create<decimal>(), Create<decimal>(), Create<decimal>() };
+        _mockFileClient
+            .Setup(client => client.GetYahooFileChartData(It.IsAny<string>()))
+            .Returns(CreateChartResponseWithMultiplePrices(Create<string>(), dates, prices));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GeneratePriceChartDataFromFile(Create<string>(), GE);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        for (int i = 1; i <= 3; i++)   
+            rows[i].Split(",").First().Should().Be(date.AddDays(i).ToString("yyyy-MM-dd"));
+    }
+
+    [Fact]
+    public void GeneratePriceChartDataFromFile_InterpolatesData()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;        
+        var stocks = new [] { GE };
+        var dates = new [] 
+        { 
+            (long)date.AddDays(1).ToUnixTimeStamp(),
+            (long)date.AddDays(2).ToUnixTimeStamp(),
+            (long)date.AddDays(3).ToUnixTimeStamp()
+        };
+        var prices = new [] { 1.2m, 0, 3.6m };
+        _mockFileClient
+            .Setup(client => client.GetYahooFileChartData(It.IsAny<string>()))
+            .Returns(CreateChartResponseWithMultiplePrices(Create<string>(), dates, prices));
+
+
+        _mockFileClient
+            .Setup(client => client.GetYahooFileChartData(It.IsAny<string>()))
+            .Returns(CreateChartResponseWithMultiplePrices(GE, dates, prices));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GeneratePriceChartDataFromFile(Create<string>(), GE);
 
         // Assert
         var rows = writePayload.Split('\n');
