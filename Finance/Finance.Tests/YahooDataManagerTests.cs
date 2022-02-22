@@ -26,7 +26,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     {
         var response = Create<HistoryResponse>();
         foreach(var price in response.prices)
-            price.date *= 1000000;
+            price.date = ValidUnixDate(Create<long>());
 
         _mockWebClient
             .Setup(client => client.GetYahooHistoryData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
@@ -239,7 +239,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     public async Task GeneratePriceChartDataFromApi_AddsPricesFromEachResponse()
     {
         // Arrange
-        var date = Create<DateTime>();
+        var date = Create<DateTime>().Date;
         var unixDate = (long)date.ToUnixTimeStamp();
         var dates = new [] { date };
         var stocks = new [] { GE, DDD };
@@ -519,7 +519,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     public void GeneratePriceChartDataFromFile_GeneratesOneRowPerDate()
     {
         // Arrange
-        var date = Create<DateTime>().Date;
+        var date = new DateTime(2016, 01, 01).AddDays(Create<int>()).Date;
         var dates = new [] 
         { 
             (long)date.AddDays(1).ToUnixTimeStamp(),
@@ -549,7 +549,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     public void GeneratePriceChartDataFromFile_InterpolatesData()
     {
         // Arrange
-        var date = Create<DateTime>().Date;        
+        var date = new DateTime(2016, 01, 01).AddDays(Create<int>()).Date;
         var stocks = new [] { GE };
         var dates = new [] 
         { 
@@ -618,4 +618,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
                     }}
                 }
             };
+
+    private long ValidUnixDate(long days) =>
+        (long)(new DateTime(2016, 01, 01).AddDays(days).ToUnixTimeStamp());
 }

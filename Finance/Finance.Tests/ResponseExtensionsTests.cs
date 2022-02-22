@@ -10,6 +10,8 @@ namespace Finance.Tests;
 
 public class ResponseExtensionsTests : TestFixture
 {
+    private readonly DateTime[] ValidDates = new [] { new DateTime(2020, 03, 13) };
+
     [Fact]
     public void HistoryResponseToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
     {
@@ -106,7 +108,7 @@ public class ResponseExtensionsTests : TestFixture
         result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);
     }
 
-        [Fact]
+    [Fact]
     public void ChartResultToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
     {
         // Arrange
@@ -123,6 +125,44 @@ public class ResponseExtensionsTests : TestFixture
     }
 
     [Fact]
+    public void ChartResultToPriceSet_CreatesKeyValuePairForPublicHoliday_IfNoDatesSupplied()
+    {
+        // Arrange
+        var start = (long)new DateTime(2020, 08, 28).ToUnixTimeStamp();
+        var end = (long)new DateTime(2020, 09, 01).ToUnixTimeStamp();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { start, end };
+        apiResult.meta["symbol"] = Create<string>();
+
+        // Act
+        var result = apiResult.ToPriceSet(new DateTime[0]);
+
+        // Assert
+        var publicHoliday = new DateTime(2020, 08, 31);
+        result.Prices.Keys.Should().Contain(publicHoliday);
+        result.Prices[publicHoliday].Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_CreatesKeyValuePairForPublicHoliday_IfNullSupplied()
+    {
+        // Arrange
+        var start = (long)new DateTime(2020, 08, 28).ToUnixTimeStamp();
+        var end = (long)new DateTime(2020, 09, 01).ToUnixTimeStamp();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { start, end };
+        apiResult.meta["symbol"] = Create<string>();
+
+        // Act
+        var result = apiResult.ToPriceSet(null);
+
+        // Assert
+        var publicHoliday = new DateTime(2020, 08, 31);
+        result.Prices.Keys.Should().Contain(publicHoliday);
+        result.Prices[publicHoliday].Should().BeEmpty();
+    }
+
+    [Fact]
     public void ChartResultToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
     {
         // Arrange
@@ -132,7 +172,7 @@ public class ResponseExtensionsTests : TestFixture
             apiResult.timestamp[i] *= 1000000;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(ValidDates);
 
         // Assert
         foreach (var stamp in apiResult.timestamp)
@@ -150,7 +190,7 @@ public class ResponseExtensionsTests : TestFixture
             apiResult.timestamp[i] *= 1000000;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(ValidDates);
 
         // Assert
         foreach (var stamp in apiResult.timestamp)
@@ -170,7 +210,7 @@ public class ResponseExtensionsTests : TestFixture
             apiResult.timestamp[i] *= 1000000;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(ValidDates);
 
         // Assert
         foreach (var stamp in apiResult.timestamp)
@@ -190,7 +230,7 @@ public class ResponseExtensionsTests : TestFixture
         apiResult.meta["symbol"] = stock;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(new [] { apiResult.timestamp.Single().UnixToDateTime().Date });
 
         // Assert
         var expectedPrice = apiResult.indicators.quote.Single().close[0];
@@ -209,7 +249,7 @@ public class ResponseExtensionsTests : TestFixture
         apiResult.meta["symbol"] = stock;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(new [] { apiResult.timestamp.Single().UnixToDateTime().Date });
 
         // Assert        
         result.Prices.Values.Single().Should().BeEmpty();
@@ -227,7 +267,7 @@ public class ResponseExtensionsTests : TestFixture
         apiResult.indicators.quote.Single().close[0] = 0.123456789m;
 
         // Act
-        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+        var result = apiResult.ToPriceSet(new [] { apiResult.timestamp.Single().UnixToDateTime().Date });
 
         // Assert        
         result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);

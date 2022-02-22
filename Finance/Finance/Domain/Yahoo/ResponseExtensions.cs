@@ -23,8 +23,11 @@ public static class ResponseExtensions
 
     public static PriceSet ToPriceSet(this Result result, DateTime[] allDates)
     {
-        var prices = allDates.ToDictionary(date => date, date => new HashSet<StockPrice>());
         var dates = result.timestamp?.Select(date => date.UnixToDateTime().Date).ToArray();
+        if ((allDates ?? new DateTime[0]).Count() == 0 )
+            allDates = Reference.GetMarketDays(dates.First(), dates.Last());
+
+        var prices = allDates.ToDictionary(date => date, date => new HashSet<StockPrice>());
         for (int i = 0; i < dates.Length; i++)
         {
             if(!prices.ContainsKey(dates[i]))
