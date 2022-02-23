@@ -71,7 +71,7 @@ public class YahooDataManager
         var trimmedStocks = stocks.Select(s => s.HandleSuffix()).ToArray();
         
         _fileIO.WriteText(allPrices
-            .Interpolate(stocks)
+            .Interpolate(trimmedStocks)
             .ConvertToCsv(QuoteKeys.Headers), 
                 FileNameTemplate($"Prices_{string.Join("_", trimmedStocks)}", ".csv"));
     }

@@ -162,7 +162,41 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var data = rows[2].Split(",");
         data[index].Should().Be($"{2.4m}");
     }
+    
+    [Fact]
+    public async Task GeneratePriceHistoryDataFromApi_InterpolatesDataWithSuffixHandling()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;        
+        var dates = new [] { date, date.AddDays(1), date.AddDays(2) };
+        var stocks = new [] { SGE + ".L" };
+        var prices = new []
+        {
+            new Price { date = (long)date.AddDays(0).ToUnixTimeStamp(), close = 1.2m },
+            new Price { date = (long)date.AddDays(1).ToUnixTimeStamp(), close = 0m },
+            new Price { date = (long)date.AddDays(2).ToUnixTimeStamp(), close = 3.6m },
+        };
 
+        _mockWebClient
+            .Setup(client => client.GetYahooHistoryData(stocks.First(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .ReturnsAsync(new HistoryResponse { prices = prices });
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceHistoryDataFromApi(dates, stocks);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == SGE);        
+        var data = rows[2].Split(",");
+        data[index].Should().Be($"{2.4m}");
+    }
+    
     [Fact]
     public async Task GeneratePriceHistoryDataFromApi_HandlesExchangeSuffix()
     {
@@ -300,6 +334,37 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
         var rows = writePayload.Split('\n');
         var headerRow = rows.First();
         var index = Array.FindIndex(headerRow.Split(","), val => val == GE);        
+        var data = rows[2].Split(",");
+        data[index].Should().Be($"{2.4m}");
+    }
+
+
+    [Fact]
+    public async Task GeneratePriceChartDataFromApi_InterpolatesDataWithSuffixHandling()
+    {
+        // Arrange
+        var date = Create<DateTime>().Date;        
+        var dates = new [] { date, date.AddDays(1), date.AddDays(2) };
+        var yahooDates = dates.Select(d => (long)d.ToUnixTimeStamp()).ToArray();
+        var stocks = new [] { SGE + ".L" };
+        var prices = new [] { 1.2m, 0m, 3.6m };
+
+        _mockWebClient
+            .Setup(client => client.GetYahooChartData(stocks.First(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
+            .ReturnsAsync(CreateChartResponseWithMultiplePrices(SGE, yahooDates, prices));
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        await Sut.GeneratePriceChartDataFromApi(dates, stocks);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == SGE);        
         var data = rows[2].Split(",");
         data[index].Should().Be($"{2.4m}");
     }
