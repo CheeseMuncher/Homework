@@ -1,4 +1,5 @@
 using Finance.Domain.Yahoo.Models;
+using Finance.Domain.TraderMade.Models;
 using Finance.Utils;
 using System.Text.Json;
 
@@ -7,14 +8,31 @@ namespace Finance.Data;
 public class WebDataClient : IWebDataClient
 {
     private readonly IFileIO _fileIO;
-    private readonly HttpClient _client;
+    private readonly IHttpClientFactory _clientFactory;
     private readonly IHttpRequestFactory _requestFactory;
+    private readonly JsonSerializerOptions _jsonOptions;
 
-    public WebDataClient(IFileIO fileIO, HttpClient client, IHttpRequestFactory requestFactory)
+    public WebDataClient(IFileIO fileIO, IHttpClientFactory clientFactory, IHttpRequestFactory requestFactory)
     {
         _fileIO = fileIO ?? throw new ArgumentException(nameof(fileIO));
-        _client = client ?? throw new ArgumentException(nameof(client));
+        _clientFactory = clientFactory ?? throw new ArgumentException(nameof(clientFactory));
         _requestFactory = requestFactory ?? throw new ArgumentException(nameof(requestFactory));
+        _jsonOptions = new JsonSerializerOptions();
+        _jsonOptions.Converters.Add(new DateTimeConverter());
+    }
+
+    public async IAsyncEnumerable<ForexHistoryResponse> GetTraderMadeHistoryData(string currencyPair, IEnumerable<DateTime> dates)
+    {
+
+        foreach (var date in dates)
+        {
+            var isoDate = date.ToString("yyyy-MM-dd");
+            var request = _requestFactory.GetHistoryDataTraderMadeRequest(currencyPair, isoDate);
+
+            using (var response = await _clientFactory.CreateClient(isoDate).SendAsync(request, default(CancellationToken)))
+                if (response.IsSuccessStatusCode)
+                    yield return JsonSerializer.Deserialize<ForexHistoryResponse>(await response.Content.ReadAsStringAsync(), _jsonOptions);
+        }        
     }
 
     public async Task<HistoryResponse> GetYahooHistoryData(string stock, long start, long end, bool writeRawData = false)
@@ -31,7 +49,7 @@ public class WebDataClient : IWebDataClient
 
     private async Task<T> GetYahooData<T>(HttpRequestMessage request, string stock, bool writeRawData) where T : new()
     {
-        using (var response = await _client.SendAsync(request))
+        using (var response = await _clientFactory.CreateClient(stock).SendAsync(request))
         {
             if (!response.IsSuccessStatusCode)
             {
@@ -43,13 +61,14 @@ public class WebDataClient : IWebDataClient
             if (writeRawData)
                 _fileIO.WriteText(body, $"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss")}_{typeof(T).Name}_{stock}.json");
 
-            return JsonSerializer.Deserialize<T>(body.ToString());
+            return JsonSerializer.Deserialize<T>(body.ToString(), _jsonOptions);
         }
     }
 }
 
 public interface IWebDataClient
 {
+    IAsyncEnumerable<ForexHistoryResponse> GetTraderMadeHistoryData(string currencyPair, IEnumerable<DateTime> dates);
     Task<HistoryResponse> GetYahooHistoryData(string stock, long start, long end, bool writeRawData = false);
     Task<ChartResponse> GetYahooChartData(string stock, long start, long end, bool writeRawData = false);
 }
