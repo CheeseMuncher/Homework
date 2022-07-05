@@ -1,5 +1,6 @@
 ﻿using MetaEdit.Conventions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MetaEdit.Decoding
@@ -16,13 +17,14 @@ namespace MetaEdit.Decoding
         public CallData DecodeFileName(string fileName, params string[] parameters)
         {
             var result = new CallData();
-            var components = fileName.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            var callDataType = typeof(CallData);
+            var components = fileName.Contains('"')
+                ? GetComponentsHandlingQuotes(fileName).ToArray()
+                : fileName.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
+            var callDataType = typeof(CallData);
             if (components[0] != components[1])
-            {
                 result.ContactName = components[0];
-            }
+
             result.ContactNumber = components[1];
 
             for (int i = 2; i < components.Length; i++)
@@ -44,6 +46,25 @@ namespace MetaEdit.Decoding
 
             result.CallDuration = _convention.GetTimeSpan(parameters.Single());
             return result;
+        }
+
+        private IEnumerable<string> GetComponentsHandlingQuotes(string fileName)
+        {
+            var sections = fileName.Split("\"");
+            if (sections.Count() % 2 == 0)
+            {
+                throw new Exception("Odd Number of double quotes in csv line");
+            }
+            var index = 0;
+            foreach (var section in sections)
+            {
+                if (index++ % 2 == 0)
+                    foreach (var split in section.Split(_convention.Separators.ToArray(), StringSplitOptions.RemoveEmptyEntries))
+                        yield return split;
+
+                else
+                    yield return section;
+            }
         }
     }
 }
