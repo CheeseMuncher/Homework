@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Paymentsense.Coding.Challenge.Api", "Paymentsense.Coding.Challenge.Api\Paymentsense.Coding.Challenge.Api.csproj", "{04E742B7-E136-47F1-86FD-E72220D14013}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Paymentsense.Coding.Challenge.Api.Tests", "Paymentsense.Coding.Challenge.Api.Tests\Paymentsense.Coding.Challenge.Api.Tests.csproj", "{29B33764-7D72-4940-90F9-28467B569288}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|x64.Build.0 = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Debug|x86.Build.0 = Debug|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|x64.ActiveCfg = Release|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|x64.Build.0 = Release|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|x86.ActiveCfg = Release|Any CPU
+		{04E742B7-E136-47F1-86FD-E72220D14013}.Release|x86.Build.0 = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|x64.Build.0 = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Debug|x86.Build.0 = Debug|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|x64.ActiveCfg = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|x64.Build.0 = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|x86.ActiveCfg = Release|Any CPU
+		{29B33764-7D72-4940-90F9-28467B569288}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B43FA89C-9979-4D77-B29A-FAAFA80619F7}
+	EndGlobalSection
+EndGlobal
