@@ -4,13 +4,20 @@ using ShoppingCart.Implementation;
 using ShoppingCart.Interfaces;
 using ShoppingCart.Models;
 using Shouldly;
+using System.Collections.Generic;
 
 namespace ShoppingCart.Tests
 {
     public class CartItemDiscountCalculatorTests
     {
         private readonly Fixture _fixture = new Fixture();
-        private readonly ICartItemDiscountCalculator _sut = new CartItemDiscountCalculator();
+
+        private readonly ICartItemDiscountCalculator _sut = new CartItemDiscountCalculator(new Dictionary<DiscountType, ICartItemDiscountCalculator>
+        {
+            [DiscountType.Category] = new CartItemCategoryDiscountCalculator(),
+            [DiscountType.Shipping] = new CartItemShippingDiscountCalculator(),
+            [DiscountType.Supplier] = new CartItemSupplierDiscountCalculator()
+        });
 
         [Test]
         public void CalculateLineTotal_AppliesNoDiscount_IfShippingDiscount()
@@ -33,7 +40,7 @@ namespace ShoppingCart.Tests
             product.Supplier = supplierDiscount.ToUpper();
 
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = supplierDiscount, DiscountPercentage = 1.23 };
+            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = supplierDiscount, DiscountPercentage = 1.23m };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -45,7 +52,7 @@ namespace ShoppingCart.Tests
         {
             var product = _fixture.Create<Product>();
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = _fixture.Create<string>(), DiscountPercentage = 2.34 };
+            var discount = new Discount { DiscountType = DiscountType.Supplier, DiscountedSupplier = _fixture.Create<string>(), DiscountPercentage = 2.34m };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -61,7 +68,7 @@ namespace ShoppingCart.Tests
             product.Categories = new[] { categoryDiscount.ToUpper() };
 
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = categoryDiscount, DiscountPercentage = 3.45 };
+            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = categoryDiscount, DiscountPercentage = 3.45m };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
@@ -73,7 +80,7 @@ namespace ShoppingCart.Tests
         {
             var product = _fixture.Create<Product>();
             var quantity = _fixture.Create<int>();
-            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = _fixture.Create<string>(), DiscountPercentage = 4.56 };
+            var discount = new Discount { DiscountType = DiscountType.Category, DiscountedCategory = _fixture.Create<string>(), DiscountPercentage = 4.56m };
 
             var result = _sut.CalculateLineTotal(product, quantity, discount);
 
