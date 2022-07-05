@@ -4,6 +4,6 @@ namespace ShoppingCart.Interfaces
 {
     public interface IShoppingCartCalculator
     {
-        double Total(ShoppingCartRequest request);
+        decimal Total(ShoppingCartRequest request);
     }
 }
