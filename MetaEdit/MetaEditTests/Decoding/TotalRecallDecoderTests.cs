@@ -37,7 +37,7 @@ namespace MetaEditTests
         public void DecodeFileName_DecodesPartialFileNameCorrectly()
         {
             // Arrange
-            var input = "2020-01-14@19-29-20_Out_Unknown.Contact (PrivateNumber).amr";
+            var input = "2020-01-14@19-29-20_Out_Unknown.Contact (Private Number).amr";
 
             // Act
             var result = Sut.DecodeFileName(input);
