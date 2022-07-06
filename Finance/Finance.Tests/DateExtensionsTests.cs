@@ -153,14 +153,14 @@ public class DateExtensionsTests : TestFixture
     public void IsGoodFriday_ThrowsException_IfGoodFridayMissingForRequestedYear()
     {
         // Arrange
-        var date = new DateTime(2012, 01, 01);
+        var date = new DateTime(2011, 01, 01);
 
         // Act
         Action action = () => date.IsGoodFriday();
 
         // Assert
         var ex = Assert.Throws<Exception>(action);
-        ex.Message.Should().Contain("2012");
+        ex.Message.Should().Contain("2011");
         ex.Message.Should().Contain("Good Friday");        
     }
 }

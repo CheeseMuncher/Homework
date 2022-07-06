@@ -37,7 +37,7 @@ class Program
     {
         var file = "2021-12-31T16:44:28_RawData_0P0000KM22.L.json";
         var stock = "0P0000KM22";
-        _yahooDataManager.GeneratePriceDataFromFile(file, stock);
+        _yahooDataManager.GeneratePriceHistoryDataFromFile(file, stock);
     }
 
     static async Task GenerateDataFromApi()
@@ -51,6 +51,6 @@ class Program
 
         var dates = Reference.GetMarketDays(startDate.AddDays(-1), endDate.AddDays(1));
 
-        await _yahooDataManager.GeneratePriceDataFromApi(dates, stocks, writeRawData:true);
+        await _yahooDataManager.GeneratePriceChartDataFromApi(dates, stocks, writeRawData:true);
     }
 }

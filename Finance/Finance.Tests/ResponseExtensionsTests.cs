@@ -1,4 +1,5 @@
 using Finance.Domain.Yahoo;
+using Finance.Domain.Yahoo.Models;
 using Finance.Utils;
 using FluentAssertions;
 using System;
@@ -7,14 +8,14 @@ using Xunit;
 
 namespace Finance.Tests;
 
-public class ResultExtensionsTests : TestFixture
+public class ResponseExtensionsTests : TestFixture
 {
     [Fact]
-    public void ToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
+    public void HistoryResponseToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
     {
         // Arrange
         var newDate = Create<DateTime>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
 
         // Act
         var result = apiResult.ToPriceSet(new [] { newDate }, Create<string>());
@@ -25,10 +26,10 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
-    public void ToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
+    public void HistoryResponseToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
     {
         // Arrange
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
 
@@ -41,11 +42,11 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
-    public void ToPriceSet_AddsStockPricesFromResult()
+    public void HistoryResponseToPriceSet_AddsStockPricesFromResult()
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
 
@@ -58,11 +59,11 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
-    public void ToPriceSet_DoesNotAddDividendPriceDataFromResult()
+    public void HistoryResponseToPriceSet_DoesNotAddDividendPriceDataFromResult()
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices[0].close = 0m;
         foreach(var price in apiResult.prices)
             price.date *= 1000000;
@@ -75,11 +76,11 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
-    public void ToPriceSet_TakesClosingPrice()
+    public void HistoryResponseToPriceSet_TakesClosingPrice()
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices = new [] { apiResult.prices.First() };
 
         // Act
@@ -90,16 +91,143 @@ public class ResultExtensionsTests : TestFixture
     }
 
     [Fact]
-    public void ToPriceSet_RoundsClosingPrice()
+    public void HistoryResponseToPriceSet_RoundsClosingPrice()
     {
         // Arrange
         var stock = Create<string>();
-        var apiResult = Create<Response>();
+        var apiResult = Create<HistoryResponse>();
         apiResult.prices = new [] { apiResult.prices.First() };
         apiResult.prices.Single().close = 0.123456789m;
 
         // Act
         var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), stock);
+
+        // Assert        
+        result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);
+    }
+
+        [Fact]
+    public void ChartResultToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
+    {
+        // Arrange
+        var newDate = Create<DateTime>();
+        var apiResult = Create<Result>();
+        apiResult.meta["symbol"] = Create<string>();
+
+        // Act
+        var result = apiResult.ToPriceSet(new [] { newDate });
+
+        // Assert
+        result.Prices.Keys.Should().Contain(newDate);
+        result.Prices[newDate].Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
+    {
+        // Arrange
+        var apiResult = Create<Result>();
+        apiResult.meta["symbol"] = Create<string>();
+        for(int i = 0; i < apiResult.timestamp.Count(); i++)
+            apiResult.timestamp[i] *= 1000000;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert
+        foreach (var stamp in apiResult.timestamp)
+            result.Prices.Keys.Should().Contain(stamp.UnixToDateTime().Date);
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_AddsStockPricesFromResult()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.meta["symbol"] = stock;
+        for(int i = 0; i < apiResult.timestamp.Count(); i++)
+            apiResult.timestamp[i] *= 1000000;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert
+        foreach (var stamp in apiResult.timestamp)
+        {
+            result.Prices[stamp.UnixToDateTime().Date].Should().Contain(sp => sp.Stock == stock);
+        }
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_AddsStockPricesFromResultWithoutSuffix()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.meta["symbol"] = stock + ".L";
+        for(int i = 0; i < apiResult.timestamp.Count(); i++)
+            apiResult.timestamp[i] *= 1000000;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert
+        foreach (var stamp in apiResult.timestamp)
+        {
+            result.Prices[stamp.UnixToDateTime().Date].Should().Contain(sp => sp.Stock == stock);
+        }
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_TakesClosingPrice()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { apiResult.timestamp.First() };
+        apiResult.indicators.quote = new [] { apiResult.indicators.quote.First() };
+        apiResult.meta["symbol"] = stock;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert
+        var expectedPrice = apiResult.indicators.quote.Single().close[0];
+        result.Prices.Values.Single().Single().Price.Should().Be(expectedPrice);
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_DoesNotAddZeroPrices()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { apiResult.timestamp.First() };
+        apiResult.indicators.quote = new [] { apiResult.indicators.quote.First() };
+        apiResult.indicators.quote.Single().close[0] = 0m;
+        apiResult.meta["symbol"] = stock;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
+
+        // Assert        
+        result.Prices.Values.Single().Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ChartResultToPriceSet_RoundsClosingPrice()
+    {
+        // Arrange
+        var stock = Create<string>();
+        var apiResult = Create<Result>();
+        apiResult.timestamp = new [] { apiResult.timestamp.First() };
+        apiResult.indicators.quote = new [] { apiResult.indicators.quote.First() };
+        apiResult.meta["symbol"] = stock;
+        apiResult.indicators.quote.Single().close[0] = 0.123456789m;
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>());
 
         // Assert        
         result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);

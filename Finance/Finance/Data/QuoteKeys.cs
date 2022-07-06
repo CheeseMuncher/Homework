@@ -10,7 +10,7 @@ public static class QuoteKeys
 {
     public static readonly string[] ForexTickers = new []
     {
-        "GBPUSD=X"
+        "GBP=X"
     };
 
     public static readonly string[] DelistedStocks = new []

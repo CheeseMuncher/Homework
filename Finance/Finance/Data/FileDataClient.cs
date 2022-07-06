@@ -1,4 +1,4 @@
-using Finance.Domain.Yahoo;
+using Finance.Domain.Yahoo.Models;
 using Finance.Utils;
 using System.Text;
 using System.Text.Json;
@@ -14,20 +14,31 @@ public class FileDataClient : IFileDataClient
         _fileIO = fileIO ?? throw new ArgumentException(nameof(fileIO));
     }
 
-    public Response GetYahooFileData(string fileName)
+    public HistoryResponse GetYahooFileHistoryData(string fileName)
+    {
+        return GetYahooFileData<HistoryResponse>(fileName);
+    }
+
+    public ChartResponse GetYahooFileChartData(string fileName)
+    {
+        return GetYahooFileData<ChartResponse>(fileName);
+    }
+
+    private T GetYahooFileData<T>(string fileName) where T : new()
     {
         if (!_fileIO.FileExists(fileName))
-            return new Response();
+            return new T();
 
         var sb = new StringBuilder();
         foreach(var line in _fileIO.ReadLinesFromFile(fileName))
             sb.AppendLine(line);
 
-        return JsonSerializer.Deserialize<Response>(sb.ToString());
+        return JsonSerializer.Deserialize<T>(sb.ToString());
     }
 }
 
 public interface IFileDataClient
 {
-    Response GetYahooFileData(string fileName);
+    HistoryResponse GetYahooFileHistoryData(string fileName);
+    ChartResponse GetYahooFileChartData(string fileName);
 }

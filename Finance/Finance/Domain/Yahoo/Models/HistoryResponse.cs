@@ -1,6 +1,6 @@
-namespace Finance.Domain.Yahoo;
+namespace Finance.Domain.Yahoo.Models;
 
-public class Response
+public class HistoryResponse
 {
     public Price[] prices { get; set; } = null!;
     public bool isPending { get; set; }
