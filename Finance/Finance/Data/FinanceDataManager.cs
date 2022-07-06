@@ -4,7 +4,7 @@ using Finance.Utils;
 
 namespace Finance.Domain.Yahoo;
 
-public class YahooDataManager
+public class FinanceDataManager
 {
     private readonly IWebDataClient _webClient;
     private readonly IFileDataClient _fileClient;
@@ -13,7 +13,7 @@ public class YahooDataManager
     private Func<PriceSet, string, DateTime[], long, long, bool, Task> _historyDataDelegate;
     private Func<PriceSet, string, DateTime[], long, long, bool, Task> _chartDataDelegate;
 
-    public YahooDataManager(IWebDataClient webClient, IFileDataClient fileClient, IFileIO fileIO)
+    public FinanceDataManager(IWebDataClient webClient, IFileDataClient fileClient, IFileIO fileIO)
     {
         _webClient = webClient ?? throw new NullReferenceException(nameof(webClient));
         _fileClient = fileClient ?? throw new NullReferenceException(nameof(fileClient));

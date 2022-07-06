@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Finance.Tests;
 
-public class YahooDataManagerTests : TestFixture<YahooDataManager>
+public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
 {
     private const string GE = "GE";
     private const string DDD = "DDD";
@@ -22,7 +22,7 @@ public class YahooDataManagerTests : TestFixture<YahooDataManager>
     private readonly Mock<IFileDataClient> _mockFileClient = new Mock<IFileDataClient>();
     private readonly Mock<IFileIO> _mockFileIO = new Mock<IFileIO>();
 
-    public YahooDataManagerTests()
+    public FinanceDataManagerTests()
     {
         var response = Create<HistoryResponse>();
         foreach(var price in response.prices)

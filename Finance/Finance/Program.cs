@@ -11,13 +11,13 @@ class Program
     private static readonly IHttpRequestFactory _requestFactory = new HttpRequestFactory();
     private static readonly IWebDataClient _webClient;
     private static readonly IFileDataClient _fileClient;
-    private static readonly YahooDataManager _yahooDataManager;
+    private static readonly FinanceDataManager _dataManager;
 
     static Program()
     {
         _webClient = new WebDataClient(_fileIO, _clientFactory, _requestFactory);
         _fileClient = new FileDataClient(_fileIO);
-        _yahooDataManager = new YahooDataManager(_webClient, _fileClient, _fileIO);
+        _dataManager = new FinanceDataManager(_webClient, _fileClient, _fileIO);
     }
 
     static async Task Main(string[] args)
@@ -59,14 +59,14 @@ class Program
     }
 
     static void GenerateHistoryDataFromFile(string file, string stock) =>
-        _yahooDataManager.GeneratePriceHistoryDataFromFile(file, stock);
+        _dataManager.GeneratePriceHistoryDataFromFile(file, stock);
 
     static void GenerateChartDataFromFile(string file, string stock) =>
-        _yahooDataManager.GeneratePriceChartDataFromFile(file, stock);
+        _dataManager.GeneratePriceChartDataFromFile(file, stock);
 
     static async Task GenerateHistoryDataFromApi(DateTime[] dates, string[] stocks) =>
-        await _yahooDataManager.GeneratePriceHistoryDataFromApi(dates, stocks, writeRawData:true);
+        await _dataManager.GeneratePriceHistoryDataFromApi(dates, stocks, writeRawData:true);
 
     static async Task GenerateChartDataFromApi(DateTime[] dates, string[] stocks) =>
-        await _yahooDataManager.GeneratePriceChartDataFromApi(dates, stocks, writeRawData:true);
+        await _dataManager.GeneratePriceChartDataFromApi(dates, stocks, writeRawData:true);
 }
