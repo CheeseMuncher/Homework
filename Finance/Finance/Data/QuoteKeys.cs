@@ -10,7 +10,7 @@ public static class QuoteKeys
 {
     public static readonly string[] ForexTickers = new []
     {
-        "GBP=X"
+        "USDGBP"
     };
 
     public static readonly string[] DelistedStocks = new []
@@ -20,22 +20,7 @@ public static class QuoteKeys
 
     public static readonly string[] ClosedPositions = new []
     {
-        "NWG.L","GRG.L","VAL.L","WTG.L","GE","DDD","RIO.L","SGE.L","BBOX.L" 
-    };
-
-    public static readonly string[] LiveMixedStocks = new []
-    { 
-        "BLTG.L","AXS.L","TPK.L","WIX.L","BOO.L","DARK.L","PUR.L"
-    };
-
-    public static readonly string[] LiveIsaStocks = new []
-    { 
-        "GSK.L","BARC.L","HSBA.L","IPF.L","TLW.L","AFX.L","XLM.L","PHE.L","HEIQ.L","AEG.L"
-    };
-
-    public static readonly string[] LiveSippStocks = new []
-    { 
-        "RDSB.L","FRES.L","IAG.L","HSX.L","LSEG.L"
+        "DDD","GE","GRG.L","HSX.L","LSEG.L","NWG.L","RIO.L","SGE.L","VAL.L","WTG.L"
     };
 
     public static readonly string[] LiveSchwabStocks = new []
@@ -43,14 +28,29 @@ public static class QuoteKeys
         "SSYS","DM" 
     };
 
+    public static readonly string[] LiveMixedStocks = new []
+    { 
+        "AXS.L","BBOX.L","BOO.L","BLTG.L","DARK.L","PUR.L","TPK.L","WIX.L"
+    };
+
+    public static readonly string[] LiveIsaStocks = new []
+    { 
+        "AEG.L","AFX.L","AVV.L","BARC.L","GSK.L","HEIQ.L","HSBA.L","IPF.L","PHE.L","TLW.L","XLM.L"
+    };
+
+    public static readonly string[] LiveSippStocks = new []
+    { 
+        "ADM.L","RDSB.L","FRES.L","IAG.L"
+    };
+
     public static readonly Dictionary<string, string> VanguardTickers = new Dictionary<string, string>
     {
-        ["0P0000KM22.L"] = "Emerging Markets",
-        ["0P0000KSP9.L"] = "Developed Europe ex-U.K.",
         ["0P0000SAVS.L"] = "U.K. All Share",
-        ["0P0000N47O.L"] = "Global Small-Cap",
-        ["0P0000KM1Y.L"] = "Japan Stock Index",
+        ["0P0000KSP9.L"] = "Developed Europe ex-U.K.",
         ["0P0000KSPA.L"] = "U.S. Equity Index",
+        ["0P0000KM1Y.L"] = "Japan Stock Index",
+        ["0P0000KM22.L"] = "Emerging Markets",
+        ["0P0000N47O.L"] = "Global Small-Cap",
     };
 
     public static string[] HeaderConcat(this IEnumerable<string> current, IEnumerable<string> toAdd) =>        
