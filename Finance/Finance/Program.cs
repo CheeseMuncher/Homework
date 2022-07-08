@@ -22,31 +22,33 @@ class Program
 
     static async Task Main(string[] args)
     {
-        var startDate = new DateTime(2020,07,01);
-        var endDate = new DateTime(2022,01, 05);
+        var startDate = new DateTime(2021,07,01);
+        var endDate = new DateTime(2022,07, 01);
         var stocks = new string[0]
             //.Concat(QuoteKeys.ForexTickers)
             //.Concat(QuoteKeys.VanguardTickers.Keys.ToArray())
-            .Concat(QuoteKeys.LiveIsaStocks)
-            .Concat(QuoteKeys.LiveSippStocks)
-            .Concat(QuoteKeys.LiveMixedStocks)
-            .Concat(new [] { "SGE.L","BBOX.L" })
+            .Concat(QuoteKeys.LiveSchwabStocks)
+            // .Concat(QuoteKeys.LiveIsaStocks)
+            // .Concat(QuoteKeys.LiveSippStocks)
+            // .Concat(QuoteKeys.LiveMixedStocks)
+            // .Concat(new [] { "SGE.L","BBOX.L" })
             .ToArray();
 
-        var file = "2022-06-23T21:52:49_Forex_USDGBP.json";
-        var stock = "USDDGBP";
+        //var file = "2022-06-23T21:52:49_Forex_USDGBP.json";
+        //var stock = "USDGBP";
         //var stock = "0P0000KM1Y";
 
 
         Console.WriteLine("Fetching data...");
 
         var dates = GenerateMarketDays(startDate, endDate);
+        //await _dataManager.GenerateForexHistoryDataFromApi(dates, stock, true);
         
         //GenerateHistoryDataFromFile(file, stock);
         //await GenerateHistoryDataFromApi(dates, stocks);
         
         //GenerateChartDataFromFile(file, stock);
-        //await GenerateChartDataFromApi(dates, stocks);
+        await GenerateChartDataFromApi(dates, stocks);
 
         Console.WriteLine("Done");
     }
