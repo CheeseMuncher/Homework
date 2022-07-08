@@ -1,8 +1,10 @@
 using Finance.Domain.Yahoo;
 using Finance.Domain.Yahoo.Models;
+using Finance.Domain.TraderMade.Models;
 using Finance.Utils;
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -11,6 +13,82 @@ namespace Finance.Tests;
 public class ResponseExtensionsTests : TestFixture
 {
     private readonly DateTime[] ValidDates = new [] { new DateTime(2020, 03, 13) };
+
+    [Fact]
+    public void ForexResponseToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
+    {
+        // Arrange
+        var newDate = Create<DateTime>();
+        var apiResult = CreateValidForexHistoryResponseSet();
+        while (apiResult.Any(r => r.date.Date == newDate.Date));
+
+        // Act
+        var result = apiResult.ToPriceSet(new [] { newDate }, Create<string>());
+
+        // Assert
+        result.Prices.Keys.Should().Contain(newDate);
+        result.Prices[newDate].Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ForexResponseToPriceSet_CreatesKeyValuePairForResultDate_IfDateNotInSuppliedSet()
+    {
+        // Arrange
+        var apiResult = CreateValidForexHistoryResponseSet();
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), Create<string>());
+
+        // Assert
+        foreach(var response in apiResult)
+            result.Prices.Keys.Should().Contain(response.date);
+    }
+
+    [Fact]
+    public void ForexResponseToPriceSet_AddsPairPricesFromResult()
+    {
+        // Arrange
+        var pair = Create<string>();
+        var apiResult = CreateValidForexHistoryResponseSet();
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), pair);
+
+        // Assert
+        foreach(var response in apiResult)
+            result.Prices[response.date].Should().Contain(sp => sp.Stock == pair);
+    }
+
+    [Fact]
+    public void ForexResponseToPriceSet_TakesClosingPrice()
+    {
+        // Arrange
+        var pair = Create<string>();
+        var response = CreateValidForexHistoryResponse();
+        var apiResult = new HashSet<ForexHistoryResponse>(new [] { response });
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), pair);
+
+        // Assert
+        result.Prices.Values.Single().Single().Price.Should().Be(apiResult.Single().quotes.Single().close);
+    }
+
+    [Fact]
+    public void ForexResponseToPriceSet_RoundsClosingPrice()
+    {
+        // Arrange
+        var pair = Create<string>();
+        var response = CreateValidForexHistoryResponse();
+        response.quotes.Single().close = 0.123456789m;
+        var apiResult = new HashSet<ForexHistoryResponse>(new [] { response });
+
+        // Act
+        var result = apiResult.ToPriceSet(Array.Empty<DateTime>(), pair);
+
+        // Assert        
+        result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);
+    }
 
     [Fact]
     public void HistoryResponseToPriceSet_CreatesKeyValuePairForSuppliedDate_IfDateNotInResult()
@@ -271,5 +349,17 @@ public class ResponseExtensionsTests : TestFixture
 
         // Assert        
         result.Prices.Values.Single().Single().Price.Should().Be(0.123457m);
-    }   
+    }
+
+    private ForexHistoryResponse CreateValidForexHistoryResponse()
+    {        
+        var response = Create<ForexHistoryResponse>();
+        response.quotes = new [] { response.quotes.First() };
+        return response;
+    }
+
+    private HashSet<ForexHistoryResponse> CreateValidForexHistoryResponseSet()
+    {
+        return new HashSet<ForexHistoryResponse>(Enumerable.Range(0, 3).Select(i => CreateValidForexHistoryResponse()));
+    }
 }
