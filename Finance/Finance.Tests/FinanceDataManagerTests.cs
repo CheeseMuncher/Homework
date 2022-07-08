@@ -21,6 +21,7 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
     private const string GE = "GE";
     private const string DDD = "DDD";
     private const string SGE = "SGE";
+    private const string USDGBP = "USDGBP";
 
     private readonly Mock<IWebDataClient> _mockWebClient = new Mock<IWebDataClient>();
     private readonly Mock<IFileDataClient> _mockFileClient = new Mock<IFileDataClient>();
@@ -43,6 +44,10 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
         _mockWebClient
             .Setup(client => client.GetYahooChartData(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<long>(), It.IsAny<bool>()))
             .ReturnsAsync(CreateChartResponseWithSinglePrice(Create<string>(), Create<long>(), Create<decimal>()));
+
+        _mockFileClient
+            .Setup(client => client.GetTraderMadeHistoryData(It.IsAny<string>()))
+            .Returns(new HashSet<ForexHistoryResponse>{ CreateValidForexHistoryResponse(Create<DateTime>()) });
 
         _mockFileClient
             .Setup(client => client.GetYahooFileHistoryData(It.IsAny<string>()))
@@ -165,7 +170,6 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
     public async Task GenerateForexHistoryDataFromApi_AddsPricesFromEachResponse()
     {
         // Arrange
-        var pair = "USDGBP";
         var date1 = Create<DateTime>();
         var date2 = date1.AddDays(1);
         var dates = new [] { date1, date2 };
@@ -181,12 +185,12 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GenerateForexHistoryDataFromApi(dates, pair);
+        await Sut.GenerateForexHistoryDataFromApi(dates, USDGBP);
 
         // Assert
         var rows = writePayload.Split('\n');
         var headerRow = rows.First();
-        var index = Array.FindIndex(headerRow.Split(","), val => val == pair);
+        var index = Array.FindIndex(headerRow.Split(","), val => val == USDGBP);
 
         var dataRow = rows[1];
         var data = dataRow.Split(",");
@@ -200,7 +204,6 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
     public async Task GenerateForexHistoryDataFromApi_InterpolatesData()
     {
         // Arrange
-        var pair = "USDGBP";
         var date1 = Create<DateTime>();
         var date2 = date1.AddDays(1);
         var date3 = date1.AddDays(2);
@@ -217,12 +220,12 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
             .Callback((string text, string file) => writePayload = text);
 
         // Act
-        await Sut.GenerateForexHistoryDataFromApi(new [] { date2 }, pair);
+        await Sut.GenerateForexHistoryDataFromApi(new [] { date2 }, USDGBP);
 
         // Assert
         var rows = writePayload.Split('\n');
         var headerRow = rows.First();
-        var index = Array.FindIndex(headerRow.Split(","), val => val == pair);
+        var index = Array.FindIndex(headerRow.Split(","), val => val == USDGBP);
 
         var expected = response.Select(r => r.quotes.Single().close).Average();
         var dataRow = rows[2];
@@ -578,6 +581,107 @@ public class FinanceDataManagerTests : TestFixture<FinanceDataManager>
 
         var data = rows[1].Split(",");        
         data[sgeIndex].Should().Be($"{price}");
+    }
+
+    [Fact]
+    public void GenerateForexHistoryDataFromFile_InvokesFileClientWithCorrectArgs()
+    {
+        // Arrange
+        var file = Create<string>();
+
+        // Act
+        Sut.GenerateForexHistoryDataFromFile(file, Create<string>());
+
+        // Assert
+        _mockFileClient.Verify(client => client.GetTraderMadeHistoryData(file), Times.Once);
+        _mockFileClient.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void GenerateForexHistoryDataFromFile_GeneratesCsvWithHeaders()
+    {
+        // Arrange
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string _) => writePayload = text);
+
+        // Act
+        Sut.GenerateForexHistoryDataFromFile(Create<string>(), Create<string>());
+
+        // Assert
+        writePayload.Should().NotBeNull();
+        var headerRow = writePayload.Split('\n').First();
+        headerRow.Should().Be(string.Join(",", QuoteKeys.Headers));
+    }
+
+    [Fact]
+    public void GenerateForexHistoryDataFromFile_AddsPricesFromFileData()
+    {
+        // Arrange
+        var file = Create<string>();
+        var date1 = Create<DateTime>();
+        var date2 = date1.AddDays(1);
+        var dates = new [] { date1, date2 };
+        var response = dates.Select(date => CreateValidForexHistoryResponse(date)).ToHashSet();
+
+        _mockFileClient
+            .Setup(client => client.GetTraderMadeHistoryData(It.IsAny<string>()))
+            .Returns(response);
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GenerateForexHistoryDataFromFile(file, USDGBP);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == USDGBP);
+
+        var dataRow = rows[1];
+        var data = dataRow.Split(",");
+        data[index].Should().Be($"{response.First().quotes.Single().close}");
+        dataRow = rows[2];
+        data = dataRow.Split(",");
+        data[index].Should().Be($"{response.Last().quotes.Single().close}");
+    }
+
+    [Fact]
+    public void GenerateForexHistoryDataFromFile_InterpolatesData()
+    {
+        // Arrange
+        var date1 = Create<DateTime>();
+        var date2 = date1.AddDays(1);
+        var date3 = date1.AddDays(2);
+        var dates = new [] { date1, date2, date3 };
+        var response = dates.Select(date => CreateValidForexHistoryResponse(date)).ToHashSet();
+        response.Single(r => r.date == date2).quotes.Single().close = 0;
+
+        _mockFileClient
+            .Setup(client => client.GetTraderMadeHistoryData(It.IsAny<string>()))
+            .Returns(response);
+
+        string writePayload = null!;
+        _mockFileIO
+            .Setup(io => io.WriteText(It.IsAny<string>(), It.IsAny<string>()))
+            .Callback((string text, string file) => writePayload = text);
+
+        // Act
+        Sut.GenerateForexHistoryDataFromFile(Create<string>(), USDGBP);
+
+        // Assert
+        var rows = writePayload.Split('\n');
+        var headerRow = rows.First();
+        var index = Array.FindIndex(headerRow.Split(","), val => val == USDGBP);
+
+        var expected = response.Select(r => r.quotes.Single().close).Sum() / 2;
+        var dataRow = rows[2];
+        var data = dataRow.Split(",");
+        data[index].Should().Be($"{expected}");
     }
 
     [Fact]

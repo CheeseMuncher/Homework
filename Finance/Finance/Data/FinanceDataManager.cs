@@ -75,6 +75,15 @@ public class FinanceDataManager
         await GeneratePriceDataFromApi(_chartDataDelegate, dates, stocks, writeRawData);
     }
 
+    public void GenerateForexHistoryDataFromFile(string fileName, string pair)
+    {
+        _fileIO.WriteText(_fileClient.GetTraderMadeHistoryData(fileName)
+            .ToPriceSet(new DateTime[0], pair)
+            .Interpolate(new[] { pair })
+            .ConvertToCsv(QuoteKeys.Headers),
+                FileNameTemplate($"Forex_{pair}", ".csv"));
+    }
+
     public void GeneratePriceHistoryDataFromFile(string fileName, string stock)
     {
         _fileIO.WriteText(_fileClient.GetYahooFileHistoryData(fileName)
