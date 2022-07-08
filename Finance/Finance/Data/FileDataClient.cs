@@ -18,9 +18,9 @@ public class FileDataClient : IFileDataClient
         _jsonOptions.Converters.Add(new DateTimeConverter());
     }
 
-    public ForexHistoryResponse GetTraderMadeHistoryData(string fileName)
+    public HashSet<ForexHistoryResponse> GetTraderMadeHistoryData(string fileName)
     {
-        return GetFileData<ForexHistoryResponse>(fileName);
+        return GetFileData<HashSet<ForexHistoryResponse>>(fileName);
     }
 
     public HistoryResponse GetYahooFileHistoryData(string fileName)
@@ -48,7 +48,7 @@ public class FileDataClient : IFileDataClient
 
 public interface IFileDataClient
 {
-    ForexHistoryResponse GetTraderMadeHistoryData(string fileName);
+    HashSet<ForexHistoryResponse> GetTraderMadeHistoryData(string fileName);
     HistoryResponse GetYahooFileHistoryData(string fileName);
     ChartResponse GetYahooFileChartData(string fileName);
 }

@@ -6,6 +6,7 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Xunit;
@@ -52,6 +53,9 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     {
         // Arrange
         var fileName = Create<string>();
+        _mockFileIO
+            .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
+            .Returns(new [] { "[{}]" });
         
         // Act
         Sut.GetTraderMadeHistoryData(fileName);
@@ -66,7 +70,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     public void GetTraderMadeHistoryData_DeserialisesFileData()
     {
         // Arrange
-        var response = Create<ForexHistoryResponse>();
+        var response = Create<HashSet<ForexHistoryResponse>>();
         _mockFileIO
             .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
             .Returns(new [] { JsonSerializer.Serialize(response, _jsonOptions) } );
@@ -82,7 +86,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     public void GetTraderMadeHistoryData_DeserialisesRequestDate()
     {
         // Arrange
-        var response = "{\"request_time\": \"Thu, 23 Jun 2022 21:52:33 GMT\"}";
+        var response = "[{\"request_time\": \"Thu, 23 Jun 2022 21:52:33 GMT\"}]";
         _mockFileIO
             .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
             .Returns(new [] { response });
@@ -91,14 +95,14 @@ public class FileDataClientTests : TestFixture<FileDataClient>
         var result = Sut.GetTraderMadeHistoryData(Create<string>());
 
         // Assert
-        result.request_time.Should().Be(new DateTime(2022,06,23,21,52,33));
+        result.Single().request_time.Should().Be(new DateTime(2022,06,23,21,52,33));
     }
 
     [Fact]
     public void GetTraderMadeHistoryData_DeserialisesMultilineFileData()
     {
         // Arrange
-        var response = Create<ForexHistoryResponse>();
+        var response = Create<HashSet<ForexHistoryResponse>>();
         var json = JsonSerializer.Serialize(response);
         json = json.Replace("{", "{\n").Replace("}", "}\n");
 
