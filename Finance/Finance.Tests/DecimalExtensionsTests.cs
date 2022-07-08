@@ -15,6 +15,21 @@ public class DecimalExtensionsExtensionsTests : TestFixture
     {
         // Arrange
         // Act
+        var result = (input).RoundToSignificantDigits(digits);
+
+        // Assert
+        result.Should().Be(output);
+    }
+
+    [Theory]
+    [InlineData(0.0, 6, 0.0)]
+    [InlineData(0.123456789, 6, 0.123457)]
+    [InlineData(0.123456111, 6, 0.123456)]
+    [InlineData(0.123456789, 7, 0.1234568)]
+    public void RoundToSignificantDigits_PerformsRoundingCorrectly_IfInputNullable(decimal input, int digits, decimal output)
+    {
+        // Arrange
+        // Act
         var result = (input as decimal?).RoundToSignificantDigits(digits);
 
         // Assert
