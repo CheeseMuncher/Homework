@@ -18,7 +18,10 @@ public static class DateExtensions
         new DateTime(2020,04,10),
         new DateTime(2021,04,02),
         new DateTime(2022,04,15),
-        new DateTime(2023,04,07)
+        new DateTime(2023,04,07),
+        new DateTime(2024,03,29),
+        new DateTime(2025,04,18),
+        new DateTime(2026,04,03)
     };  
 
     public static bool IsWeekday(this DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
