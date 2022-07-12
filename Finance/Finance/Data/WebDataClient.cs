@@ -28,7 +28,7 @@ public class WebDataClient : IWebDataClient
         {
             var isoDate = date.ToString("yyyy-MM-dd");
             var request = _requestFactory.GetHistoryDataTraderMadeRequest(currencyPair, isoDate);
-
+            Console.WriteLine($"Fetching {currencyPair} data for {isoDate} from TraderMade");
             using (var response = await _clientFactory.CreateClient(isoDate).SendAsync(request, default(CancellationToken)))
                 if (response.IsSuccessStatusCode)
                     yield return JsonSerializer.Deserialize<ForexHistoryResponse>(await response.Content.ReadAsStringAsync(), _jsonOptions);

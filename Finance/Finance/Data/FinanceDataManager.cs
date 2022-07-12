@@ -26,12 +26,14 @@ public class FinanceDataManager
 
         _historyDataDelegate = async (PriceSet prices, string stock, DateTime[] dates, long start, long end, bool writeRawData) =>
         {
+            Console.WriteLine($"Fetching history data for {stock} from Yahoo");
             var response = await _webClient.GetYahooHistoryData(stock, start, end, writeRawData);
             prices = prices.AddPrices(response.ToPriceSet(dates, stock.HandleSuffix()), stock.HandleSuffix());
         };
 
         _chartDataDelegate = async (PriceSet prices, string stock, DateTime[] dates, long start, long end, bool writeRawData) =>
         {
+            Console.WriteLine($"Fetching chart data for {stock} from Yahoo");
             var response = await _webClient.GetYahooChartData(stock, start, end, writeRawData);
             prices = prices.AddPrices(response.chart.result.Single().ToPriceSet(dates), stock.HandleSuffix());
         };
