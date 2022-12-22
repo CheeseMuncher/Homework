@@ -1,6 +1,15 @@
-using Finance.Domain.Prices;
+using Google.Apis.Auth.OAuth2;
 
 namespace Finance.Utils;
+
+
+public interface IFileIO
+{
+    bool FileExists(string fileName);
+    IEnumerable<string> ReadLinesFromFile(string fileName);
+    GoogleCredential BuildCredentialFromFile(string fileName, string[] scopes);
+    void WriteText(string text, string fileName);
+}
 
 public class FileIO : IFileIO
 {
@@ -17,6 +26,12 @@ public class FileIO : IFileIO
                 yield return s;
     }
 
+    public GoogleCredential BuildCredentialFromFile(string fileName, string[] scopes)
+    {
+        using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            return GoogleCredential.FromStream(stream).CreateScoped(scopes);
+    }
+
     public void WriteText(string text, string fileName)
     {
         using (StreamWriter sw = File.CreateText(GetDataPath(fileName)))
@@ -24,11 +39,4 @@ public class FileIO : IFileIO
     }
 
     private static string GetDataPath(string fileName) => Path.Combine("FinanceData", fileName);
-}
-
-public interface IFileIO
-{
-    bool FileExists(string fileName);
-    IEnumerable<string> ReadLinesFromFile(string fileName);
-    void WriteText(string text, string fileName);
 }
