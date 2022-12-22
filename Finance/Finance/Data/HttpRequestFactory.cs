@@ -1,4 +1,5 @@
 using Finance.Domain.Yahoo;
+using Finance.Secrets;
 
 namespace Finance.Data;
 
@@ -11,7 +12,7 @@ public class HttpRequestFactory : IHttpRequestFactory
             RequestUri = new Uri($"{GetHistoryDataUri()}{GetHistoryDataQueryString(stock, start, end)}"),
             Headers = 
             {
-                { YahooConstants.RapidApiHeaderKey, YahooFinanceApiCredentials.RapidApiHeaderValue },
+                { YahooConstants.RapidApiHeaderKey, YahooSecrets.RapidApiHeaderValue },
                 { YahooConstants.HostHeaderKey, YahooConstants.HostHeaderValue }
             }
         };
@@ -23,7 +24,7 @@ public class HttpRequestFactory : IHttpRequestFactory
             RequestUri = new Uri($"{GetChartDataUri()}{GetChartDataQueryString(stock, start, end)}"),
             Headers = 
             {
-                { YahooConstants.RapidApiHeaderKey, YahooFinanceApiCredentials.RapidApiHeaderValue },
+                { YahooConstants.RapidApiHeaderKey, YahooSecrets.RapidApiHeaderValue },
                 { YahooConstants.HostHeaderKey, YahooConstants.HostHeaderValue }
             }
         };
