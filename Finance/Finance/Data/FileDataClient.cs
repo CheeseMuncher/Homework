@@ -26,7 +26,7 @@ public class FileDataClient : IFileDataClient
 
     private T GetYahooFileData<T>(string fileName) where T : new()
     {
-        if (!_fileIO.FileExists(fileName))
+        if (!_fileIO.DataFileExists(fileName))
             return new T();
 
         var sb = new StringBuilder();
