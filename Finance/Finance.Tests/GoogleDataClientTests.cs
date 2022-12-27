@@ -17,11 +17,39 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
 
     public GoogleDataClientTests()
     {
+        _mockFileIO.Setup(mfi => mfi.SecretsFileExists(It.IsAny<string>())).Returns(true);
         Inject(_mockFileIO);
         Inject(_mockRequestFactory);
     }
 
     [Fact]    
+    public void Connect_ChecksSecretsFileExists()
+    {
+        // Arrange
+        var fileName = Create<string>();
+
+        // Act
+        Sut.Connect(fileName, Create<string[]>());
+
+        // Assert
+        _mockFileIO.Verify(f => f.SecretsFileExists(Path.Combine("./Secrets", fileName)), Times.Once);
+    }
+
+    [Fact]    
+    public void Connect_Throws_IfFileNotFound()
+    {
+        // Arrange
+        var fileName = Create<string>();
+        _mockFileIO.Setup(mfi => mfi.SecretsFileExists(fileName)).Returns(false);
+
+        // Act
+        var action = () => Sut.Connect(fileName, Create<string[]>());
+
+        // Assert
+        action.Should().ThrowAsync<FileNotFoundException>().WithMessage("Connect file not found");
+    }
+
+    [Fact]
     public void Connect_InvokesFileIO_WithCorrectArgs()
     {
         // Arrange
@@ -33,6 +61,20 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
 
         // Assert
         _mockFileIO.Verify(f => f.BuildCredentialFromFile(Path.Combine("./Secrets", fileName), scopes), Times.Once);
+    }
+
+    [Fact]
+    public void Connect_NoOtherInvocations()
+    {
+        // Arrange
+        var fileName = Create<string>();
+
+        // Act
+        Sut.Connect(fileName, Create<string[]>());
+
+        // Assert
+        _mockFileIO.Verify(f => f.SecretsFileExists(Path.Combine("./Secrets", fileName)), Times.Once);
+        _mockFileIO.Verify(f => f.BuildCredentialFromFile(Path.Combine("./Secrets", fileName), It.IsAny<string[]>()), Times.Once);
         _mockFileIO.VerifyNoOtherCalls();
     }
 

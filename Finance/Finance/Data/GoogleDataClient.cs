@@ -27,6 +27,9 @@ public class GoogleDataClient : IGoogleDataClient
     public void Connect(string fileName, string[] scopes)
     {
         var path = Path.Combine("./Secrets", fileName);
+        if (!_fileIO.DataFileExists(path))
+            throw new FileNotFoundException("Connect file not found");
+
         var credential = _fileIO.BuildCredentialFromFile(path, scopes);
         _sheetsService = new SheetsService(new BaseClientService.Initializer() { 
             HttpClientInitializer = credential, 
