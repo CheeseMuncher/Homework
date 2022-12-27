@@ -127,6 +127,6 @@ public class LedgerValidatorTest : TestFixture<LedgerValidator>
         LedgerInputRow.HeaderRow.Cast<object>().ToList();
 
     public static IList<object> ValidLedgerDataRow =>
-        new List<object> { "2022-12-22", "GBP", "ISA",  "GSK", "1234.56", "11" };        
+        new List<object> { "2022-12-22", "GBP", "ISA", "GSK", "1234.56", "11" };
 
 }

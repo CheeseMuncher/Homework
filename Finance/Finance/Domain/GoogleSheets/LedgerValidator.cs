@@ -134,7 +134,7 @@ public abstract class PrefixErrorMessageValidator<T> : AbstractValidator<T>
         if (result.Errors?.Any() ?? false)
             foreach (var error in result.Errors)
                 if (Regex.IsMatch(error.PropertyName, @"\[\d+\]"))
-                    error.ErrorMessage = $"'{error.PropertyName} error: {error.ErrorMessage}'";
+                    error.ErrorMessage = $"{error.PropertyName} error: {error.ErrorMessage}";
     }
 }
 
