@@ -16,7 +16,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     public FileDataClientTests()
     {
         _mockFileIO
-            .Setup(io => io.FileExists(It.IsAny<string>()))
+            .Setup(io => io.DataFileExists(It.IsAny<string>()))
             .Returns(true);
         _mockFileIO
             .Setup(io => io.ReadLinesFromFile(It.IsAny<string>()))
@@ -30,7 +30,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     {
         // Arrange
         _mockFileIO
-            .Setup(io => io.FileExists(It.IsAny<string>()))
+            .Setup(io => io.DataFileExists(It.IsAny<string>()))
             .Returns(false);
 
         // Act
@@ -51,7 +51,20 @@ public class FileDataClientTests : TestFixture<FileDataClient>
 
         // Assert
         _mockFileIO.Verify(io => io.ReadLinesFromFile(fileName), Times.Once);
-        _mockFileIO.Verify(io => io.FileExists(fileName), Times.Once);
+    }
+
+    [Fact]
+    public void GetYahooFileHistoryData_NoOtherCalls()
+    {
+        // Arrange
+        var fileName = Create<string>();
+        
+        // Act
+        Sut.GetYahooFileHistoryData(fileName);
+
+        // Assert
+        _mockFileIO.Verify(io => io.ReadLinesFromFile(fileName), Times.Once);
+        _mockFileIO.Verify(io => io.DataFileExists(fileName), Times.Once);
         _mockFileIO.VerifyNoOtherCalls();
     }
 
@@ -95,7 +108,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
     {
         // Arrange
         _mockFileIO
-            .Setup(io => io.FileExists(It.IsAny<string>()))
+            .Setup(io => io.DataFileExists(It.IsAny<string>()))
             .Returns(false);
 
         // Act
@@ -116,7 +129,7 @@ public class FileDataClientTests : TestFixture<FileDataClient>
 
         // Assert
         _mockFileIO.Verify(io => io.ReadLinesFromFile(fileName), Times.Once);
-        _mockFileIO.Verify(io => io.FileExists(fileName), Times.Once);
+        _mockFileIO.Verify(io => io.DataFileExists(fileName), Times.Once);
         _mockFileIO.VerifyNoOtherCalls();
     }
 
