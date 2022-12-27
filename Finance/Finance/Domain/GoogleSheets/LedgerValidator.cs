@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -90,7 +91,7 @@ public class LedgerHeaderRowValidator : AbstractValidator<IList<object>>, IValid
     }
 }
 
-public class LedgerValidator : AbstractValidator<LedgerCandidate>, IValidator<LedgerCandidate>
+public class LedgerValidator : PrefixErrorMessageValidator<LedgerCandidate>, IValidator<LedgerCandidate>
 {
     public LedgerValidator()
     {
@@ -110,6 +111,31 @@ public class LedgerValidator : AbstractValidator<LedgerCandidate>, IValidator<Le
     private bool IsEmpty(LedgerCandidate lc) =>
         (lc.HeaderRow == null || !lc.HeaderRow.Any())
         && (lc.DataRows == null || !lc.DataRows.Any());
+}
+
+public abstract class PrefixErrorMessageValidator<T> : AbstractValidator<T>
+{
+    public override ValidationResult Validate(ValidationContext<T> context)
+    {
+        var result = base.Validate(context);
+        PrefixErrorMessages(result);
+        return result;
+    }
+
+    public override async Task<ValidationResult> ValidateAsync(ValidationContext<T> context, CancellationToken cancellation = default(CancellationToken))
+    {
+        var result = await base.ValidateAsync(context, cancellation);
+        PrefixErrorMessages(result);
+        return result;
+    }
+
+    protected void PrefixErrorMessages(ValidationResult result)
+    {
+        if (result.Errors?.Any() ?? false)
+            foreach (var error in result.Errors)
+                if (Regex.IsMatch(error.PropertyName, @"\[\d+\]"))
+                    error.ErrorMessage = $"'{error.PropertyName} error: {error.ErrorMessage}'";
+    }
 }
 
 public class LedgerCandidate

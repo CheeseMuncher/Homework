@@ -115,7 +115,9 @@ public class LedgerValidatorTest : TestFixture<LedgerValidator>
         // Assert
         result.Should().NotBeNull();
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().HaveCount(9);
+        result.Errors.Where(e => e.ErrorMessage.Contains("DataRows[0]")).Should().HaveCount(3);
+        result.Errors.Where(e => e.ErrorMessage.Contains("DataRows[1]")).Should().HaveCount(3);
+        result.Errors.Where(e => e.ErrorMessage.Contains("DataRows[2]")).Should().HaveCount(3);
     }
 
     private IList<object> SomeStrings(int i) => 
