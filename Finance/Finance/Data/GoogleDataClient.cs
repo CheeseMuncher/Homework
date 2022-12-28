@@ -26,12 +26,12 @@ public class GoogleDataClient : IGoogleDataClient
 
     public void Connect(string fileName, string[] scopes)
     {
-        var path = Path.Combine("./Secrets", fileName);
-        if (!_fileIO.DataFileExists(path))
+        if (!_fileIO.SecretsFileExists(fileName))
             throw new FileNotFoundException("Connect file not found");
 
-        var credential = _fileIO.BuildCredentialFromFile(path, scopes);
-        _sheetsService = new SheetsService(new BaseClientService.Initializer() { 
+        var credential = _fileIO.BuildCredentialFromFile(fileName, scopes);
+        _sheetsService = new SheetsService(new BaseClientService.Initializer() 
+        { 
             HttpClientInitializer = credential, 
             ApplicationName = "Finance"
         });
@@ -43,9 +43,13 @@ public class GoogleDataClient : IGoogleDataClient
         {
             return _requestFactory.GetSheetData(_sheetsService, GoogleSecrets.LedgerSpreadsheetId, "Ledger").Execute();    
         }
-        catch (GoogleApiException ex)
+        catch(GoogleApiException ex)
         {
-            Console.Write($"Received status code {ex.HttpStatusCode}");
+            Console.WriteLine($"Google Exception getting sheet data; status code: {ex.HttpStatusCode}, message: {ex.Message}, ");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error getting sheet data; message: {ex.Message}");
         }
         return null;
     }

@@ -32,7 +32,7 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
         Sut.Connect(fileName, Create<string[]>());
 
         // Assert
-        _mockFileIO.Verify(f => f.SecretsFileExists(Path.Combine("./Secrets", fileName)), Times.Once);
+        _mockFileIO.Verify(f => f.SecretsFileExists(fileName), Times.Once);
     }
 
     [Fact]    
@@ -60,7 +60,7 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
         Sut.Connect(fileName, scopes);
 
         // Assert
-        _mockFileIO.Verify(f => f.BuildCredentialFromFile(Path.Combine("./Secrets", fileName), scopes), Times.Once);
+        _mockFileIO.Verify(f => f.BuildCredentialFromFile(fileName, scopes), Times.Once);
     }
 
     [Fact]
@@ -73,8 +73,8 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
         Sut.Connect(fileName, Create<string[]>());
 
         // Assert
-        _mockFileIO.Verify(f => f.SecretsFileExists(Path.Combine("./Secrets", fileName)), Times.Once);
-        _mockFileIO.Verify(f => f.BuildCredentialFromFile(Path.Combine("./Secrets", fileName), It.IsAny<string[]>()), Times.Once);
+        _mockFileIO.Verify(f => f.SecretsFileExists(fileName), Times.Once);
+        _mockFileIO.Verify(f => f.BuildCredentialFromFile(fileName, It.IsAny<string[]>()), Times.Once);
         _mockFileIO.VerifyNoOtherCalls();
     }
 
