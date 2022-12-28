@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Finance.Domain.GoogleSheets.Models;
 using FluentAssertions;
 using Xunit;
@@ -137,4 +138,43 @@ public class LedgerRowValidatorTests : TestFixture<LedgerRowValidator>
         result.Errors.Should().ContainSingle()
             .Which.ErrorMessage.Should().Be($"Consideration is missing");
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void Validate_HandlesUndersizedInput(int size)
+    {
+        // Arrange
+        var input = ValidLedgerRowRaw.Take(size).ToList();        
+
+        // Act
+        var result = Sut.Validate(input);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle()
+            .Which.ErrorMessage.Should().Be(size == 0 ? "Input is empty" : $"{LedgerInputRow.HeaderRow[size]} is missing");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("    ")]
+    public void Validate_HandlesEmptyUnits(string units)
+    {
+        // Arrange
+        var input = ValidLedgerRowRaw.Take(5).Concat(new [] { units }).ToList();  
+
+        // Act
+        var result = Sut.Validate(input);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeTrue();
+    }
+
 }

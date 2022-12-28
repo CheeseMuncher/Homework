@@ -19,35 +19,33 @@ public class LedgerRowValidator : AbstractValidator<IList<object>>, IValidator<I
             .NotEmpty()
             .WithMessage("Input is empty");
 
-        RuleFor(row => row[0])
-            .NotNull()
-            .WithMessage(Missing(nameof(LedgerInputRow.Date)))
-            .NotEmpty()
+        RuleFor(row => row)
+            .Must(row => ValidateRow(row, 0))
             .WithMessage(Missing(nameof(LedgerInputRow.Date)));
 
-        RuleFor(row => row[1])
-            .NotNull()
-            .WithMessage(Missing(nameof(LedgerInputRow.Currency)))
-            .Must(obj => !string.IsNullOrWhiteSpace(obj.ToString()))
+        RuleFor(row => row)
+            .Must(row => ValidateRow(row, 1))
             .WithMessage(Missing(nameof(LedgerInputRow.Currency)));
 
-        RuleFor(row => row[2])
-            .NotNull()
-            .WithMessage(Missing(nameof(LedgerInputRow.Portfolio)))
-            .Must(obj => !string.IsNullOrWhiteSpace(obj.ToString()))
+        RuleFor(row => row)
+            .Must(row => ValidateRow(row, 2))
             .WithMessage(Missing(nameof(LedgerInputRow.Portfolio)));
 
-        RuleFor(row => row[3])
-            .NotNull()
-            .WithMessage(Missing(nameof(LedgerInputRow.Code)))
-            .Must(obj => !string.IsNullOrWhiteSpace(obj.ToString()))
+        RuleFor(row => row)
+            .Must(row => ValidateRow(row, 3))
             .WithMessage(Missing(nameof(LedgerInputRow.Code)));
 
-        RuleFor(row => row[4])
-            .NotNull()
-            .WithMessage(Missing(nameof(LedgerInputRow.Consideration)))
-            .NotEmpty()
+        RuleFor(row => row)
+            .Must(row => ValidateRow(row, 4))
             .WithMessage(Missing(nameof(LedgerInputRow.Consideration)));
+    }
+
+    private bool ValidateRow(IList<object> row, int index)
+    {
+        if (row.Count < index + 1)
+            return false;
+
+        return !string.IsNullOrWhiteSpace(row[index]?.ToString());
     }
 }
 
@@ -65,9 +63,17 @@ public class LedgerDataRowValidator : LedgerRowValidator
             .Must(obj => decimal.TryParse(obj.ToString(), out _))
             .WithMessage(obj => Invalid(nameof(LedgerInputRow.Consideration), $"{obj[4]}"));
 
-        RuleFor(row => row[5])
-            .Must(obj => int.TryParse(obj.ToString(), out _))
-            .WithMessage(obj => Invalid(nameof(LedgerInputRow.Units), $"{obj[5]}"));
+        RuleFor(row => row)
+            .Must(row => ValidUnits(row))
+            .WithMessage(row => Invalid(nameof(LedgerInputRow.Units), $"{row[5]}"));
+    }
+
+    private bool ValidUnits(IList<object> row)
+    {
+        if (row.Count < 6)
+            return true;
+
+        return int.TryParse(row[5].ToString(), out _);
     }
 }
 
@@ -84,7 +90,7 @@ public class LedgerHeaderRowValidator : AbstractValidator<IList<object>>, IValid
     {
         if (input.Count < LedgerInputRow.HeaderRow.Length)
             return false;
-        
+
         return input.Take(LedgerInputRow.HeaderRow.Length)
             .Select(i => i.ToString())
             .SequenceEqual(LedgerInputRow.HeaderRow);

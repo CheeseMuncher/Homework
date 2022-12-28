@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Finance.Domain.GoogleSheets.Models;
 using FluentAssertions;
 using Xunit;
@@ -76,6 +77,21 @@ public class LedgerDataRowValidatorTests : TestFixture<LedgerDataRowValidator>
     }
 
     [Fact]
+    public void Validate_HandlesEmptyConsiderationData()
+    {
+        // Arrange
+        var input = ValidLedgerDataRow.Take(4).ToList();
+
+        // Act
+        var result = Sut.Validate(input);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle()
+            .Which.ErrorMessage.Should().Be($"Consideration is missing");
+    }
+
+    [Fact]
     public void Validate_ReturnsInvalidResult_IfConsiderationInvalid()
     {
         // Arrange
@@ -107,5 +123,19 @@ public class LedgerDataRowValidatorTests : TestFixture<LedgerDataRowValidator>
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainSingle()
             .Which.ErrorMessage.Should().Be($"Units value '{input[5]}' is invalid");
+    }
+
+    [Fact]
+    public void Validate_HandlesEmptyUnitsData()
+    {
+        // Arrange
+        var input = ValidLedgerDataRow.Take(5).ToList();
+
+        // Act
+        var result = Sut.Validate(input);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeTrue();
     }
 }
