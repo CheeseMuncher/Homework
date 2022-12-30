@@ -3,6 +3,7 @@ using Google;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
+using Finance.Domain.GoogleSheets;
 
 namespace Finance.Data;
 
@@ -10,18 +11,22 @@ public interface IGoogleDataClient
 {
     void Connect(string fileName, string[] scopes);
     ValueRange FetchLedgerData();
+    void ClearSheetData();
+    void WriteData();
 }
 
 public class GoogleDataClient : IGoogleDataClient
 {
     private SheetsService? _sheetsService;
-    private IFileIO _fileIO;
-    private IGoogleRequestFactory _requestFactory;
+    private readonly IFileIO _fileIO;
+    private readonly IGoogleRequestFactory _requestFactory;
+    private readonly ILedgerManager _ledgerManager;
     
-    public GoogleDataClient(IFileIO fileIO, IGoogleRequestFactory requestFactory)
+    public GoogleDataClient(IFileIO fileIO, IGoogleRequestFactory requestFactory, ILedgerManager ledgerManager)
     {
         _fileIO = fileIO;
         _requestFactory = requestFactory;
+        _ledgerManager = ledgerManager;
     }
 
     public void Connect(string fileName, string[] scopes)
@@ -41,7 +46,9 @@ public class GoogleDataClient : IGoogleDataClient
     {
         try
         {
-            return _requestFactory.GetSheetData(_sheetsService, GoogleSecrets.LedgerSpreadsheetId, "Ledger").Execute();    
+            var request = _requestFactory.GetSheetData(_sheetsService, GoogleSecrets.LedgerSpreadsheetId, "Ledger");
+            if (request is not null)
+                request.Execute();
         }
         catch(GoogleApiException ex)
         {
@@ -52,5 +59,20 @@ public class GoogleDataClient : IGoogleDataClient
             Console.WriteLine($"Error getting sheet data; message: {ex.Message}");
         }
         return null;
+    }
+
+    public void ClearSheetData()
+    {
+        var request = _requestFactory.ClearSheetData(_sheetsService, GoogleSecrets.LedgerSpreadsheetId, "Output");
+        if (request is not null)
+            request.Execute();
+    }
+
+    public void WriteData()
+    {
+        var payload = _ledgerManager.BuildLedgerWriteData();
+        var request = _requestFactory.WriteSheetData(_sheetsService, GoogleSecrets.LedgerSpreadsheetId, payload, "Output");
+        if (request is not null)
+            request.Execute();
     }
 }

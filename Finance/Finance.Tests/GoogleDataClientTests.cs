@@ -2,9 +2,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Finance.Data;
+using Finance.Domain.GoogleSheets;
 using Finance.Utils;
 using FluentAssertions;
 using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
 using Moq;
 using Xunit;
 
@@ -14,12 +16,14 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
 {
     private readonly Mock<IFileIO> _mockFileIO = new Mock<IFileIO>();
     private readonly Mock<IGoogleRequestFactory> _mockRequestFactory = new Mock<IGoogleRequestFactory>();
+    private readonly Mock<ILedgerManager> _mockLedgerManager = new Mock<ILedgerManager>();
 
     public GoogleDataClientTests()
     {
         _mockFileIO.Setup(mfi => mfi.SecretsFileExists(It.IsAny<string>())).Returns(true);
         Inject(_mockFileIO);
         Inject(_mockRequestFactory);
+        Inject(_mockLedgerManager);
     }
 
     [Fact]    
@@ -97,22 +101,54 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
         service.ApplicationName.Should().Be("Finance");        
     }
     
-    [Fact]    
+    [Fact]
     public void FetchLedgerData_InvokesRequestFactory_WithCorrectArgs()
     {
-        // Arrange
-        Sut.Connect(Create<string>(), Create<string[]>());
-        _mockRequestFactory
-            .Setup(rf => rf.GetSheetData(It.IsAny<SheetsService>(), It.IsAny<string>(), It.IsAny<string>()))
-            .Returns((SheetsService ss, string s, string r) => ss.Spreadsheets.Values.Get(s, r));
-
-
         // Act
         Sut.FetchLedgerData();
 
         // Assert
         _mockRequestFactory.Verify(f => f.GetSheetData(
             It.IsAny<SheetsService>(), GoogleSecrets.LedgerSpreadsheetId, "Ledger"), Times.Once);
+        _mockRequestFactory.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void ClearSheetData_InvokesRequestFactory_WithCorrectArgs()
+    {
+        // Act
+        Sut.ClearSheetData();
+
+        // Assert
+        _mockRequestFactory.Verify(f => f.ClearSheetData(
+            It.IsAny<SheetsService>(), GoogleSecrets.LedgerSpreadsheetId, "Output"), Times.Once);
+        _mockRequestFactory.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void WriteData_InvokesLedgerManager_BuildLedgerWriteData()
+    {
+        // Act
+        Sut.WriteData();
+        
+        // Assert
+        _mockLedgerManager.Verify(f => f.BuildLedgerWriteData(), Times.Once);
+        _mockLedgerManager.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void WriteData_InvokesRequestFactory_WithCorrectArgs()
+    {
+        // Arrange
+        var data = Create<ValueRange>();
+        _mockLedgerManager.Setup(f => f.BuildLedgerWriteData()).Returns(data);
+
+        // Act
+        Sut.WriteData();
+        
+        // Assert
+        _mockRequestFactory.Verify(f => f.WriteSheetData(
+            It.IsAny<SheetsService>(), GoogleSecrets.LedgerSpreadsheetId, data, "Output"), Times.Once);
         _mockRequestFactory.VerifyNoOtherCalls();
     }
 }
