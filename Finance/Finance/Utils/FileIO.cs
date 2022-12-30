@@ -27,7 +27,7 @@ public class FileIO : IFileIO
     }
     public GoogleCredential BuildCredentialFromFile(string fileName, string[] scopes)
     {
-        using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        using (var stream = new FileStream(GetSecretsPath(fileName), FileMode.Open, FileAccess.Read))
             return GoogleCredential.FromStream(stream).CreateScoped(scopes);
     }
     public void WriteText(string text, string fileName)

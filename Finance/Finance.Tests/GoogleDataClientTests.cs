@@ -46,7 +46,7 @@ public class GoogleDataClientTests : TestFixture<GoogleDataClient>
         var action = () => Sut.Connect(fileName, Create<string[]>());
 
         // Assert
-        action.Should().ThrowAsync<FileNotFoundException>().WithMessage("Connect file not found");
+        action.Should().Throw<FileNotFoundException>().WithMessage("Connect file not found");
     }
 
     [Fact]
