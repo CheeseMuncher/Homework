@@ -126,6 +126,44 @@ public class LedgerManagerTests : TestFixture<LedgerManager>
         result[6].Consideration.Should().Be(300m);
     }    
 
+    [Fact]
+    public void BuildLedgerWriteData_ReturnsHeaderRow()
+    {
+        // Arrange
+        Sut.LoadInputFromSource(GetHeaderRowValueRange());
+
+        // Act
+        var result = Sut.BuildLedgerWriteData();
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Values.Should().NotBeEmpty();
+        result.Values.Should().ContainSingle()
+            .Which.Should().BeEquivalentTo(LedgerRow.FullHeaderRow);
+    }    
+
+    [Fact]
+    public void BuildLedgerWriteData_ReturnsDataRows()
+    {
+        // Arrange
+        var input = GetHeaderRowValueRange();
+        input.Values.Add(ValidLedgerDataRow);
+        input.Values.Add(ValidLedgerDataRow);
+        input.Values[2][1] = "Something";
+        Sut.LoadInputFromSource(input);
+
+        // Act
+        var result = Sut.BuildLedgerWriteData();
+
+        // Assert
+        var validRowOutput = new List<object> { "2022-12-22", "GBP", "ISA", "GSK", "1234.56", "11", "", "", "", "" };
+        result.Should().NotBeNull();
+        result.Values.Should().NotBeEmpty();
+        result.Values[1].Should().BeEquivalentTo(validRowOutput);
+        validRowOutput[1] = "Something";
+        result.Values[2].Should().BeEquivalentTo(validRowOutput);
+    }    
+
     private IList<object> ValidLedgerDataRow => LedgerValidatorTest.ValidLedgerDataRow;
 
     private ValueRange GetHeaderRowValueRange()
