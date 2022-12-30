@@ -33,7 +33,7 @@ public class LedgerManager : ILedgerManager
                 row[2].ToString(),
                 row[3].ToString(),
                 decimal.Parse(row[4].ToString()),
-                row.Count > 5 ? int.Parse(row[5].ToString()) : 0);
+                row.Count > 5 ? int.Parse(row[5].ToString()) : 0));
         }
 
         _ledgerData = output
