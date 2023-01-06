@@ -12,5 +12,5 @@ while (!validationOutput.IsValid)
     if (!validationOutput.IsValid)
         Console.WriteLine(validationOutput.Message);
     else
-        break;
+        Console.WriteLine(new RomanConverter().ConvertToRoman(int.Parse(input)));
 }
