@@ -5,3 +5,9 @@
 3) has an appropriate level of complexity
 
 Feel free to use tools you are comfortable with, but you must use C# as the main language. When you are done provide access to the solution so that the interview panel may assess it in its entirety.
+
+Instructions:
+• cd to Homework/RomanNumerals
+• compile: dotnet build RomanNumerals.sln
+• run tests: dotnet test RomanNumerals.sln
+• demo: e.g. dotnet run --project RomanNumerals/RomanNumerals.csproj - Console will keep requesting input until a valid input is supplied, which is then convert to roman numerals.
