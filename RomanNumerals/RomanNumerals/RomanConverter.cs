@@ -11,7 +11,8 @@ public class RomanConverter
         var digits = _digits[input % 10];
         var tens = _tens[(input / 10) % 10];
         var hundreds = _hundreds[(input / 100) % 10];
-        var prefix = input > 999 ? "M" : "";
+        var prefix = input > 1999 ? "MM" 
+                        : input > 999 ? "M" : "";
         return $"{prefix}{hundreds}{tens}{digits}";
     }
 }
