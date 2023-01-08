@@ -47,7 +47,6 @@ public class RomanConverterTests
         _converter.ConvertToRoman(2000).Should().Be("MM");
     }
 
-
     private static object[] AddTestData(object[] first, object[] second) => new object[] { (int)first[0] + (int)second[0], (string)first[1] + (string)second[1] };
 
     public static IEnumerable<object[]> Digits()
