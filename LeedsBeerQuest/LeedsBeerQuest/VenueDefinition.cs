@@ -22,9 +22,9 @@ public record VenueDefinition
 
 public enum VenueCategory
 {
-    ClosedVenues,
-    BarReviews,
-    PubReviews,
-    OtherReviews,
-    Uncategorized
+    BarReviews = 0,
+    ClosedVenues = 1,
+    OtherReviews = 2,
+    PubReviews = 3,
+    Uncategorized = 4
 }
