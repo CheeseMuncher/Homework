@@ -93,7 +93,7 @@ public class VenueQueryValidatorTests
     }
 
     [Theory]
-    [MemberData(nameof(StarProperties))]
+    [ClassData(typeof(StarPropertiesClassData))]
     public void Validate_ReturnsInvalidResult_IfStarValueNegative(string propertyName)
     {
         var input = new VenueQuery();
@@ -108,7 +108,7 @@ public class VenueQueryValidatorTests
     }
 
     [Theory]
-    [MemberData(nameof(StarProperties))]
+    [ClassData(typeof(StarPropertiesClassData))]
     public void Validate_ReturnsInvalidResult_IfStarValueExceedsFive(string propertyName)
     {
         var input = new VenueQuery();
@@ -120,13 +120,5 @@ public class VenueQueryValidatorTests
         result.IsValid.Should().BeFalse();
         var error = result.Errors.Should().ContainSingle().Which;
         error.ErrorMessage.Should().Be($"{propertyName} value {5.000001m} is invalid");
-    }
-
-    public static IEnumerable<object[]> StarProperties()
-    {
-        yield return new object[] { nameof(VenueQuery.MinimumBeerStars) };
-        yield return new object[] { nameof(VenueQuery.MinimumAtmosphereStars) };
-        yield return new object[] { nameof(VenueQuery.MinimumAmenitiesStars) };
-        yield return new object[] { nameof(VenueQuery.MinimumValueStars) };
     }
 }
