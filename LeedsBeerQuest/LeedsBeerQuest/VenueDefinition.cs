@@ -17,7 +17,7 @@ public record VenueDefinition
     public decimal AtmosphereStars;
     public decimal AmenitiesStars;
     public decimal ValueStars;
-    public HashSet<string> Tags;
+    public HashSet<string> Tags = new HashSet<string>();
 }
 
 public enum VenueCategory
