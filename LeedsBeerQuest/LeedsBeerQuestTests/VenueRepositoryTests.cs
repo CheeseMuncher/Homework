@@ -208,6 +208,21 @@ public class VenueRepositoryTests
         result.Should().HaveCount(3);
         result.First().Should().BeEquivalentTo(venue3);
         result.Last().Should().BeEquivalentTo(venue2);
-    }    
+    }
 
+    [Fact]
+    public void GetVenues_SortsByDistance()
+    {
+        var venue1 = new VenueDefinition { Latitude = 53.801205533361426m, Longitude = -5m }; 
+        var venue2 = new VenueDefinition { Latitude = 53.801205533361426m, Longitude = -1.556007954901056m }; // Distance is zero
+        var venue3 = new VenueDefinition { Latitude = 53.801205533361426m, Longitude = -3m }; 
+        _mockRawDataRepo.Setup(repo => repo.GetAllVenues()).Returns(new HashSet<VenueDefinition>() { venue1, venue2, venue3 });
+
+        var result = _sut.GetVenues(new VenueQuery(), SortKeyType.Distance);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(3);
+        result.First().Should().BeEquivalentTo(venue2);
+        result.Last().Should().BeEquivalentTo(venue1);
+    }
 }

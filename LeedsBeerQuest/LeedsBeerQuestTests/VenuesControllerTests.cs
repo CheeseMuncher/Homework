@@ -109,7 +109,7 @@ public class VenuesControllerTests
                 AtmosphereStars = 1.5m,
                 Tags = new HashSet<string> { "Another" }
             }
-        };
+        } as Venue[];
         _mockVenueRepository.Setup(mvr => mvr.GetVenues(It.IsAny<VenueQuery>(), It.IsAny<SortKeyType>())).Returns(venues);
 
         var result = _sut.Get(new VenueQuery());

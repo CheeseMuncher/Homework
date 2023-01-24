@@ -6,7 +6,7 @@ public interface IVenueRepository
 {
     HashSet<string> GetAllTags();
 
-    VenueDefinition[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer);
+    Venue[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer);
 }
 
 public class VenueRepository : IVenueRepository
@@ -20,15 +20,16 @@ public class VenueRepository : IVenueRepository
 
     public HashSet<string> GetAllTags() => _venueRawData.GetAllVenues()?.SelectMany(v => v.Tags)?.ToHashSet() ?? new HashSet<string>();
 
-    public VenueDefinition[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer)
+    public Venue[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer)
     {
         var predicate = GetPredicate(query);
         var sortExpression = GetSortExpression(sortKeyType);
         return _venueRawData.GetAllVenues()
             ?.Where(vd => predicate(vd))
+            ?.Select(vd => BuildVenueModel(vd, query))
             ?.AsQueryable()
             ?.OrderBy(sortExpression)
-            ?.ToArray() ?? Array.Empty<VenueDefinition>();
+            ?.ToArray() ?? Array.Empty<Venue>();
     }
 
     private Func<VenueDefinition, bool> GetPredicate(VenueQuery query)
@@ -50,6 +51,14 @@ public class VenueRepository : IVenueRepository
             SortKeyType.Amenities => $"{nameof(VenueDefinition.AmenitiesStars)} DESC",
             SortKeyType.Value => $"{nameof(VenueDefinition.ValueStars)} DESC",
             SortKeyType.Name => $"{nameof(VenueDefinition.Name)} ASC",
+            SortKeyType.Distance => $"{nameof(Venue.DistanceMetres)} ASC",
             _ => ""
         };
+
+    private Venue BuildVenueModel(VenueDefinition definition, VenueQuery query)
+    {
+        var result = new Venue(definition);
+        result.SetDistance(query.Latitude.Value, query.Longitude.Value);
+        return result;
+    }
 }
