@@ -35,6 +35,18 @@ public class VenueQueryValidatorTests
     }
 
     [Fact]
+    public void Validate_ReturnsValidResult_IfTagDiffersOnlyByCase()
+    {
+        var tag = $"{Guid.NewGuid()}";
+        _mockRepository.Setup(repo => repo.GetAllTags()).Returns(new HashSet<string> { tag.ToLower() });
+        var input = new VenueQuery { Tags = new HashSet<string> { tag.ToUpper() } };
+
+        var result = _sut.Validate(input);
+
+        result.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
     public void Validate_ReturnsValidResult_IfTagsAllValid()
     {
         var validTags = new HashSet<string> { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" };
@@ -44,6 +56,28 @@ public class VenueQueryValidatorTests
         var result = _sut.Validate(input);
 
         result.IsValid.Should().BeTrue();
+    }    
+
+    [Fact]
+    public void Validate_MakesSingleInvocation_OnRepository()
+    {
+        _mockRepository.Setup(repo => repo.GetAllTags()).Returns(new HashSet<string> { $"{Guid.NewGuid()}" });
+        var input = new VenueQuery { Tags = new HashSet<string> { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
+
+        var result = _sut.Validate(input);
+
+        _mockRepository.Verify(repo => repo.GetAllTags(), Times.Once);
+    }    
+
+    [Fact]
+    public void Validate_HandlesNullRepositoryResponse()
+    {
+         _mockRepository.Setup(repo => repo.GetAllTags()).Returns(null as HashSet<string>);
+        var input = new VenueQuery { Tags = new HashSet<string> { $"{Guid.NewGuid()}", $"{Guid.NewGuid()}" } };
+
+        var result = _sut.Validate(input);
+
+        _mockRepository.Verify(repo => repo.GetAllTags(), Times.Once);
     }    
 
     [Fact]

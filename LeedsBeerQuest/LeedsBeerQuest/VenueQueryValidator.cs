@@ -4,10 +4,12 @@ namespace LeedsBeerQuest;
 
 public class VenueQueryValidator : AbstractValidator<VenueQuery>
 {
+    private HashSet<string> _allTags;
+
     public VenueQueryValidator(IVenueRepository venueRepository)
     {
         RuleForEach(query => query.Tags)
-            .Must(tag => venueRepository.GetAllTags().Contains(tag))
+            .Must(tag => IsValidTag(venueRepository, tag))
             .WithMessage((query, tag) => $"Tag value {tag} is invalid");
             
         RuleFor(query => query.Latitude)
@@ -33,8 +35,13 @@ public class VenueQueryValidator : AbstractValidator<VenueQuery>
         RuleFor(query => query.MinimumValueStars)
             .Must(stars => IsValidStarMinimum(stars))
             .WithMessage((query, stars) => $"MinimumValueStars value {stars} is invalid");
-
     }
 
-    private bool IsValidStarMinimum(decimal? value) => 0 <= (value ?? 0) && (value ?? 0) <= 5m;    
+    private bool IsValidStarMinimum(decimal? value) => 0 <= (value ?? 0) && (value ?? 0) <= 5m;   
+
+    private bool IsValidTag(IVenueRepository venueRepository, string candidate)
+    {
+        _allTags ??= venueRepository.GetAllTags() ?? new HashSet<string>();
+        return _allTags.Any(t => string.Equals(t, candidate, StringComparison.InvariantCultureIgnoreCase));
+    } 
 }

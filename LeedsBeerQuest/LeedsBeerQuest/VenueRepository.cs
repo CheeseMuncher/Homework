@@ -27,7 +27,7 @@ public class VenueRepository : IVenueRepository
     private Func<VenueDefinition, bool> GetPredicate(VenueQuery query)
     {
         return (VenueDefinition vd) => 
-            query.Tags.All(tag => vd.Tags.Contains(tag))
+            query.Tags.All(tag => vd.Tags.Any(t => string.Equals(t, tag, StringComparison.InvariantCultureIgnoreCase)))
             && query.MinimumBeerStars <= vd.BeerStars
             && query.MinimumAtmosphereStars <= vd.AtmosphereStars
             && query.MinimumAmenitiesStars <= vd.AmenitiesStars

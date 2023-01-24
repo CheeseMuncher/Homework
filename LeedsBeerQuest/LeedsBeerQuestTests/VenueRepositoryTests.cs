@@ -141,6 +141,20 @@ public class VenueRepositoryTests
         result.Should().BeEquivalentTo(new HashSet<VenueDefinition>() { venue2, venue4 });
     }
 
+    [Fact]
+    public void GetVenues_FiltersOnTagsCaseInsensitive()
+    {
+        var tag = $"{Guid.NewGuid()}".ToUpper();
+        var venue = new VenueDefinition { Tags = new HashSet<string> { tag } };
+        _mockRawDataRepo.Setup(repo => repo.GetAllVenues()).Returns(new HashSet<VenueDefinition>() { venue });
+
+        var result = _sut.GetVenues(new VenueQuery { Tags = new HashSet<string> { tag.ToLower() } });
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+        result.Should().BeEquivalentTo(new HashSet<VenueDefinition>() { venue });
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
