@@ -10,7 +10,7 @@ public class VenueQueryValidator : AbstractValidator<VenueQuery>
     {
         RuleForEach(query => query.Tags)
             .Must(tag => IsValidTag(venueRepository, tag))
-            .WithMessage((query, tag) => $"Tag value {tag} is invalid");
+            .WithMessage((query, tag) => $"Tag value {tag} is invalid, valid tags are: {string.Join(',', _allTags)}");
             
         RuleFor(query => query.Latitude)
             .Must(lat => -90m <= lat && lat <= 90m)

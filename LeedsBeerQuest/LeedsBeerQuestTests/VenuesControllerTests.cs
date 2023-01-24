@@ -23,7 +23,7 @@ public class VenuesControllerTests
     {
         var query = new VenueQuery();
 
-        _sut.Get(query, $"{Guid.NewGuid()}");
+        _sut.Get(query);
 
         _mockQueryValidator.Verify(mvv => mvv.Validate(query), Times.Once);
     }
@@ -36,7 +36,7 @@ public class VenuesControllerTests
         var validationResult = new ValidationResult { Errors = new List<ValidationFailure> { error1, error2 } };
         _mockQueryValidator.Setup(mvv => mvv.Validate(It.IsAny<VenueQuery>())).Returns(validationResult);
 
-        var result = _sut.Get(new VenueQuery(), $"{Guid.NewGuid()}");
+        var result = _sut.Get(new VenueQuery());
 
         result.Should().NotBeNull();
         result.Should().BeOfType<BadRequestObjectResult>();
@@ -48,12 +48,45 @@ public class VenuesControllerTests
         content.Should().Contain(error2.ErrorMessage);
     }
 
+    public void Get_ReturnsBadRequest_WithMessage_IfSortKeyInvalid()
+    {
+        var sortKey = $"{Guid.NewGuid()}";
+
+        var result = _sut.Get(new VenueQuery(), sortKey);
+
+        result.Should().NotBeNull();
+        result.Should().BeOfType<BadRequestObjectResult>();
+        var content = (result as BadRequestObjectResult).Value as string;
+        content.Should().Contain(sortKey);
+    }
+
     [Fact]
-    public void Get_InvokesReository_WithCorrectArgs()
+    public void Get_CombinesErrorMessages_IfQueryAndSortKeyBothInvalid()
+    {
+        var error = new ValidationFailure("property1", "message");
+        var validationResult = new ValidationResult { Errors = new List<ValidationFailure> { error } };
+        _mockQueryValidator.Setup(mvv => mvv.Validate(It.IsAny<VenueQuery>())).Returns(validationResult);
+        var sortKey = $"{Guid.NewGuid()}";
+
+        var result = _sut.Get(new VenueQuery(), sortKey);
+
+        result.Should().NotBeNull();
+        result.Should().BeOfType<BadRequestObjectResult>();
+        var content = (result as BadRequestObjectResult).Value as string;
+        content.Should().NotBeNull();
+        content.Should().Contain(error.PropertyName);
+        content.Should().Contain(error.ErrorMessage);
+        content.Should().Contain(sortKey);
+        foreach (var sortKeyType in Enum.GetNames<SortKeyType>().ToHashSet())
+            content.Should().Contain(sortKeyType);
+    }
+
+    [Fact]
+    public void Get_InvokesRepository_WithCorrectArgs()
     {
         var query = new VenueQuery();
 
-        _sut.Get(query, $"{Guid.NewGuid()}");
+        _sut.Get(query);
 
         _mockVenueRepository.Verify(mvr => mvr.GetVenues(query), Times.Once);
     }
@@ -78,7 +111,7 @@ public class VenuesControllerTests
         };
         _mockVenueRepository.Setup(mvr => mvr.GetVenues(It.IsAny<VenueQuery>())).Returns(venues);
 
-        var result = _sut.Get(new VenueQuery(), $"{Guid.NewGuid()}");
+        var result = _sut.Get(new VenueQuery());
 
         result.Should().NotBeNull();
         result.Should().BeOfType<OkObjectResult>();

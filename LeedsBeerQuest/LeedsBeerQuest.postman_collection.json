@@ -60,6 +60,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Venues - Unhappy Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7080/venues?MinimumBeerStars=6&Tags=Fried Chicken&SortKey=Cheese",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7080",
+					"path": [
+						"venues"
+					],
+					"query": [
+						{
+							"key": "MinimumBeerStars",
+							"value": "6"
+						},
+						{
+							"key": "Tags",
+							"value": "Fried Chicken"
+						},
+						{
+							"key": "SortKey",
+							"value": "Cheese"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

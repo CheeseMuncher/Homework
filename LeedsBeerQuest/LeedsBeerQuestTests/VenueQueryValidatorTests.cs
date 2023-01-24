@@ -23,7 +23,9 @@ public class VenueQueryValidatorTests
     [Fact]
     public void Validate_ReturnsInvalidResult_IfTagInvalid()
     {
-        _mockRepository.Setup(repo => repo.GetAllTags()).Returns(new HashSet<string> { $"{Guid.NewGuid()}" });
+        var validTag1 = $"{Guid.NewGuid()}";
+        var validTag2 = $"{Guid.NewGuid()}";
+        _mockRepository.Setup(repo => repo.GetAllTags()).Returns(new HashSet<string> { validTag1, validTag2 });
         var invalidTag = $"{Guid.NewGuid()}";
         var input = new VenueQuery { Tags = new HashSet<string> { invalidTag } };
 
@@ -31,7 +33,7 @@ public class VenueQueryValidatorTests
 
         result.IsValid.Should().BeFalse();
         var error = result.Errors.Should().ContainSingle().Which;
-        error.ErrorMessage.Should().Be($"Tag value {invalidTag} is invalid");
+        error.ErrorMessage.Should().Be($"Tag value {invalidTag} is invalid, valid tags are: {validTag1},{validTag2}");
     }
 
     [Fact]
@@ -94,8 +96,8 @@ public class VenueQueryValidatorTests
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().HaveCount(2);
-        result.Errors.Should().Contain(e => e.ErrorMessage == $"Tag value {invalidTag1} is invalid");
-        result.Errors.Should().Contain(e => e.ErrorMessage == $"Tag value {invalidTag2} is invalid");
+        result.Errors.Should().Contain(e => e.ErrorMessage.Contains(invalidTag1));
+        result.Errors.Should().Contain(e => e.ErrorMessage.Contains(invalidTag2));
     }
 
     [Theory]

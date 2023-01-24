@@ -17,13 +17,22 @@ public class VenuesController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult Get([FromQuery] VenueQuery venueQuery, [FromQuery] string sortValue)
+    public ActionResult Get([FromQuery] VenueQuery venueQuery, [FromQuery] string sortKey = "")
     {
+        var errors = new HashSet<string>();
+        SortKeyType sortKeyType = SortKeyType.Beer;
+        if (!string.IsNullOrEmpty(sortKey))
+            if (!Enum.TryParse<SortKeyType>(sortKey, true, out sortKeyType))
+                errors.Add($"Invalid sort key: {sortKey}, valid sort keys are {string.Join(',', Enum.GetNames<SortKeyType>())}");
+
         var result = _venueQueryValidator.Validate(venueQuery);
         if (!result.IsValid)
-            return BadRequest($"Invalid query: {string.Join(',', result.Errors.Select(e => $"{e.PropertyName}: {e.ErrorMessage}"))}");
+            errors.Add($"Invalid query: {string.Join(',', result.Errors.Select(e => $"{e.PropertyName}: {e.ErrorMessage}"))}");
+
+        if (errors.Any())
+            return BadRequest(string.Join(';', errors));
 
         var venues = _venueRepository.GetVenues(venueQuery);
         return Ok(JsonSerializer.Serialize(venues));
-    }
+    }    
 }
