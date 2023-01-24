@@ -1,10 +1,12 @@
+using System.Linq.Dynamic.Core;
+
 namespace LeedsBeerQuest;
 
 public interface IVenueRepository
 {
     HashSet<string> GetAllTags();
 
-    HashSet<VenueDefinition> GetVenues(VenueQuery query);
+    VenueDefinition[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer);
 }
 
 public class VenueRepository : IVenueRepository
@@ -18,10 +20,15 @@ public class VenueRepository : IVenueRepository
 
     public HashSet<string> GetAllTags() => _venueRawData.GetAllVenues()?.SelectMany(v => v.Tags)?.ToHashSet() ?? new HashSet<string>();
 
-    public HashSet<VenueDefinition> GetVenues(VenueQuery query)
+    public VenueDefinition[] GetVenues(VenueQuery query, SortKeyType sortKeyType = SortKeyType.Beer)
     {
         var predicate = GetPredicate(query);
-        return _venueRawData.GetAllVenues()?.Where(vd => predicate(vd))?.ToHashSet() ?? new HashSet<VenueDefinition>();
+        var sortExpression = GetSortExpression(sortKeyType);
+        return _venueRawData.GetAllVenues()
+            ?.Where(vd => predicate(vd))
+            ?.AsQueryable()
+            ?.OrderBy(sortExpression)
+            ?.ToArray() ?? Array.Empty<VenueDefinition>();
     }
 
     private Func<VenueDefinition, bool> GetPredicate(VenueQuery query)
@@ -34,4 +41,15 @@ public class VenueRepository : IVenueRepository
             && query.MinimumValueStars <= vd.ValueStars
             && (query.IncludeClosedVenues ? true : vd.VenueCategory != VenueCategory.ClosedVenues);
     }
+
+    private string GetSortExpression(SortKeyType sortKeyType) =>
+        sortKeyType switch 
+        {
+            SortKeyType.Beer => $"{nameof(VenueDefinition.BeerStars)} DESC",
+            SortKeyType.Atmosphere => $"{nameof(VenueDefinition.AtmosphereStars)} DESC",
+            SortKeyType.Amenities => $"{nameof(VenueDefinition.AmenitiesStars)} DESC",
+            SortKeyType.Value => $"{nameof(VenueDefinition.ValueStars)} DESC",
+            SortKeyType.Name => $"{nameof(VenueDefinition.Name)} ASC",
+            _ => ""
+        };
 }

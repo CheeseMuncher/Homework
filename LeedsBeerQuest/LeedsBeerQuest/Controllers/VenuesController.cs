@@ -32,7 +32,7 @@ public class VenuesController : ControllerBase
         if (errors.Any())
             return BadRequest(string.Join(';', errors));
 
-        var venues = _venueRepository.GetVenues(venueQuery);
+        var venues = _venueRepository.GetVenues(venueQuery, sortKeyType);
         return Ok(JsonSerializer.Serialize(venues));
     }    
 }

@@ -85,16 +85,17 @@ public class VenuesControllerTests
     public void Get_InvokesRepository_WithCorrectArgs()
     {
         var query = new VenueQuery();
+        var sortKey = SortKeyType.Value;
 
-        _sut.Get(query);
+        _sut.Get(query, $"{sortKey}");
 
-        _mockVenueRepository.Verify(mvr => mvr.GetVenues(query), Times.Once);
+        _mockVenueRepository.Verify(mvr => mvr.GetVenues(query, sortKey), Times.Once);
     }
 
     [Fact]
     public void Get_ReturnsOk_WithRepositoryData()
     {
-        var venues = new HashSet<VenueDefinition>
+        var venues = new []
         {
             new VenueDefinition 
             {
@@ -109,7 +110,7 @@ public class VenuesControllerTests
                 Tags = new HashSet<string> { "Another" }
             }
         };
-        _mockVenueRepository.Setup(mvr => mvr.GetVenues(It.IsAny<VenueQuery>())).Returns(venues);
+        _mockVenueRepository.Setup(mvr => mvr.GetVenues(It.IsAny<VenueQuery>(), It.IsAny<SortKeyType>())).Returns(venues);
 
         var result = _sut.Get(new VenueQuery());
 

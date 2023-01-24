@@ -173,4 +173,41 @@ public class VenueRepositoryTests
         result.Should().HaveCount(expectedVenues.Count);
         result.Should().BeEquivalentTo(expectedVenues);
     }
+
+    [Theory]
+    [InlineData(SortKeyType.Beer)]
+    [InlineData(SortKeyType.Atmosphere)]
+    [InlineData(SortKeyType.Amenities)]
+    [InlineData(SortKeyType.Value)]
+    public void GetVenues_SortsByStarValues(SortKeyType sortKeyType)
+    {
+        var venue1 = new VenueDefinition { BeerStars = 1m, AtmosphereStars = 1m, AmenitiesStars = 1m, ValueStars = 1m };
+        var venue2 = new VenueDefinition { BeerStars = 1.5m, AtmosphereStars = 1.5m, AmenitiesStars = 1.5m, ValueStars = 1.5m };
+        var venue3 = new VenueDefinition { BeerStars = 2m, AtmosphereStars = 2m, AmenitiesStars = 2m, ValueStars = 2m };
+        _mockRawDataRepo.Setup(repo => repo.GetAllVenues()).Returns(new HashSet<VenueDefinition>() { venue1, venue2, venue3 });
+
+        var result = _sut.GetVenues(new VenueQuery(), sortKeyType);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(3);
+        result.First().Should().BeEquivalentTo(venue3);
+        result.Last().Should().BeEquivalentTo(venue1);
+    }
+
+    [Fact]
+    public void GetVenues_SortsByName()
+    {
+        var venue1 = new VenueDefinition { Name = "B" };
+        var venue2 = new VenueDefinition { Name = "C" };
+        var venue3 = new VenueDefinition { Name = "A" };
+        _mockRawDataRepo.Setup(repo => repo.GetAllVenues()).Returns(new HashSet<VenueDefinition>() { venue1, venue2, venue3 });
+
+        var result = _sut.GetVenues(new VenueQuery(), SortKeyType.Name);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(3);
+        result.First().Should().BeEquivalentTo(venue3);
+        result.Last().Should().BeEquivalentTo(venue2);
+    }    
+
 }
