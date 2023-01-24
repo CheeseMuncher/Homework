@@ -7,7 +7,7 @@ public interface IVenueRepository
     HashSet<VenueDefinition> GetVenues(VenueQuery query);
 }
 
-public class VenueRepository
+public class VenueRepository : IVenueRepository
 {
     private readonly IVenueRawData _venueRawData;
 

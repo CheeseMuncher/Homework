@@ -23,6 +23,43 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Venues - Happy Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7080/venues?MinimumBeerStars=3&MinimumValueStars=3&Tags=jukebox&Tags=food",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7080",
+					"path": [
+						"venues"
+					],
+					"query": [
+						{
+							"key": "MinimumBeerStars",
+							"value": "3"
+						},
+						{
+							"key": "MinimumValueStars",
+							"value": "3"
+						},
+						{
+							"key": "Tags",
+							"value": "jukebox"
+						},
+						{
+							"key": "Tags",
+							"value": "food"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
