@@ -19,6 +19,8 @@ public class VenuesController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Venue>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public ActionResult Get([FromQuery] VenueQuery venueQuery, [FromQuery] string sortKey = "")
     {
         var errors = new HashSet<string>();
