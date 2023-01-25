@@ -9,7 +9,7 @@ public class VenueTests
         var query = new VenueQuery();
 
         var result = new Venue(venue);
-        result.SetDistance(query.Latitude.Value, query.Longitude.Value);
+        result.SetDistance(query.Latitude, query.Longitude);
 
         result.DistanceMetres.Should().Be(48);
     }

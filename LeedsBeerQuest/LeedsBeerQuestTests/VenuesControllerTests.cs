@@ -40,7 +40,7 @@ public class VenuesControllerTests
 
         result.Should().NotBeNull();
         result.Should().BeOfType<BadRequestObjectResult>();
-        var content = (result as BadRequestObjectResult).Value as string;
+        var content = (result as BadRequestObjectResult)?.Value as string;
         content.Should().NotBeNull();
         content.Should().Contain(error1.PropertyName);
         content.Should().Contain(error1.ErrorMessage);
@@ -48,6 +48,7 @@ public class VenuesControllerTests
         content.Should().Contain(error2.ErrorMessage);
     }
 
+    [Fact]
     public void Get_ReturnsBadRequest_WithMessage_IfSortKeyInvalid()
     {
         var sortKey = $"{Guid.NewGuid()}";
@@ -56,7 +57,7 @@ public class VenuesControllerTests
 
         result.Should().NotBeNull();
         result.Should().BeOfType<BadRequestObjectResult>();
-        var content = (result as BadRequestObjectResult).Value as string;
+        var content = (result as BadRequestObjectResult)?.Value as string;
         content.Should().Contain(sortKey);
     }
 
@@ -72,7 +73,7 @@ public class VenuesControllerTests
 
         result.Should().NotBeNull();
         result.Should().BeOfType<BadRequestObjectResult>();
-        var content = (result as BadRequestObjectResult).Value as string;
+        var content = (result as BadRequestObjectResult)?.Value as string;
         content.Should().NotBeNull();
         content.Should().Contain(error.PropertyName);
         content.Should().Contain(error.ErrorMessage);
@@ -97,26 +98,27 @@ public class VenuesControllerTests
     {
         var venues = new []
         {
-            new VenueDefinition 
+            new Venue 
             {
                 Address = "Something",
                 BeerStars = 2.5m,
                 Tags = new HashSet<string> { "A tag" }
             },
-            new VenueDefinition 
+            new Venue 
             {
                 Twitter = "Twit",
                 AtmosphereStars = 1.5m,
-                Tags = new HashSet<string> { "Another" }
+                Tags = new HashSet<string> { "Another" },
+                DistanceMetres = 3
             }
-        } as Venue[];
+        };
         _mockVenueRepository.Setup(mvr => mvr.GetVenues(It.IsAny<VenueQuery>(), It.IsAny<SortKeyType>())).Returns(venues);
 
         var result = _sut.Get(new VenueQuery());
 
         result.Should().NotBeNull();
         result.Should().BeOfType<OkObjectResult>();
-        var content = (result as OkObjectResult).Value as string;
+        var content = (result as OkObjectResult)?.Value as string;
         content.Should().Be(JsonSerializer.Serialize(venues));
     }
 }

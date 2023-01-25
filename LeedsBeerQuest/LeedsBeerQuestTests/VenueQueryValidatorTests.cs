@@ -134,7 +134,8 @@ public class VenueQueryValidatorTests
     {
         var input = new VenueQuery();
         var property = typeof(VenueQuery).GetProperty(propertyName);
-        property.SetValue(input, -0.000001m);
+        if (property is not null)
+            property.SetValue(input, -0.000001m);
 
         var result = _sut.Validate(input);
 
@@ -149,7 +150,8 @@ public class VenueQueryValidatorTests
     {
         var input = new VenueQuery();
         var property = typeof(VenueQuery).GetProperty(propertyName);
-        property.SetValue(input, 5.000001m);
+        if (property is not null)
+            property.SetValue(input, 5.000001m);
 
         var result = _sut.Validate(input);
 

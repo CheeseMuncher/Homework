@@ -91,7 +91,8 @@ public class VenueRepositoryTests
 
         var query = new VenueQuery();
         var property = typeof(VenueQuery).GetProperty(propertyName);
-        property.SetValue(query, 1.2m);
+        if (property is not null)
+            property.SetValue(query, 1.2m);
 
         var result = _sut.GetVenues(query);
 
@@ -111,7 +112,8 @@ public class VenueRepositoryTests
 
         var query = new VenueQuery();
         var property = typeof(VenueQuery).GetProperty(propertyName);
-        property.SetValue(query, 2m);
+        if (property is not null)
+            property.SetValue(query, 2m);
 
         var result = _sut.GetVenues(query);
 
@@ -160,9 +162,9 @@ public class VenueRepositoryTests
     [InlineData(true)]
     public void GetVenues_FiltersClosedVenues(bool includeClosedVenues)
     {
-        var venue1 = new VenueDefinition { VenueCategory = VenueCategory.BarReviews };
-        var venue2 = new VenueDefinition { VenueCategory = VenueCategory.ClosedVenues };
-        var venue3 = new VenueDefinition { VenueCategory = VenueCategory.PubReviews };
+        var venue1 = new VenueDefinition { VenueType = VenueType.BarReviews };
+        var venue2 = new VenueDefinition { VenueType = VenueType.ClosedVenues };
+        var venue3 = new VenueDefinition { VenueType = VenueType.PubReviews };
         var venues = new HashSet<VenueDefinition>() { venue1, venue2, venue3 };
         _mockRawDataRepo.Setup(repo => repo.GetAllVenues()).Returns(venues);
 

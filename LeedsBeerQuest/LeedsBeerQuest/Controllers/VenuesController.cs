@@ -1,5 +1,7 @@
 using System.Text.Json;
 using FluentValidation;
+using LeedsBeerQuest.Data;
+using LeedsBeerQuest.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LeedsBeerQuest.Controllers;

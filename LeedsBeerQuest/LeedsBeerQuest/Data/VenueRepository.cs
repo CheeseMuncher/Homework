@@ -1,6 +1,7 @@
 using System.Linq.Dynamic.Core;
+using LeedsBeerQuest.Models;
 
-namespace LeedsBeerQuest;
+namespace LeedsBeerQuest.Data;
 
 public interface IVenueRepository
 {
@@ -40,7 +41,7 @@ public class VenueRepository : IVenueRepository
             && query.MinimumAtmosphereStars <= vd.AtmosphereStars
             && query.MinimumAmenitiesStars <= vd.AmenitiesStars
             && query.MinimumValueStars <= vd.ValueStars
-            && (query.IncludeClosedVenues ? true : vd.VenueCategory != VenueCategory.ClosedVenues);
+            && (query.IncludeClosedVenues ? true : vd.VenueType != VenueType.ClosedVenues);
     }
 
     private string GetSortExpression(SortKeyType sortKeyType) =>
@@ -58,7 +59,7 @@ public class VenueRepository : IVenueRepository
     private Venue BuildVenueModel(VenueDefinition definition, VenueQuery query)
     {
         var result = new Venue(definition);
-        result.SetDistance(query.Latitude.Value, query.Longitude.Value);
+        result.SetDistance(query.Latitude, query.Longitude);
         return result;
     }
 }

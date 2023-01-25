@@ -1,5 +1,7 @@
 using FluentValidation;
 using LeedsBeerQuest;
+using LeedsBeerQuest.Data;
+using LeedsBeerQuest.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

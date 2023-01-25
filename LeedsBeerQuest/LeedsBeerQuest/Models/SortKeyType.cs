@@ -1,4 +1,4 @@
-namespace LeedsBeerQuest;
+namespace LeedsBeerQuest.Models;
 
 public enum SortKeyType
 {

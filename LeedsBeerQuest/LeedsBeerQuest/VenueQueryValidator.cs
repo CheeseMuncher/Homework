@@ -1,16 +1,18 @@
 using FluentValidation;
+using LeedsBeerQuest.Models;
+using LeedsBeerQuest.Data;
 
 namespace LeedsBeerQuest;
 
 public class VenueQueryValidator : AbstractValidator<VenueQuery>
 {
-    private HashSet<string> _allTags;
+    private HashSet<string>? _allTags;
 
     public VenueQueryValidator(IVenueRepository venueRepository)
     {
         RuleForEach(query => query.Tags)
             .Must(tag => IsValidTag(venueRepository, tag))
-            .WithMessage((query, tag) => $"Tag value {tag} is invalid, valid tags are: {string.Join(',', _allTags)}");
+            .WithMessage((query, tag) => $"Tag value {tag} is invalid, valid tags are: {string.Join(',', _allTags ?? new HashSet<string>())}");
             
         RuleFor(query => query.Latitude)
             .Must(lat => -90m <= lat && lat <= 90m)
