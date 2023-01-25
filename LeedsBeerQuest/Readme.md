@@ -28,6 +28,7 @@ This has been tested on Ubuntu Mate 20.04 only, but it should work on any platfo
 - cd down one more level to `LeedsBeerQuest` (full relative path should be `/Homework/LeedsBeerQuest/LeedsBeerQuest`)
 - run command `dotnet run`
 - console output should indicate which port the application is running on. Specifically check if it is 7080 or not (if not you'll need to update the steps below)
+- There is an IIS launch profile, if you know how that works. Not tested.
 
 ### Testing the application: 
 - Import the postman collection, a json file in the root folder of the LeedsBeerQuest Application. Optionally update the port value in the requests from 7080 to whatever yours is using
