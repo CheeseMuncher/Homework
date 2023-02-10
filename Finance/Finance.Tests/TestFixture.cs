@@ -1,6 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Dsl;
+using AutoFixture.Xunit2;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Finance.Tests;
 
 public class TestFixture
 {
-    protected readonly Fixture _fixture = new Fixture();
+    protected readonly Fixture _fixture = DateOnlyFixture.Create();
 
     protected TestFixture()
     {
@@ -36,4 +37,19 @@ public class TestFixture<TSut> : TestFixture where TSut : class
 {
     private TSut _sut = default!;
     protected TSut Sut => _sut ??= _fixture.Create<TSut>();
+}
+
+public class DateOnlyFixture
+{
+    public static Fixture Create()
+    {
+        var fixture = new Fixture();
+        fixture.Customize<DateOnly>(composer => composer.FromFactory<DateTime>(DateOnly.FromDateTime));
+        return fixture;
+    }
+}
+
+public class AutoDateOnlyAttribute : AutoDataAttribute
+{
+    public AutoDateOnlyAttribute() : base(() => DateOnlyFixture.Create()) {}
 }

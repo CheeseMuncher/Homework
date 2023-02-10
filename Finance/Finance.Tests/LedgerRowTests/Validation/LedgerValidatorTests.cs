@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Finance.Domain.GoogleSheets.Models;
+using Finance.Domain.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace Finance.Tests.Validation;
+namespace Finance.Tests.LedgerRowTests.Validation;
 
 public class LedgerValidatorTest : TestFixture<LedgerValidator>
 {
@@ -128,5 +128,4 @@ public class LedgerValidatorTest : TestFixture<LedgerValidator>
 
     public static IList<object> ValidLedgerDataRow =>
         new List<object> { "2022-12-22", "GBP", "ISA", "GSK", "1234.56", "11" };
-
 }

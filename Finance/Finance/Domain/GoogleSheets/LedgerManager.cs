@@ -1,4 +1,4 @@
-using Finance.Domain.GoogleSheets.Models;
+using Finance.Domain.Models;
 using Google.Apis.Sheets.v4.Data;
 
 namespace Finance.Domain.GoogleSheets;
@@ -7,14 +7,22 @@ public interface ILedgerManager
 {
     public LedgerRow[] GetLedger();
     public LedgerInputRow[] LoadInputFromSource(ValueRange valueRange);
+    // void GeneratePrices();
+    // void GenerateExposures();
     ValueRange BuildLedgerWriteData();
 }
 
 public class LedgerManager : ILedgerManager
 {
     private readonly LedgerValidator _ledgerValidator = new();
+    private readonly IExposureCalculator _exposureCalculator;
     private LedgerRow[] _ledgerData;
     public LedgerRow[] GetLedger() => _ledgerData;
+
+    public LedgerManager(IExposureCalculator exposureCalculator)
+    {
+        _exposureCalculator = exposureCalculator;
+    }
 
     public LedgerInputRow[] LoadInputFromSource(ValueRange valueRange)
     {
@@ -27,13 +35,15 @@ public class LedgerManager : ILedgerManager
         var output = new List<LedgerRow>();
         foreach(var row in data)
         {
-            output.Add(new LedgerRow(
-                DateOnly.Parse(row[0].ToString()),
-                row[1].ToString(),
-                row[2].ToString(),
-                row[3].ToString(),
-                decimal.Parse(row[4].ToString()),
-                row.Count > 5 ? int.Parse(row[5].ToString()) : 0));
+            output.Add(new LedgerRow
+            {
+                Date = DateOnly.Parse(row[0].ToString()),
+                Currency = row[1].ToString(),
+                Portfolio = row[2].ToString(),
+                Code = row[3].ToString(),
+                Consideration = decimal.Parse(row[4].ToString()),
+                Units = row.Count > 5 ? int.Parse(row[5].ToString()) : 0
+            });
         }
 
         _ledgerData = output
@@ -45,6 +55,22 @@ public class LedgerManager : ILedgerManager
 
         return _ledgerData.Cast<LedgerInputRow>().ToArray();
     }
+
+    // public void GeneratePrices()
+    // {
+
+    // }
+
+    // public void GenerateExposures()
+    // {
+    //     var exposure = _exposureCalculator.CalculateExposures(GetLedger());
+    //     for (int i = 0; i < exposure.Count(); i++)
+    //     {
+    //         _ledgerData[i].LocalExposure = exposure[i].LocalExposure;
+    //         _ledgerData[i].PositionExposure = exposure[i].PositionExposure;
+    //         _ledgerData[i].PortfolioExposure = exposure[i].PortfolioExposure;
+    //     }
+    // }
 
     public ValueRange BuildLedgerWriteData()
     {

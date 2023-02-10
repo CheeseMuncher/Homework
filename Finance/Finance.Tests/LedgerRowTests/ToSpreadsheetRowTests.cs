@@ -1,23 +1,22 @@
-using System;
-using Finance.Domain.GoogleSheets.Models;
+using Finance.Domain.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace Finance.Tests;
+namespace Finance.Tests.LedgerRowTests;
 
-public class LedgerRowTests : TestFixture<LedgerRow>
+public class ToSpreadsheetRowTests : TestFixture<LedgerRow>
 {
     [Fact]
     public void ToSpreadsheetRow_ReturnsDate_FormattedCorrectly()
     {
         // Arrange
-        var row = new LedgerRowBuilder().WithDate(new DateOnly(2022, 03, 04)).Build();
+        var row = new LedgerRowBuilder().Build();
 
         // Act
         var result = row.ToSpreadsheetRow;
 
         // Assert
-        result[0].Should().Be("2022-03-04");
+        result[0].Should().Be(row.Date.ToString("yyyy-MM-dd"));
     }
 
     [Theory]
@@ -46,22 +45,15 @@ public class LedgerRowTests : TestFixture<LedgerRow>
     public void ToSpreadsheetRow_MapsStringValues()
     {
         // Arrange
-        var currency = Create<string>();
-        var portfolio = Create<string>();
-        var code = Create<string>();
-        var row = new LedgerRowBuilder()
-            .WithCurrency(currency)
-            .WithPortfolio(portfolio)
-            .WithCode(code)            
-            .Build();
+        var row = new LedgerRowBuilder().Build();
 
         // Act
         var result = row.ToSpreadsheetRow;
 
         // Assert
-        result[1].Should().Be(currency);
-        result[2].Should().Be(portfolio);
-        result[3].Should().Be(code);
+        result[1].Should().Be(row.Currency);
+        result[2].Should().Be(row.Portfolio);
+        result[3].Should().Be(row.Code);
     }
 
     [Theory]
@@ -142,69 +134,4 @@ public class LedgerRowTests : TestFixture<LedgerRow>
         for (int i = 4; i < 10; i++ )
             result[i].Should().Be("");
     }
-}
-
-public class LedgerRowBuilder
-{
-    public DateOnly Date { get; private set; } = new DateOnly(2022,12,30);
-    public string Currency { get; private set; } = "GBP";
-    public string Portfolio { get; private set; } = "ISA";
-    public string Code { get; private set; } = "TPK";
-    public decimal Consideration { get; private set; } = 123.456m;
-    public int Units { get; private set; } = 78;
-    public decimal Price { get; private set; } = 456.789m;
-    public decimal LocalExposure { get; private set; } = 123.456m;
-    public decimal PositionExposure { get; private set; } = 123.456m;
-    public decimal PortfolioExposure { get; private set; } = 123.456m;
-
-    public LedgerRowBuilder WithDate(DateOnly date)
-    {
-        Date = date;
-        return this;
-    }
-    public LedgerRowBuilder WithCurrency(string currency)
-    {
-        Currency = currency;
-        return this;
-    }
-    public LedgerRowBuilder WithPortfolio(string portfolio)
-    {
-        Portfolio = portfolio;
-        return this;
-    }
-    public LedgerRowBuilder WithCode(string code)
-    {
-        Code = code;
-        return this;
-    }
-    public LedgerRowBuilder WithConsideration(decimal consideration)
-    {
-        Consideration = consideration;
-        return this;
-    }
-    public LedgerRowBuilder WithUnits(int units)
-    {
-        Units = units;
-        return this;
-    }
-    public LedgerRowBuilder WithPrice(decimal price)
-    {
-        Price = price;
-        return this;
-    }
-    public LedgerRowBuilder WithExposures(decimal local, decimal position,decimal portfolio)
-    {
-        LocalExposure = local;
-        PositionExposure = position;
-        PortfolioExposure = portfolio;
-        return this;
-    }
-
-    public LedgerRow Build() => new LedgerRow(Date, Currency, Portfolio, Code, Consideration, Units)
-    {
-        Price = Price,
-        LocalExposure = LocalExposure,
-        PositionExposure = PositionExposure,
-        PortfolioExposure = PortfolioExposure
-    };
 }

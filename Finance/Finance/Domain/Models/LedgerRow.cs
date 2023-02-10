@@ -1,33 +1,9 @@
-namespace Finance.Domain.GoogleSheets.Models;
-
-public class LedgerInputRow
-{
-    public static string[] HeaderRow => new [] { nameof(Date), nameof(Currency), nameof(Portfolio), nameof(Code), nameof(Consideration), nameof(Units) };
-
-    public LedgerInputRow(DateOnly date, string currency, string portfolio, string code, decimal consideration, int units)
-    {
-        Date = date;
-        Currency = currency;
-        Portfolio = portfolio;
-        Code = code;
-        Consideration = consideration;
-        Units = units;
-    }
-
-    public DateOnly Date { get; }
-    public string Currency { get; } = "";
-    public string Portfolio { get; } = "";
-    public string Code { get; } = "";
-    public decimal Consideration { get; }
-    public int Units { get; }
-}
+namespace Finance.Domain.Models;
 
 public class LedgerRow : LedgerInputRow
 {
     public static string[] FullHeaderRow => HeaderRow.Concat(new [] { nameof(Price), nameof(LocalExposure), nameof(PositionExposure), nameof(PortfolioExposure) }).ToArray();
 
-    public LedgerRow(DateOnly date, string currency, string portfolio, string code, decimal consideration, int units)
-        : base(date, currency, portfolio, code, consideration, units) { }
     public LedgerRowType RowType { get; }
     public decimal Price { get; set; }
     public decimal LocalExposure { get; set; }

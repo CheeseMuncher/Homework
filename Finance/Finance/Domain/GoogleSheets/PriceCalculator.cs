@@ -1,4 +1,4 @@
-using Finance.Domain.GoogleSheets.Models;
+using Finance.Domain.Models;
 
 namespace Finance.Domain.GoogleSheets;
 

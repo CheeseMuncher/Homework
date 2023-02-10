@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Finance.Domain.GoogleSheets;
-using Finance.Domain.GoogleSheets.Models;
-using Finance.Tests.Validation;
+using Finance.Domain.Models;
+using Finance.Tests.LedgerRowTests.Validation;
 using FluentAssertions;
 using Google.Apis.Sheets.v4.Data;
 using Xunit;

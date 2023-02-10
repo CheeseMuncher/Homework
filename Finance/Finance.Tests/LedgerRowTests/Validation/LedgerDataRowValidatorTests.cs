@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Finance.Domain.GoogleSheets.Models;
+using Finance.Domain.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace Finance.Tests.Validation;
+namespace Finance.Tests.LedgerRowTests.Validation;
 
 public class LedgerDataRowValidatorTests : TestFixture<LedgerDataRowValidator>
 {

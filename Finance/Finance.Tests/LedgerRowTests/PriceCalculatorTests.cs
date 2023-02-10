@@ -2,7 +2,7 @@ using Finance.Domain.GoogleSheets;
 using FluentAssertions;
 using Xunit;
 
-namespace Finance.Tests;
+namespace Finance.Tests.LedgerRowTests;
 
 public class PriceCalculatorTests : TestFixture<PriceCalculator>
 {
