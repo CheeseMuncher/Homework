@@ -1,18 +1,20 @@
+using TwistedFizzBuzz;
+
 namespace FizzBuzz;
 
-public static class FizzBuzz
+public class FizzBuzz
 {
-    public static string Evaluate(int i)
+    private readonly TwistedFizzBuzz.TwistedFizzBuzz _twistedFizzBuzz = new();
+
+    public FizzBuzz()
     {
-        if (i % 3 == 0 && i % 5 == 0)
-            return "FizzBuzz";
-
-        if (i % 3 == 0)
-            return "Fizz";
-
-        if (i % 5 == 0)
-            return "Buzz";
-
-        return $"{i}";
+        // Just in case someone changes how things are initialised in TwistedFizzBuzz
+        _twistedFizzBuzz.SetRules(new [] 
+        {
+            new FizzBuzzRule { Multiple = 3, Word = "Fizz" },
+            new FizzBuzzRule { Multiple = 5, Word = "Buzz" }
+        });
     }
+
+    public string Evaluate(int i) => _twistedFizzBuzz.GetRangeOutput(i, i).Single();
 }

@@ -2,6 +2,8 @@ namespace FizzBuzz.Tests;
 
 public class FizzBuzzTests
 {
+    private readonly FizzBuzz _sut = new ();
+
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
@@ -14,7 +16,7 @@ public class FizzBuzzTests
     [InlineData(16)]
     public void Evaluate_ReturnsInput_IfNotMultiple(int input)
     {
-        var result = FizzBuzz.Evaluate(input);
+        var result = _sut.Evaluate(input);
         result.Should().Be(input.ToString());
     }
 
@@ -26,7 +28,7 @@ public class FizzBuzzTests
     [InlineData(18)]
     public void Evaluate_ReturnsFizz_IfMultipleOfThreeOnly(int input)
     {
-        var result = FizzBuzz.Evaluate(input);
+        var result = _sut.Evaluate(input);
         result.Should().Be("Fizz");
     }
 
@@ -36,7 +38,7 @@ public class FizzBuzzTests
     [InlineData(20)]
     public void Evaluate_ReturnsBuzz_IfMultipleOfFiveOnly(int input)
     {
-        var result = FizzBuzz.Evaluate(input);
+        var result = _sut.Evaluate(input);
         result.Should().Be("Buzz");
     }
 
@@ -46,7 +48,7 @@ public class FizzBuzzTests
     [InlineData(30)]
     public void Evaluate_ReturnsFizzBuzz_IfMultipleOfThreeAndFive(int input)
     {
-        var result = FizzBuzz.Evaluate(input);
+        var result = _sut.Evaluate(input);
         result.Should().Be("FizzBuzz");
     }    
 
