@@ -1,0 +1,98 @@
+{
+	"info": {
+		"_postman_id": "87c76f6d-2ca1-4aa8-a0cd-277a962dad36",
+		"name": "LeedsBeerQuest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7080/status",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7080",
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Venues - Happy Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7080/venues?MinimumBeerStars=3&MinimumValueStars=3&Tags=jukebox&Tags=food",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7080",
+					"path": [
+						"venues"
+					],
+					"query": [
+						{
+							"key": "MinimumBeerStars",
+							"value": "3"
+						},
+						{
+							"key": "MinimumValueStars",
+							"value": "3"
+						},
+						{
+							"key": "Tags",
+							"value": "jukebox"
+						},
+						{
+							"key": "Tags",
+							"value": "food"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Venues - Unhappy Path",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7080/venues?MinimumBeerStars=6&Tags=Fried Chicken&SortKey=Cheese",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7080",
+					"path": [
+						"venues"
+					],
+					"query": [
+						{
+							"key": "MinimumBeerStars",
+							"value": "6"
+						},
+						{
+							"key": "Tags",
+							"value": "Fried Chicken"
+						},
+						{
+							"key": "SortKey",
+							"value": "Cheese"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
